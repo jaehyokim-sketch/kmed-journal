@@ -327,10 +327,6 @@ select.fi{cursor:pointer;}
       <div class="journal-h1">경혈학실습 &amp; 경혈학임상술기실습 일지</div>
       <div class="journal-sub">탐혈·자침·초음파영상 통합 실습 기록부 (Group Practice Journal)</div>
     </div>
-    <button class="btn-print" onclick="window.print()">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="1" width="10" height="8" rx="1"/><path d="M3 9H1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2"/><rect x="3" y="11" width="10" height="4" rx=".5"/><circle cx="13" cy="11.5" r=".75" fill="currentColor" stroke="none"/></svg>
-      인쇄 / Print
-    </button>
   </div>
   <div class="meta-g" style="margin-bottom:14px;">
     <div class="mf"><span class="ml">실습 날짜 · Date</span><input class="mi" type="date" id="pd"></div>
@@ -735,6 +731,8 @@ function addAE() {
         <label class="chk-i"><input type="radio" name="nd${n}" value="o"> 사자 (Oblique)</label>
         <div class="cdiv"></div>
         <label class="chk-i"><input type="radio" name="nd${n}" value="t"> 횡자 (Transverse)</label>
+        <div class="cdiv"></div>
+        <label class="chk-i"><input type="radio" name="nd${n}" value="x"> 자침하지 않음</label>
       </div>
       <div class="angle-row"><span>각도:</span><input class="angle-in" type="text" placeholder="°"><span style="color:var(--text-faint);font-size:11px;">사자·횡자 시 기재</span></div>
     </div>
@@ -759,6 +757,10 @@ function addAE() {
         </div>
       </div>
       <textarea class="fi" placeholder="득기감 발생 시점, 방사 방향, 강도 및 피시술자의 반응을 기술하시오."></textarea>
+    </div>
+    <div class="fr">
+      <label class="fl">자침 사진 첨부 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(이상반응 발생 시 근거자료로 권장)</span></label>
+      <div class="img-ph" id="ae${n}-ph" style="min-height:90px;"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-ph','ae${n}-iv-ph')"><img class="img-preview" id="ae${n}-iv-ph" alt=""><div class="img-ph-ico">📷</div><div class="img-ph-txt">자침 사진 (선택)<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div></div>
     </div>
     <div class="fr">
       <label class="fl">이상반응 및 대처방법 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(발생 시 필수 기재)</span></label>
@@ -816,10 +818,6 @@ function addAE() {
       </div>
     </div>
     <div class="fr"><label class="fl">초음파 영상 종합 소견</label><textarea class="fi" placeholder="해부학적 층 구조, 자침 경로, 득기 후 조직 변화 등을 종합하여 기술하시오."></textarea></div>
-    <div class="fr">
-      <label class="fl">자침 사진 첨부 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(이상반응 발생 시 근거자료로 권장)</span></label>
-      <div class="img-ph" id="ae${n}-ph" style="min-height:90px;"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-ph','ae${n}-iv-ph')"><img class="img-preview" id="ae${n}-iv-ph" alt=""><div class="img-ph-ico">📷</div><div class="img-ph-txt">자침 사진 (선택)<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div></div>
-    </div>
 
   </div>`;
 
