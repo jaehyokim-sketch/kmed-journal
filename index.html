@@ -1,1421 +1,660 @@
-<title>경혈학실습 &amp; 경혈학임상술기실습 일지</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap">
-
-<style>
-/* ─── Tokens ─── */
-:root {
-  --bg:#F4F7FB;--surface:#FFFFFF;--surface-alt:#EEF3FA;
-  --border:#C6D3E4;--border-lt:#DDE6F2;
-  --text-pri:#192E4A;--text-sec:#4A6585;--text-faint:#8EA3BC;
-  --accent:#1A5F96;--accent-mid:#2678BB;--accent-lt:#E1EDF8;--accent-line:#4A9FDC;
-  --green:#1A7A4A;--green-bg:#E6F5EC;
-  --warn:#B83232;--warn-bg:#FBF0F0;
-  --amber:#A05C00;--amber-bg:#FEF5E6;
-  --ink:#0D1F35;
-  --score2:#1A7A4A;--score1:#A07000;--score0:#B83232;
-}
-@media(prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --bg:#0F1A28;--surface:#182535;--surface-alt:#122030;
-    --border:#2A3F58;--border-lt:#203348;
-    --text-pri:#D0E3F5;--text-sec:#7EA8CC;--text-faint:#4A6888;
-    --accent:#3A8FD5;--accent-mid:#55A8E8;--accent-lt:#1A3050;--accent-line:#55A8E8;
-    --green:#2AAA66;--green-bg:#0D2C1E;
-    --warn:#E05A5A;--warn-bg:#2C1010;
-    --amber:#CCA050;--amber-bg:#2C1E08;
-    --ink:#EAF3FF;--score2:#2AAA66;--score1:#CCA050;--score0:#E05A5A;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0F1A28;--surface:#182535;--surface-alt:#122030;
-  --border:#2A3F58;--border-lt:#203348;--text-pri:#D0E3F5;
-  --text-sec:#7EA8CC;--text-faint:#4A6888;--accent:#3A8FD5;
-  --accent-mid:#55A8E8;--accent-lt:#1A3050;--accent-line:#55A8E8;
-  --green:#2AAA66;--green-bg:#0D2C1E;--warn:#E05A5A;--warn-bg:#2C1010;
-  --amber:#CCA050;--amber-bg:#2C1E08;--ink:#EAF3FF;
-  --score2:#2AAA66;--score1:#CCA050;--score0:#E05A5A;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text-pri);font-size:13.5px;line-height:1.65;}
-
-/* ─── Page wrap ─── */
-.pw{max-width:960px;margin:0 auto;padding:22px 18px 64px;}
-
-/* ─── Cover ─── */
-.cover{background:var(--surface);border:1.5px solid var(--border);border-top:4px solid var(--accent);border-radius:8px;padding:26px 28px 22px;margin-bottom:20px;}
-.cover-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px;}
-.journal-eyebrow{font-size:9px;letter-spacing:3px;color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:5px;}
-.journal-h1{font-family:'Noto Serif KR',serif;font-size:22px;font-weight:700;color:var(--ink);line-height:1.2;}
-.journal-sub{font-size:11.5px;color:var(--text-sec);margin-top:3px;}
-.btn-print{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;border-radius:5px;padding:8px 15px;font-size:12px;font-family:inherit;cursor:pointer;white-space:nowrap;transition:background .15s;}
-.btn-print:hover{background:var(--accent-mid);}
-
-/* ─── Meta grid ─── */
-.meta-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:9px 14px;}
-.mf{display:flex;flex-direction:column;gap:3px;}
-.ml{font-size:10.5px;color:var(--text-sec);font-weight:500;}
-.mi{background:var(--surface-alt);border:1px solid var(--border);border-radius:4px;padding:5px 9px;font-size:12.5px;color:var(--text-pri);font-family:inherit;width:100%;outline:none;transition:border-color .15s;}
-.mi:focus{border-color:var(--accent-line);}
-.mi::placeholder{color:var(--text-faint);}
-textarea.mi{min-height:56px;resize:none;line-height:1.55;}
-
-/* ─── Participants ─── */
-.participants{border:1px solid var(--border);border-radius:5px;overflow:hidden;}
-.participants-head{background:var(--surface-alt);padding:8px 14px;font-size:11px;font-weight:600;color:var(--text-sec);letter-spacing:.5px;border-bottom:1px solid var(--border);}
-.participants-body{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
-.participant-cell{padding:7px 12px;border-right:1px solid var(--border-lt);display:flex;flex-direction:column;gap:3px;}
-.participant-cell:last-child{border-right:none;}
-.pc-role{font-size:10px;color:var(--accent);font-weight:600;}
-.pc-input{background:transparent;border:none;border-bottom:1.5px solid var(--border);padding:2px 1px;font-size:12.5px;font-family:inherit;color:var(--text-pri);outline:none;width:100%;}
-.pc-input:focus{border-color:var(--accent-line);}
-
-/* ─── Guide ─── */
-.guide-card{background:var(--amber-bg);border:1px solid rgba(160,92,0,.25);border-left:3px solid var(--amber);border-radius:6px;margin-bottom:18px;overflow:hidden;}
-.guide-toggle{width:100%;background:none;border:none;text-align:left;padding:11px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--amber);gap:8px;}
-.guide-toggle svg{flex-shrink:0;transition:transform .2s;}
-.guide-toggle.open svg{transform:rotate(180deg);}
-.guide-body{display:none;padding:0 16px 14px;}
-.guide-body.open{display:block;}
-.guide-body ol{padding-left:20px;display:flex;flex-direction:column;gap:4px;}
-.guide-body li{font-size:12px;color:var(--text-pri);line-height:1.55;}
-
-/* ─── Section cards ─── */
-.sc{background:var(--surface);border:1.5px solid var(--border);border-radius:7px;margin-bottom:18px;overflow:hidden;}
-.sc-head{background:var(--accent);color:#fff;padding:11px 20px;display:flex;align-items:center;gap:11px;}
-.sc-num{background:rgba(255,255,255,.2);font-size:11px;font-weight:700;width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.sc-title{font-family:'Noto Serif KR',serif;font-size:13.5px;font-weight:700;line-height:1.25;}
-.sc-en{font-size:10px;opacity:.75;letter-spacing:.8px;}
-.sc-body{padding:18px 20px;}
-
-/* ─── Subsection label ─── */
-.ssl{font-size:10.5px;font-weight:600;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin:16px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--accent-lt);display:flex;align-items:center;gap:8px;}
-.ssl:first-child{margin-top:0;}
-.ssl::after{content:'';flex:1;height:1px;background:var(--border-lt);}
-
-/* ─── Form row ─── */
-.fr{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
-.fr:last-child{margin-bottom:0;}
-.fl{font-size:11.5px;font-weight:600;color:var(--text-sec);}
-.fi{background:var(--surface-alt);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-size:13px;color:var(--text-pri);font-family:inherit;width:100%;outline:none;resize:none;transition:border-color .15s;}
-.fi:focus{border-color:var(--accent-line);}
-.fi::placeholder{color:var(--text-faint);}
-textarea.fi{min-height:68px;line-height:1.6;}
-select.fi{cursor:pointer;}
-
-/* ─── Two/Three col ─── */
-.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-@media(max-width:560px){.two{grid-template-columns:1fr;}}
-.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-@media(max-width:600px){.three{grid-template-columns:1fr 1fr;}}
-@media(max-width:400px){.three{grid-template-columns:1fr;}}
-
-/* ─── Checkboxes ─── */
-.chk-g{display:flex;flex-wrap:wrap;gap:5px 12px;align-items:center;padding:8px 10px;background:var(--surface-alt);border:1px solid var(--border);border-radius:4px;}
-.chk-i{display:flex;align-items:center;gap:5px;cursor:pointer;font-size:12.5px;user-select:none;}
-.chk-i input{width:13px;height:13px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
-.cdiv{width:1px;height:16px;background:var(--border);margin:0 2px;}
-.angle-row{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12px;color:var(--text-sec);}
-.angle-in{background:var(--surface-alt);border:1px solid var(--border);border-radius:4px;padding:3px 7px;font-size:12px;width:66px;text-align:center;font-family:inherit;color:var(--text-pri);outline:none;}
-.angle-in:focus{border-color:var(--accent-line);}
-
-/* ─── Depth row ─── */
-.depth-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
-@media(max-width:480px){.depth-row{grid-template-columns:1fr 1fr;}}
-.depth-box{background:var(--surface-alt);border:1px solid var(--border);border-radius:4px;padding:7px 10px;display:flex;align-items:center;gap:8px;}
-.depth-box label{font-size:11px;color:var(--text-sec);font-weight:500;white-space:nowrap;}
-.depth-box input{background:transparent;border:none;border-bottom:1.5px solid var(--border);outline:none;font-size:13px;color:var(--text-pri);font-family:inherit;width:56px;text-align:right;}
-.depth-box input:focus{border-color:var(--accent-line);}
-.depth-unit{font-size:11px;color:var(--text-faint);}
-
-/* ─── Warn note ─── */
-.warn-note{background:var(--warn-bg);border:1px solid rgba(184,50,50,.22);border-left:3px solid var(--warn);border-radius:4px;padding:7px 11px;font-size:11.5px;color:var(--warn);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
-
-/* ─── Score table ─── */
-.score-table{border:1.5px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:12px;}
-.st-head{display:grid;grid-template-columns:1fr 80px;background:var(--surface-alt);border-bottom:1.5px solid var(--border);}
-.st-th{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-sec);letter-spacing:.4px;}
-.st-row{display:grid;grid-template-columns:1fr 80px;border-top:1px solid var(--border-lt);}
-.st-td{padding:7px 12px;font-size:12.5px;}
-.st-score{display:flex;align-items:center;gap:4px;justify-content:center;}
-.score-btn{width:24px;height:24px;border-radius:4px;border:1.5px solid var(--border);background:var(--surface-alt);font-size:11px;font-weight:700;cursor:pointer;transition:all .12s;font-family:inherit;display:flex;align-items:center;justify-content:center;}
-.score-btn[data-v="2"]:hover,.score-btn[data-v="2"].active{background:var(--green);border-color:var(--green);color:#fff;}
-.score-btn[data-v="1"]:hover,.score-btn[data-v="1"].active{background:var(--amber);border-color:var(--amber);color:#fff;}
-.score-btn[data-v="0"]:hover,.score-btn[data-v="0"].active{background:var(--warn);border-color:var(--warn);color:#fff;}
-.st-total{background:var(--surface-alt);border-top:1.5px solid var(--border);padding:8px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600;}
-.st-total-val{font-size:15px;font-weight:700;color:var(--accent);}
-
-/* ─── Vital signs ─── */
-.vital-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
-.vital-box{background:var(--surface-alt);border:1.5px solid var(--border);border-radius:5px;padding:10px 12px;}
-.vital-lbl{font-size:10px;color:var(--text-sec);font-weight:600;letter-spacing:.5px;margin-bottom:5px;}
-.vital-row{display:flex;align-items:baseline;gap:5px;}
-.vital-inp{background:transparent;border:none;border-bottom:1.5px solid var(--border);outline:none;font-size:15px;font-weight:600;color:var(--text-pri);font-family:inherit;width:64px;text-align:right;}
-.vital-inp:focus{border-color:var(--accent-line);}
-.vital-unit{font-size:11px;color:var(--text-faint);}
-.vital-sep{font-size:14px;color:var(--border);font-weight:600;}
-
-/* ─── Ultrasound imaging ─── */
-.us-set{border:1px solid var(--border);border-radius:5px;overflow-x:auto;margin-bottom:14px;}
-.ust{width:100%;border-collapse:collapse;}
-.ust th,.ust td{border:1px solid var(--border-lt);padding:7px 10px;font-size:12px;}
-.ust th{background:var(--surface-alt);font-weight:600;color:var(--text-sec);font-size:11px;letter-spacing:.4px;}
-.ust td.row-lbl{background:var(--surface-alt);font-weight:600;font-size:11.5px;color:var(--text-sec);white-space:nowrap;}
-.probe-val{background:var(--surface-alt);border:1px solid var(--border);border-radius:3px;padding:3px 6px;font-size:12px;font-family:inherit;color:var(--text-pri);width:64px;outline:none;}
-.probe-val:focus{border-color:var(--accent-line);}
-.img-table{border:1.5px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:14px;}
-.it-head{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-alt);border-bottom:1.5px solid var(--border);}
-.it-ch{padding:9px 12px;font-size:11px;font-weight:700;color:var(--accent);border-right:1px solid var(--border);}
-.it-ch:last-child{border-right:none;}
-.it-row{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border);}
-.it-row:first-child{border-top:none;}
-.it-cell{padding:11px 12px;border-right:1px solid var(--border);}
-.it-cell:last-child{border-right:none;}
-.it-cell-lbl{font-size:10.5px;font-weight:600;color:var(--text-sec);margin-bottom:7px;}
-.img-ph{border:2px dashed var(--border);border-radius:5px;background:var(--surface-alt);min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
-.img-ph:hover{border-color:var(--accent-line);background:var(--accent-lt);}
-.img-ph input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.img-ph-ico{font-size:26px;opacity:.35;}
-.img-ph-txt{font-size:10.5px;color:var(--text-faint);text-align:center;line-height:1.4;}
-.img-preview{max-width:100%;max-height:200px;border-radius:4px;display:none;object-fit:contain;}
-.obs-list{display:flex;flex-direction:column;gap:4px;}
-.obs-item{display:flex;align-items:flex-start;gap:6px;font-size:12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:4px;padding:5px 8px;line-height:1.5;}
-.obs-item input[type=checkbox]{margin-top:2px;width:13px;height:13px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
-.obs-sub{display:flex;align-items:center;gap:5px;margin-top:3px;flex-wrap:wrap;}
-.obs-si{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:2px 6px;font-size:11.5px;font-family:inherit;color:var(--text-pri);flex:1;min-width:80px;outline:none;}
-.obs-si:focus{border-color:var(--accent-line);}
-@media(max-width:560px){.it-head,.it-row{grid-template-columns:1fr;}.it-cell{border-right:none;border-top:1px solid var(--border);}.it-ch{border-right:none;border-bottom:1px solid var(--border);}.it-ch:last-child{border-bottom:none;}}
-
-/* ─── Acupoint Entry Accordion ─── */
-.ae-card{border:1.5px solid var(--border);border-radius:7px;margin-bottom:12px;overflow:hidden;}
-.ae-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface-alt);cursor:pointer;gap:10px;user-select:none;transition:background .12s;}
-.ae-head:hover{background:var(--accent-lt);}
-.ae-hinfo{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0;}
-.ae-title{font-size:13px;font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ae-sub{font-size:11px;color:var(--text-sec);}
-.ae-actions{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.ae-del{background:var(--warn-bg);border:1px solid var(--warn);color:var(--warn);border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .12s;}
-.ae-del:hover{background:var(--warn);color:#fff;}
-.ae-arrow{transition:transform .2s;color:var(--text-sec);}
-.ae-arrow.open{transform:rotate(180deg);}
-.ae-body{display:none;padding:16px 18px;border-top:1px solid var(--border);}
-.ae-body.open{display:block;}
-
-/* ─── Acupoint selector ─── */
-.acu-sel-row{display:grid;grid-template-columns:1fr 1fr 140px;gap:10px;margin-bottom:14px;align-items:end;}
-@media(max-width:640px){.acu-sel-row{grid-template-columns:1fr 1fr;}}
-@media(max-width:420px){.acu-sel-row{grid-template-columns:1fr;}}
-.acu-badge{display:inline-flex;align-items:center;gap:5px;background:var(--accent-lt);border:1.5px solid var(--accent-line);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--accent);font-family:'Courier New',monospace;}
-
-/* ─── Add button ─── */
-.btn-add-acu{display:flex;align-items:center;gap:7px;background:var(--accent-lt);border:1.5px dashed var(--accent-line);border-radius:6px;padding:10px 18px;font-size:12.5px;font-weight:600;color:var(--accent);cursor:pointer;font-family:inherit;transition:all .15s;width:100%;justify-content:center;margin-top:4px;}
-.btn-add-acu:hover{background:var(--accent);color:#fff;border-style:solid;}
-
-/* ─── OSCE ─── */
-.osce-grid{display:flex;flex-direction:column;gap:10px;}
-.osce-item{background:var(--surface-alt);border:1px solid var(--border);border-radius:5px;padding:11px 14px;display:grid;grid-template-columns:1fr 160px;gap:12px;align-items:start;}
-@media(max-width:520px){.osce-item{grid-template-columns:1fr;}}
-.osce-name{font-size:12px;font-weight:600;color:var(--text-pri);margin-bottom:3px;}
-.osce-label{font-size:10.5px;color:var(--text-sec);}
-.img-upload-btn{display:flex;align-items:center;justify-content:center;gap:6px;background:var(--accent-lt);border:1.5px dashed var(--accent-line);border-radius:4px;padding:7px 10px;font-size:11.5px;color:var(--accent);cursor:pointer;transition:all .15s;position:relative;font-weight:500;}
-.img-upload-btn:hover{background:var(--accent);color:#fff;border-style:solid;}
-.img-upload-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.osce-preview{display:none;max-width:100%;max-height:140px;object-fit:contain;border-radius:4px;margin-top:6px;}
-
-/* ─── Reflection table ─── */
-.reflect-table{border:1.5px solid var(--border);border-radius:6px;overflow:hidden;}
-.rt-head{display:grid;grid-template-columns:120px 1fr;background:var(--surface-alt);border-bottom:1.5px solid var(--border);}
-.rt-th{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-sec);border-right:1px solid var(--border);}
-.rt-th:last-child{border-right:none;}
-.rt-row{display:grid;grid-template-columns:120px 1fr;border-top:1px solid var(--border-lt);}
-.rt-name{padding:10px 12px;font-size:12px;font-weight:600;color:var(--text-pri);border-right:1px solid var(--border-lt);display:flex;align-items:center;}
-.rt-name input{background:transparent;border:none;border-bottom:1.5px solid var(--border);outline:none;font-size:12.5px;font-family:inherit;color:var(--text-pri);width:100%;}
-.rt-name input:focus{border-color:var(--accent-line);}
-.rt-text textarea{background:transparent;border:none;width:100%;padding:10px 12px;font-size:12.5px;font-family:inherit;color:var(--text-pri);resize:none;min-height:66px;line-height:1.6;outline:none;}
-.rt-text textarea::placeholder{color:var(--text-faint);}
-
-/* ─── WAFFLE ─── */
-.waffle-box{background:var(--surface-alt);border:1.5px dashed var(--border);border-radius:6px;padding:18px;text-align:center;cursor:pointer;position:relative;transition:all .15s;}
-.waffle-box:hover{border-color:var(--accent-line);background:var(--accent-lt);}
-.waffle-box input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.waffle-ico{font-size:28px;margin-bottom:6px;opacity:.4;}
-.waffle-txt{font-size:12px;color:var(--text-faint);}
-.waffle-preview{display:none;max-width:100%;max-height:200px;border-radius:6px;object-fit:contain;}
-
-/* ─── Footer sigs ─── */
-.sig-footer{border-top:1.5px solid var(--border);margin-top:22px;padding-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-@media(max-width:480px){.sig-footer{grid-template-columns:1fr;}}
-.sig-item{display:flex;flex-direction:column;gap:4px;}
-.sig-lbl{font-size:10.5px;color:var(--text-sec);font-weight:600;letter-spacing:.3px;}
-.sig-inp{background:transparent;border:none;border-bottom:1.5px solid var(--border);padding:4px 2px;font-size:13px;font-family:inherit;color:var(--text-pri);width:100%;outline:none;}
-.sig-inp:focus{border-color:var(--accent-line);}
-
-/* ─── Toolbar ─── */
-.toolbar{position:sticky;top:0;z-index:200;background:var(--surface);border-bottom:1.5px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.08);padding:0 18px;}
-.tb-inner{max-width:960px;margin:0 auto;display:flex;align-items:center;gap:6px;height:48px;flex-wrap:nowrap;}
-.tb-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text-pri);font-size:12px;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all .15s;}
-.tb-btn:hover{background:var(--surface-alt);border-color:var(--accent);color:var(--accent);}
-.tb-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);}
-.tb-btn.primary:hover{background:var(--accent-mid);}
-.tb-btn.danger{color:var(--warn);border-color:transparent;background:transparent;}
-.tb-btn.danger:hover{background:var(--warn-bg);border-color:var(--warn);}
-.tb-sep{width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 2px;}
-.tb-status{font-size:11px;color:var(--text-faint);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tb-flash{color:var(--green)!important;}
-
-@media(max-width:600px){
-  .tb-btn span{display:none;}
-  .tb-btn{padding:6px 9px;}
-}
-
-@media print{
-  body{background:#fff;color:#000;}
-  .toolbar,.btn-print,.ae-del,.btn-add-acu{display:none!important;}
-  .guide-body{display:block!important;}
-  .pw{padding:10px 6px;}
-  .sc{break-inside:avoid;}
-  .ae-body{display:block!important;}
-  img.img-preview,img.osce-preview{display:block!important;max-width:100%;max-height:200px;}
-  @page{margin:1.5cm;}
-}
-
-/* ─── Merge Modal ─── */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.52);display:flex;align-items:center;justify-content:center;z-index:2000;padding:16px;}
-.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;width:100%;max-width:580px;max-height:88vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.3);}
-.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
-.modal-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:700;color:var(--ink);}
-.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-sec);padding:3px 7px;border-radius:4px;line-height:1;}
-.modal-close:hover{background:var(--surface-alt);}
-.modal-body{padding:20px;}
-.modal-desc{font-size:12.5px;color:var(--text-sec);margin-bottom:14px;line-height:1.65;}
-.merge-drop{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px dashed var(--border);border-radius:8px;padding:22px 16px;cursor:pointer;transition:border-color .15s,color .15s;text-align:center;color:var(--text-sec);font-size:12.5px;margin-bottom:16px;}
-.merge-drop:hover{border-color:var(--accent);color:var(--accent);}
-.merge-sec-lbl{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--accent-lt);margin-bottom:10px;}
-.mcard{background:var(--surface-alt);border:1px solid var(--border);border-radius:6px;padding:10px 13px;margin-bottom:8px;display:flex;align-items:center;gap:11px;}
-.mcard-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;border-radius:4px;padding:3px 7px;white-space:nowrap;flex-shrink:0;min-width:42px;text-align:center;}
-.mcard-info{flex:1;min-width:0;}
-.mcard-name{font-size:12px;font-weight:600;color:var(--text-pri);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mcard-meta{font-size:11px;color:var(--text-sec);margin-top:2px;}
-.mcard-del{background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:15px;padding:2px 5px;border-radius:3px;flex-shrink:0;transition:color .1s;}
-.mcard-del:hover{color:var(--warn);}
-.merge-cfg{background:var(--surface-alt);border:1px solid var(--border);border-radius:6px;padding:12px 15px;margin-bottom:14px;}
-.mcfg-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0;border-bottom:1px solid var(--border-lt);}
-.mcfg-row:last-child{border-bottom:none;padding-bottom:0;}
-.mcfg-row:first-child{padding-top:0;}
-.mcfg-key{font-size:11.5px;font-weight:600;color:var(--text-sec);min-width:190px;}
-.mcfg-val{font-size:12px;color:var(--text-pri);}
-.merge-warn{background:var(--amber-bg);border:1px solid rgba(160,92,0,.3);border-left:3px solid var(--amber);border-radius:5px;padding:9px 13px;font-size:11.5px;color:var(--amber);line-height:1.55;}
-.merge-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;}
-</style>
-
-<!-- ══ TOOLBAR ══ -->
-<div class="toolbar" id="toolbar">
-  <div class="tb-inner">
-    <button class="tb-btn primary" onclick="saveToFile()" title="작성 내용을 JSON 파일로 저장">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4.5L10.5 1H2zm8.5 0v3.5H14L10.5 1zM4 9h8v1H4V9zm0 2h5v1H4v-1z"/></svg>
-      <span>데이터 저장</span>
-    </button>
-    <label class="tb-btn" style="cursor:pointer;" title="저장한 JSON 파일을 불러옵니다">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>
-      <span>불러오기</span>
-      <input type="file" accept=".json" onchange="loadFromFile(event)" style="display:none">
-    </label>
-    <button class="tb-btn" onclick="openMergeModal()" title="개별 저장 파일들을 통합하여 최종 일지 완성">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zm-4 4a.5.5 0 0 0 0 1h2.5V9H7a.5.5 0 0 0 0 1h2.5v2.5a.5.5 0 0 0 1 0V10H13a.5.5 0 0 0 0-1h-2.5V6H13a.5.5 0 0 0 0-1h-2.5V2.5a.5.5 0 0 0-1 0V5H7z"/></svg>
-      <span>파일 통합</span>
-    </button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn" onclick="printToPDF()" title="PDF로 저장 (인쇄 대화상자 → PDF로 저장 선택)">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0H4zM9 0v4h4L9 0zM4 9h8v1H4V9zm0 2h5v1H4v-1z"/></svg>
-      <span>PDF 저장</span>
-    </button>
-    <button class="tb-btn" onclick="window.print()" title="인쇄">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/></svg>
-      <span>인쇄</span>
-    </button>
-    <div class="tb-sep"></div>
-    <button class="tb-btn danger" onclick="resetForm()" title="모든 내용 초기화">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1z"/></svg>
-      <span>초기화</span>
-    </button>
-    <span class="tb-status" id="tb-status">준비</span>
-  </div>
-</div>
-
-<!-- ══ MERGE MODAL ══ -->
-<div class="modal-backdrop" id="merge-modal" style="display:none" onclick="if(event.target===this)closeMergeModal()">
-  <div class="modal-box">
-    <div class="modal-head">
-      <span class="modal-title">📁 개별 파일 통합 · File Merge</span>
-      <button class="modal-close" onclick="closeMergeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <p class="modal-desc">각 실습 참여자가 개별 저장한 JSON 파일을 불러와 통합된 최종 실습일지를 완성합니다. 섹션 3 경혈 기록은 모든 파일에서 수집하고, 기본정보·체크리스트·섹션 4·5는 기준 파일을 선택하여 적용합니다.</p>
-
-      <label class="merge-drop" id="merge-drop">
-        <svg width="26" height="26" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
-        <span>JSON 파일 선택 (여러 파일 동시 선택 가능)</span>
-        <input type="file" accept=".json" multiple onchange="onMergeFilesSelected(event)" style="display:none">
-      </label>
-
-      <div id="merge-content" style="display:none">
-        <div class="merge-sec-lbl">로드된 파일</div>
-        <div id="merge-cards"></div>
-
-        <div class="merge-sec-lbl" style="margin-top:16px;">통합 설정</div>
-        <div class="merge-cfg">
-          <div class="mcfg-row">
-            <span class="mcfg-key">기본정보 · 체크리스트 · 섹션 4·5</span>
-            <select class="mi" id="merge-base-sel" style="max-width:220px;font-size:12px;padding:4px 8px;"></select>
-          </div>
-          <div class="mcfg-row">
-            <span class="mcfg-key">섹션 3 경혈 기록</span>
-            <span class="mcfg-val" id="merge-ae-info">—</span>
-          </div>
-          <div class="mcfg-row">
-            <span class="mcfg-key">이미지</span>
-            <span class="mcfg-val">모든 파일에서 통합 (기준 파일 우선)</span>
-          </div>
-        </div>
-
-        <div class="merge-warn" id="merge-warn" style="display:none"></div>
-
-        <div class="merge-acts">
-          <button class="tb-btn" onclick="closeMergeModal()" style="padding:8px 18px;">취소</button>
-          <button class="tb-btn primary" onclick="executeMerge()" style="padding:8px 18px;">통합 실행</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="pw">
-
-<!-- ══ COVER ══ -->
-<div class="cover">
-  <div class="cover-row">
-    <div>
-      <div class="journal-eyebrow">원광대학교 한의과대학 경혈학교실 &amp; 침구의학교실</div>
-      <div class="journal-h1">경혈학실습 &amp; 경혈학임상술기실습 일지</div>
-      <div class="journal-sub">탐혈·자침·초음파영상 통합 실습 기록부 (Group Practice Journal)</div>
-    </div>
-  </div>
-  <div class="meta-g" style="margin-bottom:14px;">
-    <div class="mf"><span class="ml">실습 날짜 · Date</span><input class="mi" type="date" id="pd"></div>
-    <div class="mf"><span class="ml">분반 · Section</span><select class="mi"><option value="">— 선택 —</option><option>01분반</option><option>02분반</option></select></div>
-    <div class="mf"><span class="ml">조 · Group</span><select class="mi"><option value="">— 선택 —</option><option>1조</option><option>2조</option><option>3조</option><option>4조</option><option>5조</option><option>6조</option><option>7조</option><option>8조</option><option>9조</option><option>10조</option></select></div>
-    <div class="mf"><span class="ml">실습 주제 · Topic</span><input class="mi" type="text" placeholder="예) 족양명경 취혈 및 자침"></div>
-    <div class="mf"><span class="ml">지도 교수 · Supervisor</span><input class="mi" type="text" placeholder=""></div>
-  </div>
-  <div class="participants">
-    <div class="participants-head">실습 참여자 명단 · Group Members</div>
-    <div class="participants-body">
-      <div class="participant-cell"><div class="pc-role">시술자 1 (Practitioner)</div><input class="pc-input" type="text" placeholder="이름"></div>
-      <div class="participant-cell"><div class="pc-role">시술자 2 (Practitioner)</div><input class="pc-input" type="text" placeholder="이름"></div>
-      <div class="participant-cell"><div class="pc-role">시술자 3 (Practitioner)</div><input class="pc-input" type="text" placeholder="이름"></div>
-      <div class="participant-cell"><div class="pc-role">시술자 4 (Practitioner)</div><input class="pc-input" type="text" placeholder="이름"></div>
-      <div class="participant-cell"><div class="pc-role">피시술자 1 (Subject)</div><input class="pc-input" type="text" placeholder="이름"></div>
-      <div class="participant-cell"><div class="pc-role">피시술자 2 (Subject)</div><input class="pc-input" type="text" placeholder="이름"></div>
-      <div class="participant-cell"><div class="pc-role">관찰자 (Observer)</div><input class="pc-input" type="text" placeholder="이름"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ 실습 가이드 ══ -->
-<div class="guide-card">
-  <button class="guide-toggle" id="guide-btn" onclick="toggleGuide()">
-    <span>📋 실습 가이드 · Practice Guidelines</span>
-    <svg width="14" height="14" viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L1 3h10z"/></svg>
-  </button>
-  <div class="guide-body" id="guide-body">
-    <ol>
-      <li>조별로 사전학습을 통해 경혈별 탐혈 방법을 실습일지에 미리 정리한다.</li>
-      <li>미리 해당 실습일의 <strong>시술자, 피시술자, 관찰자 역할을 분담</strong>한다.</li>
-      <li>시술자는 피시술자에게 실습 동의서 내용을 직접 설명하고 동의를 받는다. <strong>(동의서 미작성 시 실습 중단)</strong></li>
-      <li>시술자는 피시술자의 상태를 확인하고 생체징후를 측정한다.</li>
-      <li>관찰자는 시술 전·후 체크리스트를 작성한다.</li>
-      <li>시술자는 자침의 전 과정을 다른 조원의 도움 없이 수행하고 실습일지에 직접 기록한다.</li>
-      <li>관찰자는 시술자의 수행을 관찰하고 위생·안전관리 준수 여부를 점검하여 기록한다.</li>
-      <li>실습 종료 후 관찰자는 교수자가 제시한 경혈에 각 시술자별로 1회씩 호침 시술하도록 하고, 체크리스트에 따라 채점하고(OSCE) 피드백한다.</li>
-    </ol>
-  </div>
-</div>
-
-<!-- ══ SECTION 1: 관찰자 기록 ══ -->
-<div class="sc">
-  <div class="sc-head">
-    <div class="sc-num">1</div>
-    <div>
-      <div class="sc-title">관찰자 기록 · Observer Record</div>
-      <div class="sc-en">Hygiene &amp; Safety Management Checklist</div>
-    </div>
-  </div>
-  <div class="sc-body">
-    <div class="two" style="margin-bottom:14px;">
-      <div class="fr" style="margin-bottom:0;"><label class="fl">관찰자 이름 · Observer Name</label><input class="fi" type="text" placeholder="이름"></div>
-      <div class="fr" style="margin-bottom:0;"><label class="fl">관찰 대상 시술자 · Observed Practitioner</label><input class="fi" type="text" placeholder="시술자 이름(들)"></div>
-    </div>
-    <div class="ssl">위생관리 점검 · Hygiene Check</div>
-    <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px;">2점: 했다 / 1점: 불완전하게 했다 / 0점: 하지 않았다</div>
-    <div class="score-table" id="hygiene-table">
-      <div class="st-head"><div class="st-th">점검 항목</div><div class="st-th" style="text-align:center;">점수</div></div>
-      <div id="hygiene-rows">
-        <div class="st-row"><div class="st-td">실습 전 손톱이 정리된 상태인가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">실습실에 들어와 세면대에서 손을 씻었는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">침 시술 직전 손을 씻었는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">시술 전 시술부위를 소독하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">시술 후 시술부위를 소독하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">실습 중 베드커버를 사용하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">시술 후 사용한 물품을 적절히 폐기하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-      </div>
-      <div class="st-total"><span>위생관리 총점 · Total</span><span class="st-total-val" id="hygiene-total">— / 14</span></div>
-    </div>
-    <div class="fr"><label class="fl">점검 결과 &amp; 보완할 점</label><textarea class="fi" placeholder="위생관리 점검 결과와 개선이 필요한 부분을 기재하시오."></textarea></div>
-
-    <div class="ssl" style="margin-top:20px;">안전관리 점검 · Safety Check</div>
-    <div style="font-size:11px;color:var(--text-sec);margin-bottom:8px;">2점: 했다 / 1점: 불완전하게 했다 / 0점: 하지 않았다</div>
-    <div class="score-table" id="safety-table">
-      <div class="st-head"><div class="st-th">점검 항목</div><div class="st-th" style="text-align:center;">점수</div></div>
-      <div id="safety-rows">
-        <div class="st-row"><div class="st-td">시술자는 피시술자에게 실습 내용을 설명하고 동의를 받았는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">피시술자의 생체징후를 확인하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">시술 전 체크리스트를 작성하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">피시술자에게 적절한 취혈자세를 안내하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">탐혈 및 시술 시 시술부위 주변의 해부학적 구조를 고려하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">적절한 자침깊이로 자침하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">시술자는 시술 과정에서 피시술자를 배려하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">출혈 발생 시 지혈과 혈종 예방을 위한 노력을 하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">실습실 대화지침을 준수하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-        <div class="st-row"><div class="st-td">시술 후 체크리스트를 작성하였는가?</div><div class="st-td"><div class="st-score"><button class="score-btn" data-v="2">2</button><button class="score-btn" data-v="1">1</button><button class="score-btn" data-v="0">0</button></div></div></div>
-      </div>
-      <div class="st-total"><span>안전관리 총점 · Total</span><span class="st-total-val" id="safety-total">— / 20</span></div>
-    </div>
-    <div class="fr"><label class="fl">점검 결과 &amp; 보완할 점</label><textarea class="fi" placeholder="안전관리 점검 결과와 개선이 필요한 부분을 기재하시오."></textarea></div>
-  </div>
-</div>
-
-<!-- ══ SECTION 2: 피시술자 정보 ══ -->
-<div class="sc">
-  <div class="sc-head">
-    <div class="sc-num">2</div>
-    <div>
-      <div class="sc-title">피시술자 정보 · Subject Information</div>
-      <div class="sc-en">Vital Signs &amp; Subject Status</div>
-    </div>
-  </div>
-  <div class="sc-body">
-
-    <!-- 피시술자 1 -->
-    <div style="background:var(--accent-lt);border:1.5px solid var(--accent-line);border-radius:6px;padding:14px 16px;margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:12px;">피시술자 1 · Subject 1</div>
-      <div class="two" style="margin-bottom:12px;">
-        <div class="fr" style="margin-bottom:0;"><label class="fl">피시술자 이름 · Subject Name</label><input class="fi" type="text" placeholder="이름"></div>
-        <div class="fr" style="margin-bottom:0;"><label class="fl">취혈자세 및 자세의 적절성</label><input class="fi" type="text" placeholder="예) 앙와위, 자세 안정적으로 유지됨"></div>
-      </div>
-      <div class="ssl" style="margin-top:0;">생체징후 · Vital Signs</div>
-      <div class="vital-g">
-        <div class="vital-box">
-          <div class="vital-lbl">체온 · Temperature</div>
-          <div class="vital-row"><input class="vital-inp" type="text" placeholder="36.5"><span class="vital-unit">℃</span></div>
-        </div>
-        <div class="vital-box">
-          <div class="vital-lbl">혈압 · Blood Pressure</div>
-          <div class="vital-row"><input class="vital-inp" type="text" placeholder="120" style="width:52px;"><span class="vital-sep">/</span><input class="vital-inp" type="text" placeholder="80" style="width:52px;"><span class="vital-unit">mmHg</span></div>
-        </div>
-        <div class="vital-box">
-          <div class="vital-lbl">혈당 · Blood Glucose</div>
-          <div class="vital-row"><input class="vital-inp" type="text" placeholder="95"><span class="vital-unit">mg/dL</span></div>
-          <div style="font-size:10.5px;color:var(--text-faint);margin-top:3px;">식사 후 <input style="background:transparent;border:none;border-bottom:1px solid var(--border);width:30px;font-size:10.5px;font-family:inherit;outline:none;" type="text" placeholder="  "> 시간 경과</div>
-        </div>
-      </div>
-      <div class="fr" style="margin-top:12px;margin-bottom:0;">
-        <label class="fl">피시술자 증상 / 상태 특이사항</label>
-        <textarea class="fi" placeholder="시술 전 확인한 피시술자의 증상, 컨디션, 금기 여부 등 특이사항을 기재하시오. (이상 없으면 '특이사항 없음' 기재)"></textarea>
-      </div>
-    </div>
-
-    <!-- 피시술자 2 -->
-    <div style="background:var(--accent-lt);border:1.5px solid var(--accent-line);border-radius:6px;padding:14px 16px;margin-bottom:16px;">
-      <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;margin-bottom:12px;">피시술자 2 · Subject 2</div>
-      <div class="two" style="margin-bottom:12px;">
-        <div class="fr" style="margin-bottom:0;"><label class="fl">피시술자 이름 · Subject Name</label><input class="fi" type="text" placeholder="이름"></div>
-        <div class="fr" style="margin-bottom:0;"><label class="fl">취혈자세 및 자세의 적절성</label><input class="fi" type="text" placeholder="예) 앙와위, 자세 안정적으로 유지됨"></div>
-      </div>
-      <div class="ssl" style="margin-top:0;">생체징후 · Vital Signs</div>
-      <div class="vital-g">
-        <div class="vital-box">
-          <div class="vital-lbl">체온 · Temperature</div>
-          <div class="vital-row"><input class="vital-inp" type="text" placeholder="36.5"><span class="vital-unit">℃</span></div>
-        </div>
-        <div class="vital-box">
-          <div class="vital-lbl">혈압 · Blood Pressure</div>
-          <div class="vital-row"><input class="vital-inp" type="text" placeholder="120" style="width:52px;"><span class="vital-sep">/</span><input class="vital-inp" type="text" placeholder="80" style="width:52px;"><span class="vital-unit">mmHg</span></div>
-        </div>
-        <div class="vital-box">
-          <div class="vital-lbl">혈당 · Blood Glucose</div>
-          <div class="vital-row"><input class="vital-inp" type="text" placeholder="95"><span class="vital-unit">mg/dL</span></div>
-          <div style="font-size:10.5px;color:var(--text-faint);margin-top:3px;">식사 후 <input style="background:transparent;border:none;border-bottom:1px solid var(--border);width:30px;font-size:10.5px;font-family:inherit;outline:none;" type="text" placeholder="  "> 시간 경과</div>
-        </div>
-      </div>
-      <div class="fr" style="margin-top:12px;margin-bottom:0;">
-        <label class="fl">피시술자 증상 / 상태 특이사항</label>
-        <textarea class="fi" placeholder="시술 전 확인한 피시술자의 증상, 컨디션, 금기 여부 등 특이사항을 기재하시오. (이상 없으면 '특이사항 없음' 기재)"></textarea>
-      </div>
-    </div>
-
-    <div class="fr" style="margin-top:4px;">
-      <label class="fl">시술자별 수행 관찰 및 피드백 (피시술자 작성)</label>
-      <textarea class="fi" style="min-height:80px;" placeholder="각 시술자의 수행 태도, 의사소통, 술기 능숙도 등에 대한 관찰 내용과 피드백을 기재하시오."></textarea>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SECTION 3: 탐혈/시술 및 초음파영상 실습 기록 ══ -->
-<div class="sc">
-  <div class="sc-head">
-    <div class="sc-num">3</div>
-    <div>
-      <div class="sc-title">탐혈/시술 및 초음파영상 실습 기록</div>
-      <div class="sc-en">Acupoint Location · Needling · Ultrasound Record (Per Acupoint)</div>
-    </div>
-  </div>
-  <div class="sc-body">
-    <div style="font-size:11.5px;color:var(--text-sec);margin-bottom:14px;padding:9px 12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:5px;">
-      경혈별로 실습 항목을 추가하고, 해당 경혈의 사전학습 정리 → 탐혈 과정 → 자침 기록 → 초음파 영상 순서로 기록하시오. 경맥 전체 경혈 수만큼 추가할 수 있습니다.
-    </div>
-    <div id="ae-wrap"></div>
-    <button class="btn-add-acu" id="btn-add" onclick="addAE()">＋ 경혈 기록 추가</button>
-  </div>
-</div>
-
-<!-- ══ SECTION 4: 학습에 대한 성찰 ══ -->
-<div class="sc">
-  <div class="sc-head">
-    <div class="sc-num">4</div>
-    <div>
-      <div class="sc-title">학습에 대한 성찰</div>
-      <div class="sc-en">Individual Reflection · All Group Members</div>
-    </div>
-  </div>
-  <div class="sc-body">
-    <div style="font-size:11.5px;color:var(--text-sec);margin-bottom:12px;padding:9px 12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:5px;">자신의 학습을 돌이켜보고 객관적으로 평가하시오. ① 오늘 나의 학습태도 ② 개선해야 할 점 ③ 교수자에게 질문하고 싶은 내용</div>
-    <div class="reflect-table">
-      <div class="rt-head"><div class="rt-th">이름</div><div class="rt-th">성찰 내용 · Reflection</div></div>
-      <div class="rt-row"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SECTION 5: 관찰자 모의 OSCE 채점 ══ -->
-<div class="sc">
-  <div class="sc-head">
-    <div class="sc-num">5</div>
-    <div>
-      <div class="sc-title">관찰자 모의 OSCE 채점 결과</div>
-      <div class="sc-en">Observer Mock OSCE Scoring</div>
-    </div>
-  </div>
-  <div class="sc-body">
-    <div style="font-size:11.5px;color:var(--text-sec);margin-bottom:14px;">OSCE 수행 후 구글 설문에서 캡처한 이미지를 각 시술자별로 첨부하시오.</div>
-    <div class="osce-grid">
-      <div class="osce-item">
-        <div><div class="osce-name">시술자 1 · Practitioner 1</div><input class="fi" type="text" placeholder="시술자 이름" style="margin-bottom:8px;"><div class="osce-label">OSCE 설문 캡처 이미지</div><img class="osce-preview" id="osce-prev-0" alt=""></div>
-        <div><div class="img-upload-btn"><input type="file" accept="image/*" onchange="oscePrev(this,'osce-prev-0')">📎 이미지 첨부</div></div>
-      </div>
-      <div class="osce-item">
-        <div><div class="osce-name">시술자 2 · Practitioner 2</div><input class="fi" type="text" placeholder="시술자 이름" style="margin-bottom:8px;"><div class="osce-label">OSCE 설문 캡처 이미지</div><img class="osce-preview" id="osce-prev-1" alt=""></div>
-        <div><div class="img-upload-btn"><input type="file" accept="image/*" onchange="oscePrev(this,'osce-prev-1')">📎 이미지 첨부</div></div>
-      </div>
-      <div class="osce-item">
-        <div><div class="osce-name">시술자 3 · Practitioner 3</div><input class="fi" type="text" placeholder="시술자 이름" style="margin-bottom:8px;"><div class="osce-label">OSCE 설문 캡처 이미지</div><img class="osce-preview" id="osce-prev-2" alt=""></div>
-        <div><div class="img-upload-btn"><input type="file" accept="image/*" onchange="oscePrev(this,'osce-prev-2')">📎 이미지 첨부</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ Footer ══ -->
-<div class="sig-footer">
-  <div class="sig-item"><span class="sig-lbl">조장 서명 · Group Leader</span><input class="sig-inp" type="text" placeholder=""></div>
-  <div class="sig-item"><span class="sig-lbl">교수 확인 · Supervisor</span><input class="sig-inp" type="text" placeholder=""></div>
-  <div class="sig-item"><span class="sig-lbl">확인 일자 · Review Date</span><input class="sig-inp" type="date"></div>
-</div>
-
-</div><!-- .pw -->
-
-<script>
-// ══ Acupoint database ══
-const MERIDIANS = [
-  {key:'CV', name:'임맥 (任脈)', en:'CV · Conception Vessel', pts:[
-    'CV01 회음','CV02 곡골','CV03 중극','CV04 관원','CV05 석문','CV06 기해','CV07 음교','CV08 신궐','CV09 수분','CV10 하완',
-    'CV11 건리','CV12 중완','CV13 상완','CV14 거궐','CV15 구미','CV16 중정','CV17 단중','CV18 옥당','CV19 자궁','CV20 화개',
-    'CV21 선기','CV22 천돌','CV23 염천','CV24 승장'
-  ]},
-  {key:'GV', name:'독맥 (督脈)', en:'GV · Governing Vessel', pts:[
-    'GV01 장강','GV02 요수','GV03 요양관','GV04 명문','GV05 현추','GV06 척중','GV07 중추','GV08 근축','GV09 지양','GV10 영대',
-    'GV11 신도','GV12 신주','GV13 도도','GV14 대추','GV15 아문','GV16 풍부','GV17 뇌호','GV18 강간','GV19 후정','GV20 백회',
-    'GV21 전정','GV22 신회','GV23 상성','GV24 신정','GV25 소료','GV26 수구','GV27 태단','GV28 은교'
-  ]},
-  {key:'LU', name:'수태음폐경 (手太陰肺經)', en:'LU · Lung Meridian', pts:[
-    'LU01 중부','LU02 운문','LU03 천부','LU04 협백','LU05 척택','LU06 공최','LU07 열결','LU08 경거','LU09 태연','LU10 어제','LU11 소상'
-  ]},
-  {key:'LI', name:'수양명대장경 (手陽明大腸經)', en:'LI · Large Intestine Meridian', pts:[
-    'LI01 상양','LI02 이간','LI03 삼간','LI04 합곡','LI05 양계','LI06 편력','LI07 온류','LI08 하렴','LI09 상렴','LI10 수삼리',
-    'LI11 곡지','LI12 주료','LI13 수오리','LI14 비노','LI15 견우','LI16 거골','LI17 천정','LI18 부돌','LI19 화료','LI20 영향'
-  ]},
-  {key:'ST', name:'족양명위경 (足陽明胃經)', en:'ST · Stomach Meridian', pts:[
-    'ST01 승읍','ST02 사백','ST03 거료','ST04 지창','ST05 대영','ST06 협거','ST07 하관','ST08 두유','ST09 인영','ST10 수돌',
-    'ST11 기사','ST12 결분','ST13 기호','ST14 고방','ST15 옥예','ST16 응창','ST17 유중','ST18 유근','ST19 불용','ST20 승만',
-    'ST21 양문','ST22 관문','ST23 태을','ST24 활육문','ST25 천추','ST26 외릉','ST27 대거','ST28 수도','ST29 귀래','ST30 기충',
-    'ST31 비관','ST32 복토','ST33 음시','ST34 양구','ST35 독비','ST36 족삼리','ST37 상거허','ST38 조구','ST39 하거허','ST40 풍륭',
-    'ST41 해계','ST42 충양','ST43 함곡','ST44 내정','ST45 여태'
-  ]},
-  {key:'SP', name:'족태음비경 (足太陰脾經)', en:'SP · Spleen Meridian', pts:[
-    'SP01 은백','SP02 대도','SP03 태백','SP04 공손','SP05 상구','SP06 삼음교','SP07 누곡','SP08 지기','SP09 음릉천','SP10 혈해',
-    'SP11 기문','SP12 충문','SP13 부사','SP14 복결','SP15 대횡','SP16 복애','SP17 식두','SP18 천계','SP19 흉향','SP20 주영','SP21 대포'
-  ]},
-  {key:'HT', name:'수소음심경 (手少陰心經)', en:'HT · Heart Meridian', pts:[
-    'HT01 극천','HT02 청령','HT03 소해','HT04 영도','HT05 통리','HT06 음극','HT07 신문','HT08 소부','HT09 소충'
-  ]},
-  {key:'SI', name:'수태양소장경 (手太陽小腸經)', en:'SI · Small Intestine Meridian', pts:[
-    'SI01 소택','SI02 전곡','SI03 후계','SI04 완골','SI05 양곡','SI06 양로','SI07 지정','SI08 소해','SI09 견정','SI10 노수',
-    'SI11 천종','SI12 병풍','SI13 곡원','SI14 견외수','SI15 견중수','SI16 천창','SI17 천용','SI18 관료','SI19 청궁'
-  ]},
-  {key:'BL', name:'족태양방광경 (足太陽膀胱經)', en:'BL · Bladder Meridian', pts:[
-    'BL01 정명','BL02 찬죽','BL03 미충','BL04 곡차','BL05 오처','BL06 승광','BL07 통천','BL08 낙각','BL09 옥침','BL10 천주',
-    'BL11 대저','BL12 풍문','BL13 폐수','BL14 궐음수','BL15 심수','BL16 독수','BL17 격수','BL18 간수','BL19 담수','BL20 비수',
-    'BL21 위수','BL22 삼초수','BL23 신수','BL24 기해수','BL25 대장수','BL26 관원수','BL27 소장수','BL28 방광수','BL29 중려수','BL30 백환수',
-    'BL31 상료','BL32 차료','BL33 중료','BL34 하료','BL35 회양','BL36 승부','BL37 은문','BL38 부극','BL39 위양','BL40 위중',
-    'BL41 부분','BL42 백호','BL43 고황','BL44 신당','BL45 의희','BL46 격관','BL47 혼문','BL48 양강','BL49 의사','BL50 위창',
-    'BL51 황문','BL52 지실','BL53 포황','BL54 질변','BL55 합양','BL56 승근','BL57 승산','BL58 비양','BL59 부양','BL60 곤륜',
-    'BL61 복참','BL62 신맥','BL63 금문','BL64 경골','BL65 속골','BL66 족통곡','BL67 지음'
-  ]},
-  {key:'KI', name:'족소음신경 (足少陰腎經)', en:'KI · Kidney Meridian', pts:[
-    'KI01 용천','KI02 연곡','KI03 태계','KI04 대종','KI05 수천','KI06 조해','KI07 복류','KI08 교신','KI09 축빈','KI10 음곡',
-    'KI11 횡골','KI12 대혁','KI13 기혈','KI14 사만','KI15 중주','KI16 황수','KI17 상곡','KI18 석관','KI19 음도','KI20 복통곡',
-    'KI21 유문','KI22 보랑','KI23 신봉','KI24 영허','KI25 신장','KI26 욱중','KI27 수부'
-  ]},
-  {key:'PC', name:'수궐음심포경 (手厥陰心包經)', en:'PC · Pericardium Meridian', pts:[
-    'PC01 천지','PC02 천천','PC03 곡택','PC04 극문','PC05 간사','PC06 내관','PC07 대릉','PC08 노궁','PC09 중충'
-  ]},
-  {key:'TE', name:'수소양삼초경 (手少陽三焦經)', en:'TE · Triple Energizer Meridian', pts:[
-    'TE01 관충','TE02 액문','TE03 중저','TE04 양지','TE05 외관','TE06 지구','TE07 회종','TE08 삼양락','TE09 사독','TE10 천정',
-    'TE11 청냉연','TE12 소락','TE13 노회','TE14 견료','TE15 천료','TE16 천유','TE17 예풍','TE18 계맥','TE19 노식','TE20 각손',
-    'TE21 이문','TE22 화료','TE23 사죽공'
-  ]},
-  {key:'GB', name:'족소양담경 (足少陽膽經)', en:'GB · Gallbladder Meridian', pts:[
-    'GB01 동자료','GB02 청회','GB03 상관','GB04 함염','GB05 현로','GB06 현리','GB07 곡빈','GB08 솔곡','GB09 천충','GB10 부백',
-    'GB11 두규음','GB12 완골','GB13 본신','GB14 양백','GB15 두임읍','GB16 목창','GB17 정영','GB18 승영','GB19 뇌공','GB20 풍지',
-    'GB21 견정','GB22 연액','GB23 첩근','GB24 일월','GB25 경문','GB26 대맥','GB27 오추','GB28 유도','GB29 거료','GB30 환도',
-    'GB31 풍시','GB32 중독','GB33 슬양관','GB34 양릉천','GB35 양교','GB36 외구','GB37 광명','GB38 양보','GB39 현종','GB40 구허',
-    'GB41 족임읍','GB42 지오회','GB43 협계','GB44 족규음'
-  ]},
-  {key:'LR', name:'족궐음간경 (足厥陰肝經)', en:'LR · Liver Meridian', pts:[
-    'LR01 대돈','LR02 행간','LR03 태충','LR04 중봉','LR05 여구','LR06 중도','LR07 슬관','LR08 곡천','LR09 음포','LR10 족오리',
-    'LR11 음렴','LR12 급맥','LR13 장문','LR14 기문'
-  ]}
-];
-
-// ══ Entry counter ══
-let aeCount = 0;
-const MAX_AE = MERIDIANS.reduce((s, m) => s + m.pts.length, 0); // 모든 경맥 경혈 수 합계
-
-// 상용수혈 (SCM0003-2009, 130穴) — 세계중의학본과교육표준 기준
-const IMPORTANT_ACU = new Set([
-  // 수태음폐경 (6)
-  '중부','척택','공최','열결','어제','소상',
-  // 수양명대장경 (7)
-  '상양','합곡','양계','편력','곡지','견우','영향',
-  // 족양명위경 (13)
-  '협거','하관','두유','양문','천추','양구','족삼리','상거허','하거허','조구','풍륭','해계','내정',
-  // 족태음비경 (7)
-  '은백','태백','공손','삼음교','지기','음릉천','혈해',
-  // 수소음심경 (6)
-  '극천','소해','통리','음극','신문','소충',
-  // 수태양소장경 (4)
-  '소택','후계','천종','청궁',
-  // 족태양방광경 (20)
-  '찬죽','천주','폐유','심유','격유','간유','비유','위유','신유','대장유',
-  '방광유','차료','위중','지실','질변','승산','비양','곤륜','신맥','지음',
-  // 족소음신경 (4)
-  '태계','대종','조해','복류',
-  // 수궐음심포경 (5)
-  '곡택','내관','대릉','노궁','중충',
-  // 수소양삼초경 (9)
-  '관충','중저','양지','외관','지구','견료','예풍','이문','사죽공',
-  // 족소양담경 (14)
-  '동자료','청회','두임읍','풍지','견정','환도','풍시','양릉천','광명','현종','구허','족임읍','협계','족규음',
-  // 족궐음간경 (5)
-  '행간','태충','곡천','장문','기문',
-  // 임맥 (9)
-  '관원','기해','신궐','하완','중완','단중','천돌','염천','승장',
-  // 독맥 (9)
-  '요양관','명문','지양','대추','풍부','백회','상성','소료','수구',
-]);
-
-function addAE() {
-  if (aeCount >= MAX_AE) { alert('경혈 기록은 최대 ' + MAX_AE + '개까지 추가 가능합니다.'); return; }
-  const n = aeCount++;
-  const wrap = document.getElementById('ae-wrap');
-  const card = document.createElement('div');
-  card.className = 'ae-card';
-  card.id = 'ae-' + n;
-
-  // Build meridian options
-  const mOpts = MERIDIANS.map(m => `<option value="${m.key}">${m.name}</option>`).join('');
-
-  card.innerHTML = `
-  <div class="ae-head" onclick="toggleAE(${n})">
-    <div class="ae-hinfo">
-      <div class="ae-title" id="ae-title-${n}">경혈 ${n+1} — 미선택</div>
-      <div class="ae-sub" id="ae-sub-${n}">시술자: 미입력</div>
-    </div>
-    <div class="ae-actions">
-      <button class="ae-del" onclick="delAE(${n}, event)">삭제</button>
-      <svg class="ae-arrow" id="ae-arr-${n}" width="14" height="14" viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L1 3h10z"/></svg>
-    </div>
-  </div>
-  <div class="ae-body" id="ae-body-${n}">
-
-    <!-- Acupoint selector -->
-    <div class="acu-sel-row">
-      <div class="fr" style="margin-bottom:0;">
-        <label class="fl">경맥 선택 · Meridian</label>
-        <select class="fi" id="ae-mer-${n}" onchange="updateAcuPts(${n})">
-          <option value="">— 경맥 선택 —</option>
-          ${mOpts}
-        </select>
-      </div>
-      <div class="fr" style="margin-bottom:0;">
-        <label class="fl">경혈 선택 · Acupoint</label>
-        <select class="fi" id="ae-acu-${n}" onchange="updateAETitle(${n})" disabled>
-          <option value="">— 먼저 경맥을 선택하세요 —</option>
-        </select>
-      </div>
-      <div class="fr" style="margin-bottom:0;">
-        <label class="fl">시술자 이름</label>
-        <input class="fi" type="text" id="ae-prac-inp-${n}" placeholder="이름" oninput="updateAESub(${n})">
-      </div>
-    </div>
-
-    <!-- 사전학습 공동 정리 -->
-    <div class="ssl">사전학습 공동 정리 · Pre-Study Summary</div>
-    <div class="fr">
-      <label class="fl">탐혈 방법 · Location Method <span style="color:var(--warn);font-size:9px;">필수</span></label>
-      <textarea class="fi" style="min-height:80px;" placeholder="표준 취혈 기준점, 계측법, 체위 등을 기술하시오."></textarea>
-    </div>
-    <div class="fr">
-      <label class="fl">부위 및 주변 해부학적 구조물</label>
-      <div class="warn-note"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 3.5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0V5.25A.75.75 0 0 1 8 4.5zm0 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>위험 구조물(신경·혈관·장기)과의 안전거리를 반드시 확인하시오.</div>
-      <textarea class="fi" style="min-height:76px;" placeholder="피부층, 피하지방, 근막, 근육, 신경, 혈관 등 자침 경로상의 해부학적 구조 및 위험 구조물을 기재하시오."></textarea>
-    </div>
-    <div class="fr">
-      <label class="fl">자침 시 주의사항</label>
-      <textarea class="fi" style="min-height:56px;" placeholder="금기 자세, 자침 각도 특이사항, 이상반응 예방 등을 기재하시오."></textarea>
-    </div>
-
-    <!-- 탐혈 과정 -->
-    <div class="ssl">탐혈 과정 · Location Process</div>
-    <div class="fr">
-      <label class="fl">탐혈 과정 (구체적으로 작성) <span style="color:var(--warn);font-size:9px;">필수</span></label>
-      <textarea class="fi" style="min-height:72px;" placeholder="손가락을 이용한 촉진 방법, 환자 반응 등 탐혈 과정을 구체적으로 기술하시오."></textarea>
-    </div>
-
-    <!-- 자침 기록 -->
-    <div class="ssl">자침 기록 · Needling Record</div>
-    <div class="fr">
-      <label class="fl">자침 방향 및 각도 <span style="color:var(--warn);font-size:9px;">필수</span></label>
-      <div class="chk-g">
-        <label class="chk-i"><input type="radio" name="nd${n}" value="p"> 직자 (Perpendicular)</label>
-        <div class="cdiv"></div>
-        <label class="chk-i"><input type="radio" name="nd${n}" value="o"> 사자 (Oblique)</label>
-        <div class="cdiv"></div>
-        <label class="chk-i"><input type="radio" name="nd${n}" value="t"> 횡자 (Transverse)</label>
-        <div class="cdiv"></div>
-        <label class="chk-i"><input type="radio" name="nd${n}" value="x"> 자침하지 않음</label>
-      </div>
-      <div class="angle-row"><span>각도:</span><input class="angle-in" type="text" placeholder="°"><span style="color:var(--text-faint);font-size:11px;">사자·횡자 시 기재</span></div>
-    </div>
-    <div class="fr">
-      <label class="fl">자침 깊이, 침 굵기 및 목표 해부학적 구조물 <span style="color:var(--warn);font-size:9px;">필수</span></label>
-      <div class="depth-row">
-        <div class="depth-box"><label>자침 심도</label><input type="text" placeholder="00"><span class="depth-unit">mm</span></div>
-        <div class="depth-box"><label>침 굵기</label><input type="text" placeholder="0.25"><span class="depth-unit">mm</span></div>
-        <div class="depth-box"><label>목표 구조물</label><input type="text" placeholder="예) 전경골근" style="width:100%;text-align:left;max-width:none;"></div>
-      </div>
-    </div>
-    <div class="fr">
-      <label class="fl">득기감(침감) 및 피시술자 반응</label>
-      <div style="margin-bottom:7px;">
-        <div class="chk-g">
-          <label class="chk-i"><input type="checkbox"> 산(酸)</label>
-          <label class="chk-i"><input type="checkbox"> 마(麻)</label>
-          <label class="chk-i"><input type="checkbox"> 창(脹)</label>
-          <label class="chk-i"><input type="checkbox"> 중(重)</label>
-          <label class="chk-i"><input type="checkbox"> 온(溫)</label>
-          <label class="chk-i"><input type="checkbox"> 무감(無感)</label>
-        </div>
-      </div>
-      <textarea class="fi" placeholder="득기감 발생 시점, 방사 방향, 강도 및 피시술자의 반응을 기술하시오."></textarea>
-    </div>
-    <div class="fr">
-      <label class="fl">자침 사진 첨부 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(이상반응 발생 시 근거자료로 권장)</span></label>
-      <div class="img-ph" id="ae${n}-ph" style="min-height:90px;"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-ph','ae${n}-iv-ph')"><img class="img-preview" id="ae${n}-iv-ph" alt=""><div class="img-ph-ico">📷</div><div class="img-ph-txt">자침 사진 (선택)<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div></div>
-    </div>
-    <div class="fr">
-      <label class="fl">이상반응 및 대처방법 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(발생 시 필수 기재)</span></label>
-      <textarea class="fi" placeholder="이상반응이 없으면 '없음'으로 기재. 발생 시: 증상, 발생 시점, 시행한 대처 방법을 구체적으로 기술하시오."></textarea>
-    </div>
-
-    <!-- 초음파 영상 -->
-    <div class="ssl">초음파 영상 실습 기록 · Ultrasound Imaging</div>
-    <div class="us-set">
-      <table class="ust">
-        <thead><tr><th style="width:110px;">설정</th><th>횡단면 (Transverse)</th><th>종단면 (Longitudinal)</th></tr></thead>
-        <tbody>
-          <tr>
-            <td class="row-lbl">탐촉자 · Probe</td>
-            <td><label class="chk-i" style="margin-right:10px;"><input type="radio" name="pb${n}t" value="l"> Linear</label><label class="chk-i"><input type="radio" name="pb${n}t" value="c"> Convex</label></td>
-            <td><label class="chk-i" style="margin-right:10px;"><input type="radio" name="pb${n}l" value="l"> Linear</label><label class="chk-i"><input type="radio" name="pb${n}l" value="c"> Convex</label></td>
-          </tr>
-          <tr>
-            <td class="row-lbl">Depth / Gain</td>
-            <td><span style="font-size:11.5px;">Depth <input class="probe-val" type="text" placeholder="cm"> Gain <input class="probe-val" type="text" placeholder="dB"></span></td>
-            <td><span style="font-size:11.5px;">Depth <input class="probe-val" type="text" placeholder="cm"> Gain <input class="probe-val" type="text" placeholder="dB"></span></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="img-table">
-      <div class="it-head"><div class="it-ch">횡단면 영상 (Transverse / 단축)</div><div class="it-ch">종단면 영상 (Longitudinal / 장축)</div></div>
-      <div class="it-row">
-        <div class="it-cell">
-          <div class="it-cell-lbl">초음파 이미지 첨부</div>
-          <div class="img-ph" id="ae${n}-t"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-t','ae${n}-iv-t')"><img class="img-preview" id="ae${n}-iv-t" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">Transverse<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div></div>
-        </div>
-        <div class="it-cell">
-          <div class="it-cell-lbl">초음파 이미지 첨부</div>
-          <div class="img-ph" id="ae${n}-l"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-l','ae${n}-iv-l')"><img class="img-preview" id="ae${n}-iv-l" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">Longitudinal<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div></div>
-        </div>
-      </div>
-      <div class="it-row">
-        <div class="it-cell">
-          <div class="it-cell-lbl">횡단면 관찰 소견</div>
-          <div class="obs-list">
-            <div class="obs-item"><input type="checkbox"><label>식별 층 확인: 피부 → 피하 → 근막 → 표적근</label></div>
-            <div class="obs-item"><input type="checkbox"><label>Out-of-plane 고에코 점 음영 (침 음영) 확인<div class="obs-sub"><span style="font-size:11px;color:var(--text-sec);">관찰 층:</span><input class="obs-si" type="text" placeholder="예) 전경골근 내"></div></label></div>
-            <div class="obs-item"><input type="checkbox"><label>위험 구조물 안전거리 확인<div class="obs-sub"><span style="font-size:11px;color:var(--text-sec);">구조물:</span><input class="obs-si" type="text" placeholder="신경/혈관명"><span style="font-size:11px;color:var(--text-sec);">거리:</span><input class="obs-si" type="text" placeholder="mm" style="max-width:60px;"></div></label></div>
-          </div>
-        </div>
-        <div class="it-cell">
-          <div class="it-cell-lbl">종단면 관찰 소견</div>
-          <div class="obs-list">
-            <div class="obs-item"><input type="checkbox"><label>In-plane 바늘 전체 경로(Shaft) 관찰</label></div>
-            <div class="obs-item"><input type="checkbox"><label>침 첨부(Tip) 목표 층 도달 확인<div class="obs-sub"><span style="font-size:11px;color:var(--text-sec);">도달 층:</span><input class="obs-si" type="text" placeholder="예) 전경골근 중심부"></div></label></div>
-            <div class="obs-item"><input type="checkbox"><label>주위 조직 변화 확인<div class="obs-sub"><span style="font-size:11px;color:var(--text-sec);">삽입 깊이:</span><input class="obs-si" type="text" placeholder="mm" style="max-width:60px;"></div></label></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="fr"><label class="fl">초음파 영상 종합 소견</label><textarea class="fi" placeholder="해부학적 층 구조, 자침 경로, 득기 후 조직 변화 등을 종합하여 기술하시오."></textarea></div>
-
-  </div>`;
-
-  wrap.appendChild(card);
-  // Auto-open new entry
-  openAE(n);
-  // Update add button
-  if (aeCount >= MAX_AE) document.getElementById('btn-add').style.display = 'none';
-}
-
-function openAE(n) {
-  const body = document.getElementById('ae-body-' + n);
-  const arr = document.getElementById('ae-arr-' + n);
-  if (body) { body.classList.add('open'); arr.classList.add('open'); }
-}
-
-function toggleAE(n) {
-  const body = document.getElementById('ae-body-' + n);
-  const arr = document.getElementById('ae-arr-' + n);
-  if (!body) return;
-  const isOpen = body.classList.toggle('open');
-  arr.classList.toggle('open', isOpen);
-}
-
-function delAE(n, e) {
-  e.stopPropagation();
-  if (!confirm('이 경혈 기록을 삭제하시겠습니까?')) return;
-  const card = document.getElementById('ae-' + n);
-  if (card) card.remove();
-  aeCount = Math.max(0, aeCount - 1);
-  document.getElementById('btn-add').style.display = '';
-}
-
-function updateAcuPts(n) {
-  const merSel = document.getElementById('ae-mer-' + n);
-  const acuSel = document.getElementById('ae-acu-' + n);
-  const key = merSel.value;
-  acuSel.innerHTML = '';
-  if (!key) {
-    acuSel.innerHTML = '<option value="">— 먼저 경맥을 선택하세요 —</option>';
-    acuSel.disabled = true;
-    return;
-  }
-  const mer = MERIDIANS.find(m => m.key === key);
-  acuSel.innerHTML = `<option value="">— 경혈 선택 (${mer.pts.length}穴) —</option>` +
-    mer.pts.map(p => {
-      const korName = p.replace(/^\S+\s+/, '');
-      const label = IMPORTANT_ACU.has(korName) ? `★ ${p}` : p;
-      return `<option value="${p}">${label}</option>`;
-    }).join('');
-  acuSel.disabled = false;
-  updateAETitle(n);
-}
-
-function updateAETitle(n) {
-  const acuSel = document.getElementById('ae-acu-' + n);
-  const merSel = document.getElementById('ae-mer-' + n);
-  const titleEl = document.getElementById('ae-title-' + n);
-  const acu = acuSel.value;
-  const merKey = merSel.value;
-  const mer = MERIDIANS.find(m => m.key === merKey);
-  if (acu && mer) {
-    titleEl.textContent = `경혈 ${n+1} — ${acu}`;
-  } else {
-    titleEl.textContent = `경혈 ${n+1} — 미선택`;
-  }
-}
-
-function updateAESub(n) {
-  const inp = document.getElementById('ae-prac-inp-' + n);
-  const sub = document.getElementById('ae-sub-' + n);
-  sub.textContent = '시술자: ' + (inp.value.trim() || '미입력');
-}
-
-// ══ Image preview ══
-function prevImgAE(input, phId, ivId) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const ph = document.getElementById(phId);
-    const iv = document.getElementById(ivId);
-    if (!ph || !iv) return;
-    iv.src = e.target.result;
-    iv.style.display = 'block';
-    ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
-  };
-  reader.readAsDataURL(file);
-}
-function oscePrev(input, previewId) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => { const img = document.getElementById(previewId); img.src = e.target.result; img.style.display = 'block'; };
-  reader.readAsDataURL(file);
-}
-function wafflePrev(input) {
-  const file = input.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const box = document.querySelector('.waffle-box');
-    const prev = document.getElementById('waffle-preview');
-    prev.src = e.target.result; prev.style.display = 'block';
-    box.querySelectorAll('.waffle-ico,.waffle-txt').forEach(el => el.style.display = 'none');
-  };
-  reader.readAsDataURL(file);
-}
-
-// ══ Guide toggle ══
-function toggleGuide() {
-  const btn = document.getElementById('guide-btn');
-  const body = document.getElementById('guide-body');
-  const open = body.classList.toggle('open');
-  btn.classList.toggle('open', open);
-}
-
-// ══ Score buttons ══
-function setupScoring(tableId, totalId, maxScore) {
-  const table = document.getElementById(tableId); if (!table) return;
-  table.querySelectorAll('.st-score').forEach(sg => {
-    sg.querySelectorAll('.score-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        sg.querySelectorAll('.score-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        updateTotal(tableId, totalId, maxScore);
-      });
-    });
-  });
-}
-function updateTotal(tableId, totalId, maxScore) {
-  const table = document.getElementById(tableId);
-  let total = 0, allScored = true;
-  table.querySelectorAll('.st-score').forEach(g => {
-    const a = g.querySelector('.score-btn.active');
-    if (a) total += parseInt(a.dataset.v); else allScored = false;
-  });
-  document.getElementById(totalId).textContent = (allScored ? total : total + '+') + ' / ' + maxScore;
-}
-setupScoring('hygiene-table', 'hygiene-total', 14);
-setupScoring('safety-table', 'safety-total', 20);
-
-// ══ Data Save / Load ══
-function collectState() {
-  const state = { v: 2, ts: new Date().toISOString(), nEntries: 0, entries: [], vals: [], scores: [], imgs: {} };
-  const cards = document.querySelectorAll('#ae-wrap .ae-card');
-  state.nEntries = cards.length;
-  cards.forEach(card => {
-    const n = parseInt(card.id.split('-')[1]);
-    const m = document.getElementById('ae-mer-' + n);
-    const a = document.getElementById('ae-acu-' + n);
-    state.entries.push({ mer: m ? m.value : '', acu: a ? a.value : '' });
-  });
-  const allEls = Array.from(document.querySelectorAll('input:not([type=file]), textarea, select'));
-  allEls.forEach(el => {
-    if (el.type === 'checkbox' || el.type === 'radio') state.vals.push({ t: 'c', v: el.checked });
-    else state.vals.push({ t: 'v', v: el.value });
-  });
-  // _ae: 통합(merge)을 위한 AE 섹션 경계 정보
-  const aeWrap = document.getElementById('ae-wrap');
-  const aeInputs = Array.from(aeWrap.querySelectorAll('input:not([type=file]), textarea, select'));
-  if (aeInputs.length > 0 && cards.length > 0) {
-    const st = allEls.indexOf(aeInputs[0]);
-    const en = allEls.indexOf(aeInputs[aeInputs.length - 1]) + 1;
-    state._ae = { start: st, end: en, perCard: (en - st) / cards.length };
-  } else {
-    let beforeCount = 0;
-    for (const el of allEls) { if (aeWrap.contains(el)) break; beforeCount++; }
-    state._ae = { start: beforeCount, end: beforeCount, perCard: 0 };
-  }
-  // _info: 모달 표시용 메타
-  state._info = {
-    date:    (document.getElementById('pd')    || {}).value || '',
-    section: (document.getElementById('cls')   || {}).value || '',
-    group:   (document.getElementById('grp')   || {}).value || '',
-    topic:   (document.getElementById('topic') || {}).value || '',
-  };
-  // reflectEntries: 섹션4 성찰 데이터 (통합용)
-  const reflectRows = document.querySelectorAll('.reflect-table .rt-row');
-  state.reflectEntries = Array.from(reflectRows).map(row => ({
-    name:    (row.querySelector('.rt-name input')   || {}).value || '',
-    content: (row.querySelector('.rt-text textarea') || {}).value || '',
-  }));
-  document.querySelectorAll('.st-score').forEach(sg => {
-    const a = sg.querySelector('.score-btn.active');
-    state.scores.push(a ? a.dataset.v : null);
-  });
-  document.querySelectorAll('img.img-preview, img.osce-preview').forEach(img => {
-    if (img.id && img.src && img.src.startsWith('data:')) state.imgs[img.id] = img.src;
-  });
-  return state;
-}
-
-function applyState(state) {
-  if (!state || !state.v) { alert('올바른 저장 파일이 아닙니다.'); return; }
-  aeCount = 0;
-  document.getElementById('ae-wrap').querySelectorAll('.ae-card').forEach(c => c.remove());
-  document.getElementById('btn-add').style.display = '';
-  const nE = state.nEntries || 1;
-  for (let i = 0; i < nE; i++) addAE();
-  (state.entries || []).forEach((e, i) => {
-    const mer = document.getElementById('ae-mer-' + i);
-    if (mer && e.mer) {
-      mer.value = e.mer; updateAcuPts(i);
-      const acu = document.getElementById('ae-acu-' + i);
-      if (acu && e.acu) acu.value = e.acu;
-      updateAETitle(i);
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>경혈학 실습일지</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+  <style>
+    /* === CSS Token System === */
+    :root {
+      --bg:           #F4F2EE;
+      --surface:      #FFFFFF;
+      --surface-2:    #FAF9F7;
+      --text:         #1C2231;
+      --text-sub:     #5B6478;
+      --text-muted:   #8A93A6;
+      --accent:       #1D3E7A;
+      --accent-lt:    #E4EAF7;
+      --accent-hover: #163060;
+      --warm:         #C45A2A;
+      --star:         #A07010;
+      --border:       #DDD9D1;
+      --border-soft:  #EDEAE5;
+      --shadow-sm:    0 1px 3px rgba(28,34,49,0.07);
+      --shadow-md:    0 4px 14px rgba(28,34,49,0.10);
+      --radius:       8px;
+      --font-serif:   'Noto Serif KR', 'Batang', Georgia, serif;
+      --font-sans:    'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     }
-  });
-  const els = Array.from(document.querySelectorAll('input:not([type=file]), textarea, select'));
-  (state.vals || []).forEach((item, i) => {
-    if (i >= els.length) return;
-    const el = els[i];
-    if (el.id && /^ae-mer-\d+$|^ae-acu-\d+$/.test(el.id)) return;
-    if (item.t === 'c') el.checked = item.v;
-    else el.value = item.v;
-  });
-  for (let i = 0; i < nE; i++) { const p = document.getElementById('ae-prac-inp-' + i); if (p) updateAESub(i); }
-  const sgs = document.querySelectorAll('.st-score');
-  (state.scores || []).forEach((v, gi) => {
-    if (gi >= sgs.length || v === null) return;
-    sgs[gi].querySelectorAll('.score-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.v === String(v)));
-  });
-  updateTotal('hygiene-table', 'hygiene-total', 14);
-  updateTotal('safety-table', 'safety-total', 20);
-  Object.entries(state.imgs || {}).forEach(([id, src]) => {
-    const img = document.getElementById(id);
-    if (!img || !src) return;
-    img.src = src; img.style.display = 'block';
-    const ph = img.closest('.img-ph');
-    if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
-  });
-  // 섹션4 성찰 데이터 적용 (reflectEntries 우선, 필요시 행 자동 추가)
-  if (state.reflectEntries && state.reflectEntries.length > 0) {
-    const reflTable = document.querySelector('.reflect-table');
-    let rows = reflTable.querySelectorAll('.rt-row');
-    // 부족한 행은 동적으로 추가
-    while (rows.length < state.reflectEntries.length) {
-      const newRow = document.createElement('div');
-      newRow.className = 'rt-row';
-      newRow.style.borderTop = '1px solid var(--border-lt)';
-      newRow.innerHTML = '<div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div>';
-      reflTable.appendChild(newRow);
-      rows = reflTable.querySelectorAll('.rt-row');
-    }
-    state.reflectEntries.forEach((e, i) => {
-      if (i >= rows.length) return;
-      const nameEl    = rows[i].querySelector('.rt-name input');
-      const contentEl = rows[i].querySelector('.rt-text textarea');
-      if (nameEl)    nameEl.value    = e.name    || '';
-      if (contentEl) contentEl.value = e.content || '';
-    });
-  }
-  setStatus('✓ 불러오기 완료', true);
-}
 
-function saveToFile() {
-  const state = collectState();
-  const date = document.getElementById('pd').value || new Date().toISOString().slice(0, 10);
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = '경혈학실습일지_' + date + '.json';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  setStatus('✓ 파일로 저장됨', true);
-}
-
-function loadFromFile(event) {
-  const file = event.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try { applyState(JSON.parse(e.target.result)); }
-    catch(err) { alert('파일 읽기 오류: ' + err.message); }
-  };
-  reader.readAsText(file); event.target.value = '';
-}
-
-function printToPDF() {
-  setStatus('인쇄 대화상자에서 "PDF로 저장"을 선택하세요');
-  setTimeout(() => window.print(), 200);
-}
-
-function resetForm() {
-  if (!confirm('모든 입력 내용을 초기화하시겠습니까?\n저장되지 않은 데이터는 사라집니다.')) return;
-  aeCount = 0;
-  document.getElementById('ae-wrap').querySelectorAll('.ae-card').forEach(c => c.remove());
-  document.getElementById('btn-add').style.display = '';
-  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(el => {
-    if (el.type === 'checkbox' || el.type === 'radio') el.checked = false; else el.value = '';
-  });
-  document.querySelectorAll('.score-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById('hygiene-total').textContent = '— / 14';
-  document.getElementById('safety-total').textContent = '— / 20';
-  document.querySelectorAll('img.img-preview, img.osce-preview').forEach(img => { img.src = ''; img.style.display = 'none'; });
-  document.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = '');
-  document.getElementById('pd').value = new Date().toISOString().split('T')[0];
-  addAE(); setStatus('초기화 완료', true);
-}
-
-function setStatus(msg, flash) {
-  const el = document.getElementById('tb-status'); if (!el) return;
-  el.textContent = msg;
-  if (flash) { el.classList.add('tb-flash'); setTimeout(() => el.classList.remove('tb-flash'), 2000); }
-}
-
-let _asTimer;
-function autoSave() {
-  try {
-    localStorage.setItem('kmed_jnl_v2', JSON.stringify(collectState()));
-    const t = new Date();
-    const ts = t.getHours().toString().padStart(2,'0') + ':' + t.getMinutes().toString().padStart(2,'0') + ':' + t.getSeconds().toString().padStart(2,'0');
-    setStatus('자동저장 ' + ts);
-  } catch(e) { /* storage blocked */ }
-}
-
-function checkAutoSave() {
-  try {
-    const saved = localStorage.getItem('kmed_jnl_v2');
-    if (!saved) return false;
-    const state = JSON.parse(saved);
-    const ts = state.ts ? new Date(state.ts).toLocaleString('ko-KR') : '알 수 없음';
-    if (confirm('이전 작업 내용이 있습니다.\n(저장: ' + ts + ')\n\n불러오시겠습니까?')) {
-      applyState(state); return true;
-    }
-  } catch(e) { /* ignore */ }
-  return false;
-}
-
-
-// ══ Merge ══
-let _mf = []; // loaded merge files
-
-function openMergeModal() {
-  _mf = [];
-  document.getElementById('merge-content').style.display = 'none';
-  document.getElementById('merge-modal').style.display = 'flex';
-}
-function closeMergeModal() {
-  document.getElementById('merge-modal').style.display = 'none';
-  _mf = [];
-}
-
-function onMergeFilesSelected(event) {
-  const files = Array.from(event.target.files); event.target.value = '';
-  if (!files.length) return;
-  let pending = files.length;
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        const state = JSON.parse(e.target.result);
-        if (!state || !state.v) { alert(file.name + ': 올바른 저장 파일이 아닙니다.'); pending--; if(!pending) renderMergeUI(); return; }
-        _mf.push({ name: file.name, state });
-      } catch(err) { alert(file.name + ' 읽기 오류: ' + err.message); }
-      pending--; if (!pending) renderMergeUI();
-    };
-    reader.readAsText(file);
-  });
-}
-
-function removeMergeFile(idx) { _mf.splice(idx, 1); renderMergeUI(); }
-
-function renderMergeUI() {
-  const content = document.getElementById('merge-content');
-  if (_mf.length === 0) { content.style.display = 'none'; return; }
-  content.style.display = '';
-
-  // 파일 카드
-  document.getElementById('merge-cards').innerHTML = _mf.map((f, i) => {
-    const inf = f.state._info || {};
-    const ts  = f.state.ts ? new Date(f.state.ts).toLocaleString('ko-KR') : '—';
-    const nE  = f.state.nEntries || 0;
-    const old = !f.state._ae;
-    const meta = [
-      inf.date    && '실습일: ' + inf.date,
-      inf.section || '',
-      inf.group   || '',
-      nE + '개 경혈기록',
-      old ? '⚠ 구버전 형식' : '',
-    ].filter(Boolean).join(' · ');
-    return `<div class="mcard">
-  <div class="mcard-badge">파일 ${i+1}</div>
-  <div class="mcard-info">
-    <div class="mcard-name" title="${f.name}">${f.name}</div>
-    <div class="mcard-meta">${meta}</div>
-  </div>
-  <button class="mcard-del" onclick="removeMergeFile(${i})" title="목록에서 제거">✕</button>
-</div>`;
-  }).join('');
-
-  // 기준 파일 선택
-  const sel = document.getElementById('merge-base-sel');
-  const prev = sel.value;
-  sel.innerHTML = _mf.map((f, i) => `<option value="${i}">파일 ${i+1}: ${f.name}</option>`).join('');
-  if (prev && parseInt(prev) < _mf.length) sel.value = prev;
-
-  // AE 통합 요약
-  const totalAE = _mf.reduce((s, f) => s + (f.state.nEntries || 0), 0);
-  const totalReflect = _mf.reduce((s, f) => {
-    return s + (f.state.reflectEntries || []).filter(e => (e.name||'').trim() || (e.content||'').trim()).length;
-  }, 0);
-  document.getElementById('merge-ae-info').innerHTML =
-    `경혈기록 <strong>${totalAE}</strong>개 + 성찰 <strong>${totalReflect}</strong>개 통합`;
-
-  // 경고
-  const oldFmt = _mf.filter(f => !f.state._ae);
-  const warn = document.getElementById('merge-warn');
-  if (oldFmt.length > 0) {
-    warn.style.display = '';
-    warn.innerHTML = `⚠ <strong>구버전 형식 파일 ${oldFmt.length}개:</strong> ${oldFmt.map(f=>f.name).join(', ')}<br>
-이 파일들은 경혈 기록 텍스트를 정밀하게 추출할 수 없습니다. 최신 버전의 실습일지에서 <em>데이터 저장</em>을 다시 실행하면 정확도가 향상됩니다. 현재는 기준 파일의 텍스트 영역을 기반으로 통합합니다.`;
-  } else { warn.style.display = 'none'; }
-}
-
-function executeMerge() {
-  if (_mf.length === 0) { alert('파일을 먼저 불러오세요.'); return; }
-  const baseIdx  = parseInt(document.getElementById('merge-base-sel').value) || 0;
-  const baseFile = _mf[baseIdx];
-  const base     = baseFile.state;
-  const baseAE   = base._ae;
-
-  // 통합 entries (최대 MAX_AE)
-  const mergedEntries = [];
-  for (const f of _mf) {
-    for (const e of (f.state.entries || [])) {
-      if (mergedEntries.length >= MAX_AE) break;
-      mergedEntries.push(e);
-    }
-    if (mergedEntries.length >= MAX_AE) break;
-  }
-
-  // 통합 vals 구성
-  let mergedVals;
-  if (baseAE && baseAE.perCard > 0) {
-    const headerVals = base.vals.slice(0, baseAE.start);
-    const footerVals = base.vals.slice(baseAE.end);
-    const aeVals = [];
-    let collected = 0;
-
-    for (const f of _mf) {
-      const fState = f.state;
-      const fN = fState.nEntries || 0; if (!fN) continue;
-      const toTake = Math.min(fN, MAX_AE - collected);
-      if (toTake <= 0) break;
-
-      // AE 시작/카드당 입력수 결정 (구버전은 기준 파일 기준)
-      const fAEStart  = (fState._ae && fState._ae.start  != null) ? fState._ae.start  : baseAE.start;
-      const fPerCard  = (fState._ae && fState._ae.perCard > 0)    ? fState._ae.perCard : baseAE.perCard;
-      const valsCount = Math.round(toTake * fPerCard);
-      aeVals.push(...fState.vals.slice(fAEStart, fAEStart + valsCount));
-      collected += toTake;
-    }
-    mergedVals = [...headerVals, ...aeVals, ...footerVals];
-  } else {
-    // 기준 파일이 구버전이면 vals 그대로 사용
-    mergedVals = base.vals;
-  }
-
-  // 섹션4 성찰 통합 (비어있지 않은 항목만 수집)
-  const mergedReflect = [];
-  for (const f of _mf) {
-    const entries = f.state.reflectEntries || [];
-    for (const e of entries) {
-      if ((e.name || '').trim() || (e.content || '').trim()) {
-        mergedReflect.push(e);
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg:           #131921;
+        --surface:      #1C2433;
+        --surface-2:    #243044;
+        --text:         #E8EDF8;
+        --text-sub:     #8A9BB8;
+        --text-muted:   #5A6A84;
+        --accent:       #4B80D4;
+        --accent-lt:    #1A2A4A;
+        --accent-hover: #5E90E2;
+        --warm:         #E07850;
+        --star:         #D4A020;
+        --border:       #2C3A52;
+        --border-soft:  #243044;
+        --shadow-sm:    0 1px 3px rgba(0,0,0,0.22);
+        --shadow-md:    0 4px 14px rgba(0,0,0,0.32);
       }
     }
-  }
+    :root[data-theme="dark"] {
+      --bg:           #131921;
+      --surface:      #1C2433;
+      --surface-2:    #243044;
+      --text:         #E8EDF8;
+      --text-sub:     #8A9BB8;
+      --text-muted:   #5A6A84;
+      --accent:       #4B80D4;
+      --accent-lt:    #1A2A4A;
+      --accent-hover: #5E90E2;
+      --warm:         #E07850;
+      --star:         #D4A020;
+      --border:       #2C3A52;
+      --border-soft:  #243044;
+      --shadow-sm:    0 1px 3px rgba(0,0,0,0.22);
+      --shadow-md:    0 4px 14px rgba(0,0,0,0.32);
+    }
 
-  // 이미지 통합 (기준 파일 최우선)
-  const mergedImgs = {};
-  for (const f of _mf) { if (f !== baseFile) Object.assign(mergedImgs, f.state.imgs || {}); }
-  Object.assign(mergedImgs, base.imgs || {});
+    /* === Reset & Base === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 15px; scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      padding-inline: 20px;
+      padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
-  const merged = {
-    v: 2,
-    ts: new Date().toISOString(),
-    nEntries: mergedEntries.length,
-    entries:  mergedEntries,
-    vals:     mergedVals,
-    scores:   base.scores || [],
-    imgs:     mergedImgs,
-    _ae:      baseAE,
-    reflectEntries: mergedReflect,
-    _merged:  true,
-    _sources: _mf.map(f => f.name),
-  };
+    /* === Layout === */
+    .container { max-width: 960px; margin-inline: auto; }
 
-  closeMergeModal();
-  applyState(merged);
-  setStatus(`✓ ${_mf.length}개 파일 통합 완료 — 경혈기록 ${merged.nEntries}개, 성찰 ${mergedReflect.length}개`, true);
-}
+    /* === Site Header === */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding-block: 14px;
+      position: sticky;
+      top: env(safe-area-inset-top, 0px);
+      z-index: 10;
+    }
+    .site-header .inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .site-header .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .site-header .univ {
+      font-family: var(--font-serif);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+    .site-header .sep { color: var(--border); }
+    .site-header .dept-name {
+      font-size: 0.76rem;
+      color: var(--text-sub);
+    }
+    .header-cta {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-lt);
+      padding: 6px 14px;
+      border-radius: var(--radius);
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .header-cta:hover { background: var(--accent); color: #fff; text-decoration: none; }
 
-// ══ Init ══
-document.getElementById('pd').value = new Date().toISOString().split('T')[0];
-const _restored = checkAutoSave();
-if (!_restored) addAE();
-_asTimer = setInterval(autoSave, 30000);
-</script>
+    /* === Hero === */
+    .hero {
+      padding-block: 60px 48px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.71rem;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-lt);
+      padding: 4px 14px;
+      border-radius: 100px;
+      margin-bottom: 22px;
+    }
+    .hero-badge::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.28;
+      text-wrap: balance;
+      margin-bottom: 18px;
+    }
+    .hero h1 .hl {
+      color: var(--accent);
+    }
+    .hero-sub {
+      font-size: 1.0rem;
+      color: var(--text-sub);
+      max-width: 520px;
+      margin-inline: auto;
+      margin-bottom: 36px;
+      line-height: 1.75;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.96rem;
+      font-weight: 700;
+      padding: 13px 30px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      text-decoration: none;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(28,34,49,0.16);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      color: var(--text-sub);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 13px 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* === Divider === */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* === Section === */
+    .page-section {
+      padding-block: 48px;
+    }
+    .section-eyebrow {
+      font-size: 0.71rem;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 28px;
+      text-wrap: balance;
+    }
+
+    /* === Feature Cards === */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+      gap: 14px;
+    }
+    .fc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .fc-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      background: var(--accent-lt);
+      color: var(--accent);
+      padding: 2px 9px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .fc h3 {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+    .fc p {
+      font-size: 0.83rem;
+      color: var(--text-sub);
+      line-height: 1.65;
+    }
+    .fc .star-note {
+      display: block;
+      margin-top: 9px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--star);
+    }
+    .fc.merge-card { border-color: var(--accent-lt); }
+
+    /* === Usage Steps === */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 22px 22px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .step-card::after {
+      content: attr(data-n);
+      position: absolute;
+      top: 10px;
+      right: 18px;
+      font-family: var(--font-serif);
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: var(--border-soft);
+      line-height: 1;
+      pointer-events: none;
+    }
+    .step-card h3 {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .step-card ol {
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .step-card li {
+      font-size: 0.83rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+    .step-card li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* === Merge Table === */
+    .merge-info {
+      margin-top: 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .merge-info-head {
+      background: var(--accent-lt);
+      border-bottom: 1px solid var(--border);
+      padding: 11px 20px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .merge-tbl { width: 100%; border-collapse: collapse; }
+    .merge-tbl td {
+      padding: 10px 20px;
+      font-size: 0.82rem;
+      border-bottom: 1px solid var(--border-soft);
+      vertical-align: middle;
+    }
+    .merge-tbl tr:last-child td { border-bottom: none; }
+    .merge-tbl td:first-child {
+      font-weight: 600;
+      color: var(--text);
+      width: 48%;
+    }
+    .merge-tbl td:last-child { color: var(--text-sub); }
+    .badge {
+      display: inline-block;
+      font-size: 0.69rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 100px;
+    }
+    .badge-all { background: #E8F5E9; color: #2E7D32; }
+    .badge-base { background: #FFF3E0; color: #BF5000; }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) .badge-all { background: #193D1E; color: #66BB6A; }
+      :root:not([data-theme="light"]) .badge-base { background: #3A2000; color: #FFA040; }
+    }
+    :root[data-theme="dark"] .badge-all { background: #193D1E; color: #66BB6A; }
+    :root[data-theme="dark"] .badge-base { background: #3A2000; color: #FFA040; }
+
+    /* === Spec chips === */
+    .spec-desc {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.75;
+      max-width: 540px;
+      margin-bottom: 16px;
+    }
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-size: 0.78rem;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      padding: 5px 13px;
+      border-radius: 100px;
+    }
+
+    /* === Footer === */
+    .site-footer {
+      border-top: 1px solid var(--border);
+      padding-block: 30px;
+      margin-top: 12px;
+    }
+    .footer-inner {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .footer-info p {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.9;
+    }
+    .footer-info a {
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .footer-info a:hover { color: var(--accent); text-decoration: none; }
+    .footer-nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .footer-nav a {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .footer-nav a:hover { color: var(--accent); text-decoration: none; }
+    .footer-ver {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    /* === Responsive === */
+    @media (max-width: 620px) {
+      body { padding-inline: 16px; }
+      .hero { padding-block: 40px 32px; }
+      .hero h1 { font-size: 1.75rem; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .step-card::after { font-size: 2.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="container inner">
+      <div class="brand">
+        <span class="univ">원광대학교 한의과대학</span>
+        <span class="sep">·</span>
+        <span class="dept-name">경혈학교실 &amp; 침구의학교실</span>
+      </div>
+      <a href="./group-journal.html" class="header-cta">실습일지 열기 →</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-badge">조별 실습일지 시스템</div>
+        <h1>경혈학실습 &amp;<br><span class="hl">경혈학임상술기실습</span> 일지</h1>
+        <p class="hero-sub">
+          탐혈·자침·초음파영상 통합 실습을 위한 조별 실습일지입니다.<br>
+          단일 HTML 파일로 구성되어 별도 설치 없이 브라우저에서 바로 사용할 수 있습니다.
+        </p>
+        <div class="hero-actions">
+          <a href="./group-journal.html" class="btn-primary">실습일지 열기 →</a>
+          <a href="https://github.com/damjjaeng/kmed-journal" target="_blank" rel="noopener" class="btn-secondary">GitHub ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Features -->
+    <section class="page-section">
+      <div class="container">
+        <p class="section-eyebrow">주요 기능</p>
+        <h2 class="section-title">섹션별 실습 기록</h2>
+        <div class="features-grid">
+
+          <div class="fc">
+            <span class="fc-tag">섹션 1</span>
+            <h3>관찰자 체크리스트</h3>
+            <p>위생·안전관리 체크리스트 자동 채점. 항목별 점수 합산 및 평점이 실시간으로 계산됩니다.</p>
+          </div>
+
+          <div class="fc">
+            <span class="fc-tag">섹션 2</span>
+            <h3>피시술자 정보</h3>
+            <p>생체징후(체온·혈압·혈당) 및 피시술자 기본정보를 구조화된 양식으로 기록합니다.</p>
+          </div>
+
+          <div class="fc">
+            <span class="fc-tag">섹션 3</span>
+            <h3>탐혈·시술 실습 기록</h3>
+            <p>경맥 → 경혈 드롭다운 선택, 경혈별 아코디언 카드로 상세 기록. 경혈별 초음파영상 첨부 가능.</p>
+            <span class="star-note">★ 상용수혈 130穴 (SCM0003-2009) 표시</span>
+          </div>
+
+          <div class="fc">
+            <span class="fc-tag">섹션 4</span>
+            <h3>개인 성찰</h3>
+            <p>조원 각자의 성찰을 개별 입력. 파일 통합 시 전원의 성찰 내용이 자동으로 병합됩니다.</p>
+          </div>
+
+          <div class="fc">
+            <span class="fc-tag">섹션 5</span>
+            <h3>모의 OSCE 채점 이미지</h3>
+            <p>관찰자가 작성한 모의 OSCE 채점표를 이미지(최대 4장)로 첨부합니다.</p>
+          </div>
+
+          <div class="fc merge-card">
+            <span class="fc-tag">파일 통합</span>
+            <h3>조별 일지 자동 병합</h3>
+            <p>조원 각자가 저장한 JSON 파일을 하나의 최종 일지로 자동 통합. 경혈 기록·성찰·이미지가 모두 합산됩니다.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Usage Guide -->
+    <section class="page-section">
+      <div class="container">
+        <p class="section-eyebrow">사용 방법</p>
+        <h2 class="section-title">실습일지 작성 흐름</h2>
+
+        <div class="steps-grid">
+          <div class="step-card" data-n="1">
+            <h3>개별 실습 기록</h3>
+            <ol>
+              <li>실습일지를 열어 <strong>기본정보</strong>(날짜·분반·조·주제·지도교수)를 입력합니다.</li>
+              <li>조원 이름과 역할(시술자·피시술자·관찰자)을 확인합니다.</li>
+              <li>섹션 1→5를 순서대로 작성합니다.</li>
+              <li>작성 중 수시로 <strong>[데이터 저장]</strong>을 눌러 JSON 파일로 저장합니다.</li>
+            </ol>
+          </div>
+
+          <div class="step-card" data-n="2">
+            <h3>조별 최종 일지 완성</h3>
+            <ol>
+              <li>조원 각자가 자신이 담당한 경혈 기록과 성찰을 작성 후 저장합니다.</li>
+              <li>조장이 <strong>[파일 통합]</strong>을 클릭합니다.</li>
+              <li>조원 전체의 JSON 파일을 선택하고 기준 파일을 지정합니다.</li>
+              <li><strong>[통합 실행]</strong>을 클릭하면 최종 일지가 완성됩니다.</li>
+              <li>최종 일지를 저장하거나 PDF로 출력합니다.</li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Merge algorithm table -->
+        <div class="merge-info">
+          <div class="merge-info-head">파일 통합 알고리즘</div>
+          <table class="merge-tbl">
+            <tbody>
+              <tr>
+                <td>기본정보 · 체크리스트 (섹션 1·2)</td>
+                <td><span class="badge badge-base">기준 파일</span> 적용</td>
+              </tr>
+              <tr>
+                <td>섹션 3 경혈 기록</td>
+                <td><span class="badge badge-all">모든 파일</span> 수집 후 합산</td>
+              </tr>
+              <tr>
+                <td>섹션 4 성찰</td>
+                <td><span class="badge badge-all">모든 파일</span> 비어 있지 않은 항목 수집</td>
+              </tr>
+              <tr>
+                <td>섹션 5 OSCE 이미지</td>
+                <td><span class="badge badge-all">모든 파일</span> 통합 (기준 파일 우선)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Tech specs -->
+    <section class="page-section">
+      <div class="container">
+        <p class="section-eyebrow">기술 정보</p>
+        <h2 class="section-title">브라우저만으로 동작</h2>
+        <p class="spec-desc">
+          별도 설치나 서버 없이 브라우저만으로 동작합니다. 데이터는 사용자 기기에
+          JSON 파일로만 저장되며 외부 서버로 전송되지 않습니다.
+        </p>
+        <div class="chips">
+          <span class="chip">Chrome (권장)</span>
+          <span class="chip">Edge</span>
+          <span class="chip">Safari</span>
+          <span class="chip">Firefox</span>
+          <span class="chip">단일 HTML 파일</span>
+          <span class="chip">Vanilla JS</span>
+          <span class="chip">외부 의존성 없음</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-info">
+          <p>
+            <strong style="color:var(--text-sub);">원광대학교 한의과대학</strong><br>
+            경혈학교실 · 침구의학교실<br>
+            문의: <a href="mailto:medicdog@wku.ac.kr">medicdog@wku.ac.kr</a>
+          </p>
+        </div>
+        <nav class="footer-nav">
+          <a href="./group-journal.html">실습일지</a>
+          <a href="https://github.com/damjjaeng/kmed-journal" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://github.com/damjjaeng/kmed-journal/blob/main/README.md" target="_blank" rel="noopener">README</a>
+        </nav>
+      </div>
+      <p class="footer-ver">
+        group-journal.html v18 · 상용수혈 SCM0003-2009 기준 · 2026
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
