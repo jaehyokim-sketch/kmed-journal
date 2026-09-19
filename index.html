@@ -1,8 +1,3 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>경혈학실습 &amp; 경혈학임상술기실습 일지</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap">
 
@@ -282,10 +277,35 @@ select.fi{cursor:pointer;}
   img.img-preview,img.osce-preview{display:block!important;max-width:100%;max-height:200px;}
   @page{margin:1.5cm;}
 }
-</style>
-</head>
-<body>
 
+/* ─── Merge Modal ─── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.52);display:flex;align-items:center;justify-content:center;z-index:2000;padding:16px;}
+.modal-box{background:var(--surface);border:1px solid var(--border);border-radius:10px;width:100%;max-width:580px;max-height:88vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.3);}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
+.modal-title{font-family:'Noto Serif KR',serif;font-size:15px;font-weight:700;color:var(--ink);}
+.modal-close{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-sec);padding:3px 7px;border-radius:4px;line-height:1;}
+.modal-close:hover{background:var(--surface-alt);}
+.modal-body{padding:20px;}
+.modal-desc{font-size:12.5px;color:var(--text-sec);margin-bottom:14px;line-height:1.65;}
+.merge-drop{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px dashed var(--border);border-radius:8px;padding:22px 16px;cursor:pointer;transition:border-color .15s,color .15s;text-align:center;color:var(--text-sec);font-size:12.5px;margin-bottom:16px;}
+.merge-drop:hover{border-color:var(--accent);color:var(--accent);}
+.merge-sec-lbl{font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;padding-bottom:6px;border-bottom:1px solid var(--accent-lt);margin-bottom:10px;}
+.mcard{background:var(--surface-alt);border:1px solid var(--border);border-radius:6px;padding:10px 13px;margin-bottom:8px;display:flex;align-items:center;gap:11px;}
+.mcard-badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;border-radius:4px;padding:3px 7px;white-space:nowrap;flex-shrink:0;min-width:42px;text-align:center;}
+.mcard-info{flex:1;min-width:0;}
+.mcard-name{font-size:12px;font-weight:600;color:var(--text-pri);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mcard-meta{font-size:11px;color:var(--text-sec);margin-top:2px;}
+.mcard-del{background:none;border:none;cursor:pointer;color:var(--text-faint);font-size:15px;padding:2px 5px;border-radius:3px;flex-shrink:0;transition:color .1s;}
+.mcard-del:hover{color:var(--warn);}
+.merge-cfg{background:var(--surface-alt);border:1px solid var(--border);border-radius:6px;padding:12px 15px;margin-bottom:14px;}
+.mcfg-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 0;border-bottom:1px solid var(--border-lt);}
+.mcfg-row:last-child{border-bottom:none;padding-bottom:0;}
+.mcfg-row:first-child{padding-top:0;}
+.mcfg-key{font-size:11.5px;font-weight:600;color:var(--text-sec);min-width:190px;}
+.mcfg-val{font-size:12px;color:var(--text-pri);}
+.merge-warn{background:var(--amber-bg);border:1px solid rgba(160,92,0,.3);border-left:3px solid var(--amber);border-radius:5px;padding:9px 13px;font-size:11.5px;color:var(--amber);line-height:1.55;}
+.merge-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;}
+</style>
 
 <!-- ══ TOOLBAR ══ -->
 <div class="toolbar" id="toolbar">
@@ -299,6 +319,10 @@ select.fi{cursor:pointer;}
       <span>불러오기</span>
       <input type="file" accept=".json" onchange="loadFromFile(event)" style="display:none">
     </label>
+    <button class="tb-btn" onclick="openMergeModal()" title="개별 저장 파일들을 통합하여 최종 일지 완성">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h6zm-4 4a.5.5 0 0 0 0 1h2.5V9H7a.5.5 0 0 0 0 1h2.5v2.5a.5.5 0 0 0 1 0V10H13a.5.5 0 0 0 0-1h-2.5V6H13a.5.5 0 0 0 0-1h-2.5V2.5a.5.5 0 0 0-1 0V5H7z"/></svg>
+      <span>파일 통합</span>
+    </button>
     <div class="tb-sep"></div>
     <button class="tb-btn" onclick="printToPDF()" title="PDF로 저장 (인쇄 대화상자 → PDF로 저장 선택)">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0H4zM9 0v4h4L9 0zM4 9h8v1H4V9zm0 2h5v1H4v-1z"/></svg>
@@ -316,6 +340,54 @@ select.fi{cursor:pointer;}
     <span class="tb-status" id="tb-status">준비</span>
   </div>
 </div>
+
+<!-- ══ MERGE MODAL ══ -->
+<div class="modal-backdrop" id="merge-modal" style="display:none" onclick="if(event.target===this)closeMergeModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title">📁 개별 파일 통합 · File Merge</span>
+      <button class="modal-close" onclick="closeMergeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">각 실습 참여자가 개별 저장한 JSON 파일을 불러와 통합된 최종 실습일지를 완성합니다. 섹션 3 경혈 기록은 모든 파일에서 수집하고, 기본정보·체크리스트·섹션 4·5는 기준 파일을 선택하여 적용합니다.</p>
+
+      <label class="merge-drop" id="merge-drop">
+        <svg width="26" height="26" viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/></svg>
+        <span>JSON 파일 선택 (여러 파일 동시 선택 가능)</span>
+        <input type="file" accept=".json" multiple onchange="onMergeFilesSelected(event)" style="display:none">
+      </label>
+
+      <div id="merge-content" style="display:none">
+        <div class="merge-sec-lbl">로드된 파일</div>
+        <div id="merge-cards"></div>
+
+        <div class="merge-sec-lbl" style="margin-top:16px;">통합 설정</div>
+        <div class="merge-cfg">
+          <div class="mcfg-row">
+            <span class="mcfg-key">기본정보 · 체크리스트 · 섹션 4·5</span>
+            <select class="mi" id="merge-base-sel" style="max-width:220px;font-size:12px;padding:4px 8px;"></select>
+          </div>
+          <div class="mcfg-row">
+            <span class="mcfg-key">섹션 3 경혈 기록</span>
+            <span class="mcfg-val" id="merge-ae-info">—</span>
+          </div>
+          <div class="mcfg-row">
+            <span class="mcfg-key">이미지</span>
+            <span class="mcfg-val">모든 파일에서 통합 (기준 파일 우선)</span>
+          </div>
+        </div>
+
+        <div class="merge-warn" id="merge-warn" style="display:none"></div>
+
+        <div class="merge-acts">
+          <button class="tb-btn" onclick="closeMergeModal()" style="padding:8px 18px;">취소</button>
+          <button class="tb-btn primary" onclick="executeMerge()" style="padding:8px 18px;">통합 실행</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div class="pw">
 
@@ -509,7 +581,7 @@ select.fi{cursor:pointer;}
   </div>
   <div class="sc-body">
     <div style="font-size:11.5px;color:var(--text-sec);margin-bottom:14px;padding:9px 12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:5px;">
-      경혈별로 실습 항목을 추가하고, 해당 경혈의 사전학습 정리 → 탐혈 과정 → 자침 기록 → 초음파 영상 순서로 기록하시오. 경혈은 최대 6개까지 추가 가능합니다.
+      경혈별로 실습 항목을 추가하고, 해당 경혈의 사전학습 정리 → 탐혈 과정 → 자침 기록 → 초음파 영상 순서로 기록하시오. 경맥 전체 경혈 수만큼 추가할 수 있습니다.
     </div>
     <div id="ae-wrap"></div>
     <button class="btn-add-acu" id="btn-add" onclick="addAE()">＋ 경혈 기록 추가</button>
@@ -651,10 +723,43 @@ const MERIDIANS = [
 
 // ══ Entry counter ══
 let aeCount = 0;
-const MAX_AE = 6;
+const MAX_AE = MERIDIANS.reduce((s, m) => s + m.pts.length, 0); // 모든 경맥 경혈 수 합계
+
+// 상용수혈 (SCM0003-2009, 130穴) — 세계중의학본과교육표준 기준
+const IMPORTANT_ACU = new Set([
+  // 수태음폐경 (6)
+  '중부','척택','공최','열결','어제','소상',
+  // 수양명대장경 (7)
+  '상양','합곡','양계','편력','곡지','견우','영향',
+  // 족양명위경 (13)
+  '협거','하관','두유','양문','천추','양구','족삼리','상거허','하거허','조구','풍륭','해계','내정',
+  // 족태음비경 (7)
+  '은백','태백','공손','삼음교','지기','음릉천','혈해',
+  // 수소음심경 (6)
+  '극천','소해','통리','음극','신문','소충',
+  // 수태양소장경 (4)
+  '소택','후계','천종','청궁',
+  // 족태양방광경 (20)
+  '찬죽','천주','폐유','심유','격유','간유','비유','위유','신유','대장유',
+  '방광유','차료','위중','지실','질변','승산','비양','곤륜','신맥','지음',
+  // 족소음신경 (4)
+  '태계','대종','조해','복류',
+  // 수궐음심포경 (5)
+  '곡택','내관','대릉','노궁','중충',
+  // 수소양삼초경 (9)
+  '관충','중저','양지','외관','지구','견료','예풍','이문','사죽공',
+  // 족소양담경 (14)
+  '동자료','청회','두임읍','풍지','견정','환도','풍시','양릉천','광명','현종','구허','족임읍','협계','족규음',
+  // 족궐음간경 (5)
+  '행간','태충','곡천','장문','기문',
+  // 임맥 (9)
+  '관원','기해','신궐','하완','중완','단중','천돌','염천','승장',
+  // 독맥 (9)
+  '요양관','명문','지양','대추','풍부','백회','상성','소료','수구',
+]);
 
 function addAE() {
-  if (aeCount >= MAX_AE) { alert('경혈 기록은 최대 6개까지 추가 가능합니다.'); return; }
+  if (aeCount >= MAX_AE) { alert('경혈 기록은 최대 ' + MAX_AE + '개까지 추가 가능합니다.'); return; }
   const n = aeCount++;
   const wrap = document.getElementById('ae-wrap');
   const card = document.createElement('div');
@@ -863,7 +968,11 @@ function updateAcuPts(n) {
   }
   const mer = MERIDIANS.find(m => m.key === key);
   acuSel.innerHTML = `<option value="">— 경혈 선택 (${mer.pts.length}穴) —</option>` +
-    mer.pts.map(p => `<option value="${p}">${p}</option>`).join('');
+    mer.pts.map(p => {
+      const korName = p.replace(/^\S+\s+/, '');
+      const label = IMPORTANT_ACU.has(korName) ? `★ ${p}` : p;
+      return `<option value="${p}">${label}</option>`;
+    }).join('');
   acuSel.disabled = false;
   updateAETitle(n);
 }
@@ -964,10 +1073,36 @@ function collectState() {
     const a = document.getElementById('ae-acu-' + n);
     state.entries.push({ mer: m ? m.value : '', acu: a ? a.value : '' });
   });
-  document.querySelectorAll('input:not([type=file]), textarea, select').forEach(el => {
+  const allEls = Array.from(document.querySelectorAll('input:not([type=file]), textarea, select'));
+  allEls.forEach(el => {
     if (el.type === 'checkbox' || el.type === 'radio') state.vals.push({ t: 'c', v: el.checked });
     else state.vals.push({ t: 'v', v: el.value });
   });
+  // _ae: 통합(merge)을 위한 AE 섹션 경계 정보
+  const aeWrap = document.getElementById('ae-wrap');
+  const aeInputs = Array.from(aeWrap.querySelectorAll('input:not([type=file]), textarea, select'));
+  if (aeInputs.length > 0 && cards.length > 0) {
+    const st = allEls.indexOf(aeInputs[0]);
+    const en = allEls.indexOf(aeInputs[aeInputs.length - 1]) + 1;
+    state._ae = { start: st, end: en, perCard: (en - st) / cards.length };
+  } else {
+    let beforeCount = 0;
+    for (const el of allEls) { if (aeWrap.contains(el)) break; beforeCount++; }
+    state._ae = { start: beforeCount, end: beforeCount, perCard: 0 };
+  }
+  // _info: 모달 표시용 메타
+  state._info = {
+    date:    (document.getElementById('pd')    || {}).value || '',
+    section: (document.getElementById('cls')   || {}).value || '',
+    group:   (document.getElementById('grp')   || {}).value || '',
+    topic:   (document.getElementById('topic') || {}).value || '',
+  };
+  // reflectEntries: 섹션4 성찰 데이터 (통합용)
+  const reflectRows = document.querySelectorAll('.reflect-table .rt-row');
+  state.reflectEntries = Array.from(reflectRows).map(row => ({
+    name:    (row.querySelector('.rt-name input')   || {}).value || '',
+    content: (row.querySelector('.rt-text textarea') || {}).value || '',
+  }));
   document.querySelectorAll('.st-score').forEach(sg => {
     const a = sg.querySelector('.score-btn.active');
     state.scores.push(a ? a.dataset.v : null);
@@ -1017,6 +1152,27 @@ function applyState(state) {
     const ph = img.closest('.img-ph');
     if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
   });
+  // 섹션4 성찰 데이터 적용 (reflectEntries 우선, 필요시 행 자동 추가)
+  if (state.reflectEntries && state.reflectEntries.length > 0) {
+    const reflTable = document.querySelector('.reflect-table');
+    let rows = reflTable.querySelectorAll('.rt-row');
+    // 부족한 행은 동적으로 추가
+    while (rows.length < state.reflectEntries.length) {
+      const newRow = document.createElement('div');
+      newRow.className = 'rt-row';
+      newRow.style.borderTop = '1px solid var(--border-lt)';
+      newRow.innerHTML = '<div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div>';
+      reflTable.appendChild(newRow);
+      rows = reflTable.querySelectorAll('.rt-row');
+    }
+    state.reflectEntries.forEach((e, i) => {
+      if (i >= rows.length) return;
+      const nameEl    = rows[i].querySelector('.rt-name input');
+      const contentEl = rows[i].querySelector('.rt-text textarea');
+      if (nameEl)    nameEl.value    = e.name    || '';
+      if (contentEl) contentEl.value = e.content || '';
+    });
+  }
   setStatus('✓ 불러오기 완료', true);
 }
 
@@ -1092,12 +1248,174 @@ function checkAutoSave() {
   return false;
 }
 
+
+// ══ Merge ══
+let _mf = []; // loaded merge files
+
+function openMergeModal() {
+  _mf = [];
+  document.getElementById('merge-content').style.display = 'none';
+  document.getElementById('merge-modal').style.display = 'flex';
+}
+function closeMergeModal() {
+  document.getElementById('merge-modal').style.display = 'none';
+  _mf = [];
+}
+
+function onMergeFilesSelected(event) {
+  const files = Array.from(event.target.files); event.target.value = '';
+  if (!files.length) return;
+  let pending = files.length;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const state = JSON.parse(e.target.result);
+        if (!state || !state.v) { alert(file.name + ': 올바른 저장 파일이 아닙니다.'); pending--; if(!pending) renderMergeUI(); return; }
+        _mf.push({ name: file.name, state });
+      } catch(err) { alert(file.name + ' 읽기 오류: ' + err.message); }
+      pending--; if (!pending) renderMergeUI();
+    };
+    reader.readAsText(file);
+  });
+}
+
+function removeMergeFile(idx) { _mf.splice(idx, 1); renderMergeUI(); }
+
+function renderMergeUI() {
+  const content = document.getElementById('merge-content');
+  if (_mf.length === 0) { content.style.display = 'none'; return; }
+  content.style.display = '';
+
+  // 파일 카드
+  document.getElementById('merge-cards').innerHTML = _mf.map((f, i) => {
+    const inf = f.state._info || {};
+    const ts  = f.state.ts ? new Date(f.state.ts).toLocaleString('ko-KR') : '—';
+    const nE  = f.state.nEntries || 0;
+    const old = !f.state._ae;
+    const meta = [
+      inf.date    && '실습일: ' + inf.date,
+      inf.section || '',
+      inf.group   || '',
+      nE + '개 경혈기록',
+      old ? '⚠ 구버전 형식' : '',
+    ].filter(Boolean).join(' · ');
+    return `<div class="mcard">
+  <div class="mcard-badge">파일 ${i+1}</div>
+  <div class="mcard-info">
+    <div class="mcard-name" title="${f.name}">${f.name}</div>
+    <div class="mcard-meta">${meta}</div>
+  </div>
+  <button class="mcard-del" onclick="removeMergeFile(${i})" title="목록에서 제거">✕</button>
+</div>`;
+  }).join('');
+
+  // 기준 파일 선택
+  const sel = document.getElementById('merge-base-sel');
+  const prev = sel.value;
+  sel.innerHTML = _mf.map((f, i) => `<option value="${i}">파일 ${i+1}: ${f.name}</option>`).join('');
+  if (prev && parseInt(prev) < _mf.length) sel.value = prev;
+
+  // AE 통합 요약
+  const totalAE = _mf.reduce((s, f) => s + (f.state.nEntries || 0), 0);
+  const totalReflect = _mf.reduce((s, f) => {
+    return s + (f.state.reflectEntries || []).filter(e => (e.name||'').trim() || (e.content||'').trim()).length;
+  }, 0);
+  document.getElementById('merge-ae-info').innerHTML =
+    `경혈기록 <strong>${totalAE}</strong>개 + 성찰 <strong>${totalReflect}</strong>개 통합`;
+
+  // 경고
+  const oldFmt = _mf.filter(f => !f.state._ae);
+  const warn = document.getElementById('merge-warn');
+  if (oldFmt.length > 0) {
+    warn.style.display = '';
+    warn.innerHTML = `⚠ <strong>구버전 형식 파일 ${oldFmt.length}개:</strong> ${oldFmt.map(f=>f.name).join(', ')}<br>
+이 파일들은 경혈 기록 텍스트를 정밀하게 추출할 수 없습니다. 최신 버전의 실습일지에서 <em>데이터 저장</em>을 다시 실행하면 정확도가 향상됩니다. 현재는 기준 파일의 텍스트 영역을 기반으로 통합합니다.`;
+  } else { warn.style.display = 'none'; }
+}
+
+function executeMerge() {
+  if (_mf.length === 0) { alert('파일을 먼저 불러오세요.'); return; }
+  const baseIdx  = parseInt(document.getElementById('merge-base-sel').value) || 0;
+  const baseFile = _mf[baseIdx];
+  const base     = baseFile.state;
+  const baseAE   = base._ae;
+
+  // 통합 entries (최대 MAX_AE)
+  const mergedEntries = [];
+  for (const f of _mf) {
+    for (const e of (f.state.entries || [])) {
+      if (mergedEntries.length >= MAX_AE) break;
+      mergedEntries.push(e);
+    }
+    if (mergedEntries.length >= MAX_AE) break;
+  }
+
+  // 통합 vals 구성
+  let mergedVals;
+  if (baseAE && baseAE.perCard > 0) {
+    const headerVals = base.vals.slice(0, baseAE.start);
+    const footerVals = base.vals.slice(baseAE.end);
+    const aeVals = [];
+    let collected = 0;
+
+    for (const f of _mf) {
+      const fState = f.state;
+      const fN = fState.nEntries || 0; if (!fN) continue;
+      const toTake = Math.min(fN, MAX_AE - collected);
+      if (toTake <= 0) break;
+
+      // AE 시작/카드당 입력수 결정 (구버전은 기준 파일 기준)
+      const fAEStart  = (fState._ae && fState._ae.start  != null) ? fState._ae.start  : baseAE.start;
+      const fPerCard  = (fState._ae && fState._ae.perCard > 0)    ? fState._ae.perCard : baseAE.perCard;
+      const valsCount = Math.round(toTake * fPerCard);
+      aeVals.push(...fState.vals.slice(fAEStart, fAEStart + valsCount));
+      collected += toTake;
+    }
+    mergedVals = [...headerVals, ...aeVals, ...footerVals];
+  } else {
+    // 기준 파일이 구버전이면 vals 그대로 사용
+    mergedVals = base.vals;
+  }
+
+  // 섹션4 성찰 통합 (비어있지 않은 항목만 수집)
+  const mergedReflect = [];
+  for (const f of _mf) {
+    const entries = f.state.reflectEntries || [];
+    for (const e of entries) {
+      if ((e.name || '').trim() || (e.content || '').trim()) {
+        mergedReflect.push(e);
+      }
+    }
+  }
+
+  // 이미지 통합 (기준 파일 최우선)
+  const mergedImgs = {};
+  for (const f of _mf) { if (f !== baseFile) Object.assign(mergedImgs, f.state.imgs || {}); }
+  Object.assign(mergedImgs, base.imgs || {});
+
+  const merged = {
+    v: 2,
+    ts: new Date().toISOString(),
+    nEntries: mergedEntries.length,
+    entries:  mergedEntries,
+    vals:     mergedVals,
+    scores:   base.scores || [],
+    imgs:     mergedImgs,
+    _ae:      baseAE,
+    reflectEntries: mergedReflect,
+    _merged:  true,
+    _sources: _mf.map(f => f.name),
+  };
+
+  closeMergeModal();
+  applyState(merged);
+  setStatus(`✓ ${_mf.length}개 파일 통합 완료 — 경혈기록 ${merged.nEntries}개, 성찰 ${mergedReflect.length}개`, true);
+}
+
 // ══ Init ══
 document.getElementById('pd').value = new Date().toISOString().split('T')[0];
 const _restored = checkAutoSave();
 if (!_restored) addAE();
 _asTimer = setInterval(autoSave, 30000);
 </script>
-
-</body>
-</html>
