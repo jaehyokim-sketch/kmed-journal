@@ -421,9 +421,9 @@ select.fi{cursor:pointer;}
   </div>
   <div class="meta-g" style="margin-bottom:14px;">
     <div class="mf"><span class="ml">실습 날짜 · Date</span><input class="mi" type="date" id="pd"></div>
-    <div class="mf"><span class="ml">분반 · Section</span><select class="mi"><option value="">— 선택 —</option><option>01분반</option><option>02분반</option></select></div>
-    <div class="mf"><span class="ml">조 · Group</span><select class="mi"><option value="">— 선택 —</option><option>1조</option><option>2조</option><option>3조</option><option>4조</option><option>5조</option><option>6조</option><option>7조</option><option>8조</option><option>9조</option><option>10조</option></select></div>
-    <div class="mf"><span class="ml">실습 주제 · Topic</span><input class="mi" type="text" placeholder="예) 족양명경 취혈 및 자침"></div>
+    <div class="mf"><span class="ml">분반 · Section</span><select class="mi" id="cls"><option value="">— 선택 —</option><option>01분반</option><option>02분반</option></select></div>
+    <div class="mf"><span class="ml">조 · Group</span><select class="mi" id="grp"><option value="">— 선택 —</option><option>1조</option><option>2조</option><option>3조</option><option>4조</option><option>5조</option><option>6조</option><option>7조</option><option>8조</option><option>9조</option><option>10조</option></select></div>
+    <div class="mf"><span class="ml">실습 주제 · Topic</span><input class="mi" type="text" id="topic" placeholder="예) 족양명경 취혈 및 자침"></div>
     <div class="mf"><span class="ml">지도 교수 · Supervisor</span><input class="mi" type="text" placeholder=""></div>
   </div>
   <div class="participants">
@@ -1298,13 +1298,24 @@ function applyState(state) {
 
 function saveToFile() {
   const state = collectState();
-  const date = document.getElementById('pd').value || new Date().toISOString().slice(0, 10);
+  const date  = (document.getElementById('pd')    || {}).value || new Date().toISOString().slice(0, 10);
+  const cls   = (document.getElementById('cls')   || {}).value || '';
+  const grp   = (document.getElementById('grp')   || {}).value || '';
+  const topic = (document.getElementById('topic') || {}).value || '';
+  // 저장 시간: HH-MM-SS
+  const now = new Date();
+  const hms = [now.getHours(), now.getMinutes(), now.getSeconds()]
+    .map(n => String(n).padStart(2, '0')).join('-');
+  // 파일명: 날짜_분반_조_실습주제_저장시간.json (값이 없는 부분은 생략)
+  const parts = [date, cls, grp, topic, hms].filter(Boolean);
+  // 파일 시스템에서 사용할 수 없는 문자 제거
+  const fname = parts.join('_').replace(/[\\/:*?"<>|]/g, '') + '.json';
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = '경혈학실습일지_' + date + '.json';
+  a.download = fname;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  setStatus('✓ 파일로 저장됨', true);
+  setStatus('✓ 파일로 저장됨 — ' + fname, true);
 }
 
 function loadFromFile(event) {
