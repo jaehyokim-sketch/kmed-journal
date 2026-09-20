@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>경혈학-침구의학 연계실습 포털 · 원광대 한의과대학</title>
+<title>경혈학-침구의학 연계 실습 포털 · 원광대 한의과대학</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap">
 
 <style>
@@ -366,8 +366,8 @@ body {
     <div class="file-tree">
       <span class="dir">kmed-journal/</span><br>
       ├── <span style="color:var(--blue);font-weight:600;">index.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 포털 대문 (현재 파일)</span><br>
-      ├── <span class="jade">group-journal.html</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 경혈학실습 &amp; 임상술기실습 일지</span><br>
-      └── <span class="amber">checklist.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 피험자 동의서 및 사전-사후 체크리스트</span>
+      ├── <span class="jade">checklist.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← ① 피험자 동의서 및 사전-사후 체크리스트</span><br>
+      └── <span style="color:var(--blue);">group-journal.html</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← ② 경혈학실습 &amp; 임상술기실습 일지</span>
     </div>
 
     <div class="fn-table-wrap">
@@ -375,8 +375,8 @@ body {
         <thead><tr><th>파일</th><th>역할</th><th>비고</th></tr></thead>
         <tbody>
           <tr><td>index.html</td><td>포털 대문 — 두 도구 진입점, 사용 안내</td><td>현재 페이지</td></tr>
-          <tr><td>group-journal.html</td><td>조별 실습일지 본체 (섹션 1–5)</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
-          <tr><td>checklist.html</td><td>피험자 동의서 + 사전·사후 체크리스트</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
+          <tr><td>checklist.html</td><td>① 피험자 동의서 + 사전·사후 체크리스트 (3탭)</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
+          <tr><td>group-journal.html</td><td>② 조별 실습일지 본체 (섹션 1–5)</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
         </tbody>
       </table>
     </div>
@@ -393,6 +393,10 @@ body {
 
     <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--jade);text-transform:uppercase;margin-bottom:10px;">동의서 &amp; 체크리스트 (checklist.html)</p>
     <div class="version-list">
+      <div class="version-item">
+        <div><div class="ver-badge jade">v7</div></div>
+        <div class="ver-desc">술기 행위 동의 항목에 <strong>초음파 영상관찰</strong> 추가 (동의 15종), 타임스탬프 레이블 → <strong>PDF 저장 최종 입력</strong> 변경, JSON 저장 파일명 형식 고정 (<code style="font-size:11px;">동의서체크리스트_분반-실습조-실습일자.json</code>) — 반복 저장 시 동일 파일 덮어쓰기</div>
+      </div>
       <div class="version-item">
         <div><div class="ver-badge jade">v6</div></div>
         <div class="ver-desc">JSON 저장 기능 추가 (blob URL 다운로드), 불러오기 기능, 탭별 입력 타임스탬프 자동 기록, 최종 출력본 타임스탬프 표시</div>
