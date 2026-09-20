@@ -1,660 +1,479 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>경혈학 실습일지</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
-  <style>
-    /* === CSS Token System === */
-    :root {
-      --bg:           #F4F2EE;
-      --surface:      #FFFFFF;
-      --surface-2:    #FAF9F7;
-      --text:         #1C2231;
-      --text-sub:     #5B6478;
-      --text-muted:   #8A93A6;
-      --accent:       #1D3E7A;
-      --accent-lt:    #E4EAF7;
-      --accent-hover: #163060;
-      --warm:         #C45A2A;
-      --star:         #A07010;
-      --border:       #DDD9D1;
-      --border-soft:  #EDEAE5;
-      --shadow-sm:    0 1px 3px rgba(28,34,49,0.07);
-      --shadow-md:    0 4px 14px rgba(28,34,49,0.10);
-      --radius:       8px;
-      --font-serif:   'Noto Serif KR', 'Batang', Georgia, serif;
-      --font-sans:    'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>경혈학실습 포털 · 원광대 한의과대학</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap">
 
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg:           #131921;
-        --surface:      #1C2433;
-        --surface-2:    #243044;
-        --text:         #E8EDF8;
-        --text-sub:     #8A9BB8;
-        --text-muted:   #5A6A84;
-        --accent:       #4B80D4;
-        --accent-lt:    #1A2A4A;
-        --accent-hover: #5E90E2;
-        --warm:         #E07850;
-        --star:         #D4A020;
-        --border:       #2C3A52;
-        --border-soft:  #243044;
-        --shadow-sm:    0 1px 3px rgba(0,0,0,0.22);
-        --shadow-md:    0 4px 14px rgba(0,0,0,0.32);
-      }
-    }
-    :root[data-theme="dark"] {
-      --bg:           #131921;
-      --surface:      #1C2433;
-      --surface-2:    #243044;
-      --text:         #E8EDF8;
-      --text-sub:     #8A9BB8;
-      --text-muted:   #5A6A84;
-      --accent:       #4B80D4;
-      --accent-lt:    #1A2A4A;
-      --accent-hover: #5E90E2;
-      --warm:         #E07850;
-      --star:         #D4A020;
-      --border:       #2C3A52;
-      --border-soft:  #243044;
-      --shadow-sm:    0 1px 3px rgba(0,0,0,0.22);
-      --shadow-md:    0 4px 14px rgba(0,0,0,0.32);
-    }
+<style>
+/* ─── Tokens ─── */
+:root {
+  --bg:       #F4F8FC;
+  --surface:  #FFFFFF;
+  --surf-alt: #EDF3FB;
+  --border:   #C8D8EC;
+  --border-lt:#DDE8F4;
+  --text:     #192E4A;
+  --text-sec: #4A6585;
+  --text-fnt: #8EA3BC;
+  --blue:     #1A5F96;
+  --blue-mid: #2678BB;
+  --blue-lt:  #E1EDF8;
+  --jade:     #2D8B72;
+  --jade-lt:  #E1F4EE;
+  --jade-mid: #3AA88A;
+  --amber:    #A05C00;
+  --amber-lt: #FEF5E6;
+  --tag-bg:   #E8F2FB;
+  --tag-txt:  #1A5F96;
+  --nav-w:    220px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0D1B2A;--surface:#162435;--surf-alt:#1C2E42;
+    --border:#2A3F5A;--border-lt:#1F3450;
+    --text:#CDE0F5;--text-sec:#7AA8CC;--text-fnt:#4A6888;
+    --blue:#4AA0DC;--blue-mid:#5DB8F0;--blue-lt:#152840;
+    --jade:#3DB890;--jade-lt:#112B22;--jade-mid:#3DB890;
+    --amber:#CCA050;--amber-lt:#2C1E08;
+    --tag-bg:#162840;--tag-txt:#4AA0DC;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0D1B2A;--surface:#162435;--surf-alt:#1C2E42;
+  --border:#2A3F5A;--border-lt:#1F3450;
+  --text:#CDE0F5;--text-sec:#7AA8CC;--text-fnt:#4A6888;
+  --blue:#4AA0DC;--blue-mid:#5DB8F0;--blue-lt:#152840;
+  --jade:#3DB890;--jade-lt:#112B22;--jade-mid:#3DB890;
+  --amber:#CCA050;--amber-lt:#2C1E08;
+  --tag-bg:#162840;--tag-txt:#4AA0DC;
+}
 
-    /* === Reset & Base === */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 15px; scroll-behavior: smooth; }
-    body {
-      font-family: var(--font-sans);
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.65;
-      padding-inline: 20px;
-      padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px);
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body {
+  font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;
+  background:var(--bg);color:var(--text);font-size:14px;line-height:1.7;
+  display:flex;min-height:100vh;
+}
 
-    /* === Layout === */
-    .container { max-width: 960px; margin-inline: auto; }
+/* ─── Sidebar ─── */
+.sidebar {
+  width:var(--nav-w);flex-shrink:0;
+  position:sticky;top:0;height:100vh;
+  background:var(--surface);border-right:1.5px solid var(--border);
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.sidebar-brand { padding:24px 20px 20px;border-bottom:1px solid var(--border-lt); }
+.brand-eyebrow { font-size:9px;letter-spacing:2px;color:var(--blue);font-weight:600;text-transform:uppercase;margin-bottom:4px; }
+.brand-name { font-family:'Noto Serif KR',serif;font-size:13px;font-weight:700;color:var(--text);line-height:1.35; }
 
-    /* === Site Header === */
-    .site-header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding-block: 14px;
-      position: sticky;
-      top: env(safe-area-inset-top, 0px);
-      z-index: 10;
-    }
-    .site-header .inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .site-header .brand {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .site-header .univ {
-      font-family: var(--font-serif);
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: 0.02em;
-    }
-    .site-header .sep { color: var(--border); }
-    .site-header .dept-name {
-      font-size: 0.76rem;
-      color: var(--text-sub);
-    }
-    .header-cta {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--accent);
-      background: var(--accent-lt);
-      padding: 6px 14px;
-      border-radius: var(--radius);
-      white-space: nowrap;
-      transition: background 0.15s;
-    }
-    .header-cta:hover { background: var(--accent); color: #fff; text-decoration: none; }
+.nav-section-lbl { font-size:9.5px;letter-spacing:1.5px;font-weight:600;color:var(--text-fnt);text-transform:uppercase;padding:18px 20px 6px; }
+.nav-link {
+  display:flex;align-items:center;gap:8px;padding:7px 20px;
+  font-size:12.5px;color:var(--text-sec);text-decoration:none;
+  border-left:2px solid transparent;transition:all .14s;
+}
+.nav-link:hover,.nav-link.active { color:var(--blue);background:var(--blue-lt);border-left-color:var(--blue); }
+.nav-link svg { flex-shrink:0;opacity:.65; }
+.nav-divider { height:1px;background:var(--border-lt);margin:10px 20px; }
+.sidebar-footer { margin-top:auto;padding:16px 20px;border-top:1px solid var(--border-lt);font-size:11px;color:var(--text-fnt);line-height:1.5; }
 
-    /* === Hero === */
-    .hero {
-      padding-block: 60px 48px;
-      text-align: center;
-    }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.71rem;
-      font-weight: 700;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: var(--accent-lt);
-      padding: 4px 14px;
-      border-radius: 100px;
-      margin-bottom: 22px;
-    }
-    .hero-badge::before {
-      content: '';
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--accent);
-    }
-    .hero h1 {
-      font-family: var(--font-serif);
-      font-size: clamp(1.75rem, 5vw, 2.75rem);
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.28;
-      text-wrap: balance;
-      margin-bottom: 18px;
-    }
-    .hero h1 .hl {
-      color: var(--accent);
-    }
-    .hero-sub {
-      font-size: 1.0rem;
-      color: var(--text-sub);
-      max-width: 520px;
-      margin-inline: auto;
-      margin-bottom: 36px;
-      line-height: 1.75;
-    }
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent);
-      color: #fff;
-      font-family: var(--font-sans);
-      font-size: 0.96rem;
-      font-weight: 700;
-      padding: 13px 30px;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-md);
-      transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
-    }
-    .btn-primary:hover {
-      background: var(--accent-hover);
-      text-decoration: none;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(28,34,49,0.16);
-    }
-    .btn-primary:active { transform: translateY(0); }
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--surface);
-      color: var(--text-sub);
-      font-size: 0.88rem;
-      font-weight: 500;
-      padding: 13px 22px;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .btn-secondary:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      text-decoration: none;
-    }
+/* ─── Main ─── */
+.main { flex:1;min-width:0;padding:40px 48px 80px;max-width:860px; }
 
-    /* === Divider === */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border-soft);
-    }
+/* ─── Page header ─── */
+.page-header { margin-bottom:48px;padding-bottom:28px;border-bottom:1.5px solid var(--border); }
+.page-eyebrow { font-size:10px;letter-spacing:2.5px;font-weight:600;color:var(--blue);text-transform:uppercase;margin-bottom:10px; }
+.page-h1 { font-family:'Noto Serif KR',serif;font-size:28px;font-weight:700;color:var(--text);line-height:1.25;margin-bottom:8px; }
+.page-sub { font-size:14px;color:var(--text-sec);margin-bottom:0; }
 
-    /* === Section === */
-    .page-section {
-      padding-block: 48px;
-    }
-    .section-eyebrow {
-      font-size: 0.71rem;
-      font-weight: 700;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
-    .section-title {
-      font-family: var(--font-serif);
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 28px;
-      text-wrap: balance;
-    }
+/* ─── Section ─── */
+.doc-section { margin-bottom:52px;scroll-margin-top:24px; }
+.section-h2 {
+  font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;color:var(--text);
+  margin-bottom:20px;padding-bottom:10px;border-bottom:1.5px solid var(--blue-lt);
+  display:flex;align-items:center;gap:10px;
+}
+.section-h2 .h2-icon {
+  width:28px;height:28px;background:var(--blue-lt);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;color:var(--blue);flex-shrink:0;
+}
+.section-h2.jade-head { border-bottom-color:var(--jade-lt); }
+.section-h2.jade-head .h2-icon { background:var(--jade-lt);color:var(--jade); }
+.section-h2.amber-head { border-bottom-color:var(--amber-lt); }
+.section-h2.amber-head .h2-icon { background:var(--amber-lt);color:var(--amber); }
 
-    /* === Feature Cards === */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
-      gap: 14px;
-    }
-    .fc {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px 20px;
-      box-shadow: var(--shadow-sm);
-    }
-    .fc-tag {
-      display: inline-block;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      background: var(--accent-lt);
-      color: var(--accent);
-      padding: 2px 9px;
-      border-radius: 4px;
-      margin-bottom: 10px;
-    }
-    .fc h3 {
-      font-size: 0.94rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 7px;
-    }
-    .fc p {
-      font-size: 0.83rem;
-      color: var(--text-sub);
-      line-height: 1.65;
-    }
-    .fc .star-note {
-      display: block;
-      margin-top: 9px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--star);
-    }
-    .fc.merge-card { border-color: var(--accent-lt); }
+.prose { font-size:13.5px;color:var(--text-sec);line-height:1.75; }
 
-    /* === Usage Steps === */
-    .steps-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .step-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px 22px 22px;
-      box-shadow: var(--shadow-sm);
-      position: relative;
-      overflow: hidden;
-    }
-    .step-card::after {
-      content: attr(data-n);
-      position: absolute;
-      top: 10px;
-      right: 18px;
-      font-family: var(--font-serif);
-      font-size: 3.2rem;
-      font-weight: 700;
-      color: var(--border-soft);
-      line-height: 1;
-      pointer-events: none;
-    }
-    .step-card h3 {
-      font-size: 0.96rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-    .step-card ol {
-      padding-left: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .step-card li {
-      font-size: 0.83rem;
-      color: var(--text-sub);
-      line-height: 1.6;
-    }
-    .step-card li strong {
-      color: var(--text);
-      font-weight: 600;
-    }
+/* ─── Tool cards ─── */
+.tool-cards { display:flex;flex-direction:column;gap:16px; }
+.tool-card {
+  background:var(--surface);border:1.5px solid var(--border);border-radius:10px;
+  overflow:hidden;display:grid;grid-template-columns:auto 1fr;
+}
+.tool-card-accent { width:5px; }
+.tool-card-accent.blue  { background:var(--blue); }
+.tool-card-accent.jade  { background:var(--jade); }
+.tool-card-accent.amber { background:var(--amber); }
+.tool-card-body { padding:20px 22px; }
+.tool-card-head { display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:12px; }
+.tool-card-title-group {}
+.tool-tag {
+  display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:1.2px;
+  text-transform:uppercase;border-radius:3px;padding:2px 7px;margin-bottom:6px;
+}
+.tool-tag.blue  { background:var(--blue-lt);color:var(--blue); }
+.tool-tag.jade  { background:var(--jade-lt);color:var(--jade); }
+.tool-tag.amber { background:var(--amber-lt);color:var(--amber); }
+.tool-card-name { font-family:'Noto Serif KR',serif;font-size:16px;font-weight:700;color:var(--text);line-height:1.3;margin-bottom:3px; }
+.tool-card-en { font-size:11.5px;color:var(--text-fnt); }
+.tool-card-links { display:flex;gap:8px;flex-shrink:0;align-items:flex-start;flex-wrap:wrap; }
+.link-btn {
+  display:inline-flex;align-items:center;gap:5px;
+  border-radius:5px;padding:7px 14px;font-size:12px;font-weight:600;
+  text-decoration:none;white-space:nowrap;transition:all .15s;
+}
+.link-btn.primary   { background:var(--blue);color:#fff; }
+.link-btn.primary:hover   { background:var(--blue-mid); }
+.link-btn.jade-btn  { background:var(--jade);color:#fff; }
+.link-btn.jade-btn:hover  { background:var(--jade-mid); }
+.link-btn.amber-btn { background:var(--amber);color:#fff; }
+.link-btn.amber-btn:hover { filter:brightness(1.1); }
+.link-btn.secondary { background:var(--surf-alt);color:var(--text-sec);border:1px solid var(--border); }
+.link-btn.secondary:hover { border-color:var(--blue);color:var(--blue); }
+.tool-card-desc { font-size:13px;color:var(--text-sec);line-height:1.7;margin-bottom:14px; }
 
-    /* === Merge Table === */
-    .merge-info {
-      margin-top: 22px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-    }
-    .merge-info-head {
-      background: var(--accent-lt);
-      border-bottom: 1px solid var(--border);
-      padding: 11px 20px;
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .merge-tbl { width: 100%; border-collapse: collapse; }
-    .merge-tbl td {
-      padding: 10px 20px;
-      font-size: 0.82rem;
-      border-bottom: 1px solid var(--border-soft);
-      vertical-align: middle;
-    }
-    .merge-tbl tr:last-child td { border-bottom: none; }
-    .merge-tbl td:first-child {
-      font-weight: 600;
-      color: var(--text);
-      width: 48%;
-    }
-    .merge-tbl td:last-child { color: var(--text-sub); }
-    .badge {
-      display: inline-block;
-      font-size: 0.69rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 100px;
-    }
-    .badge-all { background: #E8F5E9; color: #2E7D32; }
-    .badge-base { background: #FFF3E0; color: #BF5000; }
+/* ─── Feature chips ─── */
+.chip-row { display:flex;flex-wrap:wrap;gap:6px; }
+.chip {
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--surf-alt);border:1px solid var(--border-lt);border-radius:20px;
+  padding:3px 10px;font-size:11.5px;color:var(--text-sec);
+}
+.chip-dot { width:6px;height:6px;border-radius:50%; }
+.chip-dot.blue  { background:var(--blue); }
+.chip-dot.jade  { background:var(--jade); }
+.chip-dot.amber { background:var(--amber); }
 
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) .badge-all { background: #193D1E; color: #66BB6A; }
-      :root:not([data-theme="light"]) .badge-base { background: #3A2000; color: #FFA040; }
-    }
-    :root[data-theme="dark"] .badge-all { background: #193D1E; color: #66BB6A; }
-    :root[data-theme="dark"] .badge-base { background: #3A2000; color: #FFA040; }
+/* ─── File tree ─── */
+.file-tree {
+  background:var(--surface);border:1.5px solid var(--border);border-radius:7px;
+  padding:16px 20px;font-family:'Courier New','Menlo',monospace;
+  font-size:12.5px;color:var(--text-sec);line-height:2.1;margin-top:14px;
+}
+.file-tree .dir   { color:var(--blue);font-weight:600; }
+.file-tree .jade  { color:var(--jade); }
+.file-tree .amber { color:var(--amber); }
+.file-tree .comment { color:var(--text-fnt);font-size:11.5px; }
 
-    /* === Spec chips === */
-    .spec-desc {
-      font-size: 0.88rem;
-      color: var(--text-sub);
-      line-height: 1.75;
-      max-width: 540px;
-      margin-bottom: 16px;
-    }
-    .chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .chip {
-      font-size: 0.78rem;
-      font-weight: 500;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text-sub);
-      padding: 5px 13px;
-      border-radius: 100px;
-    }
+/* ─── Fn table ─── */
+.fn-table-wrap { overflow-x:auto;margin-top:14px; }
+.fn-table { width:100%;border-collapse:collapse;font-size:13px; }
+.fn-table th,.fn-table td { padding:9px 14px;border:1px solid var(--border-lt);text-align:left;vertical-align:top; }
+.fn-table th { background:var(--surf-alt);font-size:11px;font-weight:600;color:var(--text-sec);letter-spacing:.4px;white-space:nowrap; }
+.fn-table td { color:var(--text-sec); }
+.fn-table td:first-child { font-weight:600;color:var(--text);white-space:nowrap; }
 
-    /* === Footer === */
-    .site-footer {
-      border-top: 1px solid var(--border);
-      padding-block: 30px;
-      margin-top: 12px;
-    }
-    .footer-inner {
-      display: flex;
-      gap: 20px;
-      justify-content: space-between;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-    .footer-info p {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.9;
-    }
-    .footer-info a {
-      color: var(--text-muted);
-      transition: color 0.15s;
-    }
-    .footer-info a:hover { color: var(--accent); text-decoration: none; }
-    .footer-nav {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-    .footer-nav a {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      transition: color 0.15s;
-    }
-    .footer-nav a:hover { color: var(--accent); text-decoration: none; }
-    .footer-ver {
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border-soft);
-    }
+/* ─── Version list ─── */
+.version-list { display:flex;flex-direction:column;gap:0;margin-top:14px; }
+.version-item { display:grid;grid-template-columns:56px 1fr;gap:16px;padding:12px 0;border-bottom:1px solid var(--border-lt);align-items:start; }
+.version-item:last-child { border-bottom:none; }
+.ver-badge { background:var(--blue-lt);color:var(--blue);font-size:11px;font-weight:700;border-radius:4px;padding:3px 7px;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap; }
+.ver-badge.jade  { background:var(--jade-lt);color:var(--jade); }
+.ver-badge.amber { background:var(--amber-lt);color:var(--amber); }
+.ver-desc { font-size:13px;color:var(--text-sec);line-height:1.6; }
 
-    /* === Responsive === */
-    @media (max-width: 620px) {
-      body { padding-inline: 16px; }
-      .hero { padding-block: 40px 32px; }
-      .hero h1 { font-size: 1.75rem; }
-      .steps-grid { grid-template-columns: 1fr; }
-      .features-grid { grid-template-columns: 1fr; }
-      .step-card::after { font-size: 2.4rem; }
-    }
-  </style>
-</head>
-<body>
+/* ─── Divider with label ─── */
+.section-divider {
+  display:flex;align-items:center;gap:12px;margin:48px 0 32px;
+  font-size:10px;font-weight:700;letter-spacing:2px;
+  color:var(--text-fnt);text-transform:uppercase;
+}
+.section-divider::before,.section-divider::after { content:'';flex:1;height:1px;background:var(--border); }
 
-  <!-- Site Header -->
-  <header class="site-header">
-    <div class="container inner">
-      <div class="brand">
-        <span class="univ">원광대학교 한의과대학</span>
-        <span class="sep">·</span>
-        <span class="dept-name">경혈학교실 &amp; 침구의학교실</span>
+/* ─── Info note ─── */
+.info-note {
+  background:var(--blue-lt);border:1px solid rgba(26,95,150,.2);border-left:3px solid var(--blue);
+  border-radius:5px;padding:11px 14px;font-size:12.5px;color:var(--text-sec);
+  line-height:1.65;margin-top:14px;
+}
+.info-note strong { color:var(--text);font-weight:600; }
+
+/* ─── Responsive ─── */
+@media (max-width:760px) {
+  body { flex-direction:column; }
+  .sidebar {
+    width:100%;height:auto;position:static;
+    flex-direction:row;flex-wrap:wrap;align-items:center;
+    overflow-x:auto;border-right:none;border-bottom:1.5px solid var(--border);
+  }
+  .sidebar-brand { padding:14px 16px;border-bottom:none;border-right:1px solid var(--border-lt); }
+  .brand-name { font-size:12px; }
+  .nav-section-lbl,.nav-divider,.sidebar-footer { display:none; }
+  .nav-link { padding:10px 14px;white-space:nowrap;border-left:none;border-bottom:2px solid transparent; }
+  .nav-link:hover,.nav-link.active { border-bottom-color:var(--blue);border-left-color:transparent; }
+  .main { padding:24px 18px 60px; }
+  .page-h1 { font-size:22px; }
+  .tool-card { grid-template-columns:1fr; }
+  .tool-card-accent { width:100%;height:4px; }
+}
+</style>
+
+<!-- ─── SIDEBAR ─── -->
+<nav class="sidebar" aria-label="목차">
+  <div class="sidebar-brand">
+    <div class="brand-eyebrow">원광대학교 한의과대학</div>
+    <div class="brand-name">경혈학교실 &amp; 침구의학교실</div>
+  </div>
+
+  <div class="nav-section-lbl">실습 도구</div>
+  <a class="nav-link" href="#tools">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/></svg>
+    실습 도구 목록
+  </a>
+  <a class="nav-link" href="#checklist">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/><path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/></svg>
+    동의서·체크리스트
+  </a>
+  <a class="nav-link" href="#journal">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.746c-.917-.35-2.107-.692-3.287-.811-1.094-.11-2.278-.036-3.213.492V2.687z"/></svg>
+    실습일지
+  </a>
+
+  <div class="nav-divider"></div>
+
+  <a class="nav-link" href="#structure">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>
+    파일 구조
+  </a>
+  <a class="nav-link" href="#changelog">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
+    업데이트 이력
+  </a>
+  <a class="nav-link" href="#dev">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/></svg>
+    개발 정보
+  </a>
+
+  <div class="sidebar-footer">
+    경혈학교실 · 침구의학교실<br>
+    <a href="mailto:medicdog@wku.ac.kr" style="color:var(--blue);text-decoration:none;">medicdog@wku.ac.kr</a>
+  </div>
+</nav>
+
+<!-- ─── MAIN ─── -->
+<main class="main">
+
+  <!-- Page header -->
+  <div class="page-header" id="tools">
+    <div class="page-eyebrow">원광대학교 한의과대학 경혈학교실 &amp; 침구의학교실</div>
+    <h1 class="page-h1">경혈학실습 포털</h1>
+    <p class="page-sub">실습일지 · 피험자 동의서 · 사전-사후 체크리스트 통합 접속 포털</p>
+  </div>
+
+  <!-- ─── 실습 도구 목록 ─── -->
+  <section class="doc-section" id="tools-list">
+    <h2 class="section-h2">
+      <span class="h2-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/></svg>
+      </span>
+      실습 도구 목록
+    </h2>
+    <p class="prose" style="margin-bottom:20px;">아래 두 도구를 순서대로 활용하여 실습을 진행합니다. 브라우저만 있으면 별도 설치 없이 사용 가능합니다.</p>
+
+    <div class="tool-cards">
+
+      <!-- ① 동의서·체크리스트 -->
+      <div class="tool-card" id="checklist">
+        <div class="tool-card-accent jade"></div>
+        <div class="tool-card-body">
+          <div class="tool-card-head">
+            <div class="tool-card-title-group">
+              <div class="tool-tag jade">① 시술 사전·사후 관리</div>
+              <div class="tool-card-name">피험자 동의 및 시술 사전-사후 체크리스트</div>
+              <div class="tool-card-en">Participant Consent Form &amp; Pre/Post Procedure Checklist</div>
+            </div>
+            <div class="tool-card-links">
+              <a class="link-btn jade-btn" href="checklist.html" target="_blank">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/></svg>
+                체크리스트 열기
+              </a>
+            </div>
+          </div>
+          <p class="tool-card-desc">피험자(피시술자) 동의서 작성부터 시술 전·후 체크리스트까지 세 단계를 하나의 문서로 통합 관리합니다. 탭별 입력 시각을 자동 기록하여 최종 출력본(PDF)에 타임스탬프가 표시됩니다. 작성 내용은 JSON 파일로 저장·불러오기 가능합니다.</p>
+          <div class="chip-row">
+            <div class="chip"><span class="chip-dot jade"></span>피험자 동의서</div>
+            <div class="chip"><span class="chip-dot jade"></span>시술 동의 (15종)</div>
+            <div class="chip"><span class="chip-dot jade"></span>초음파 영상관찰</div>
+            <div class="chip"><span class="chip-dot jade"></span>노출·접촉 부위 체크</div>
+            <div class="chip"><span class="chip-dot jade"></span>사전 체크리스트</div>
+            <div class="chip"><span class="chip-dot jade"></span>사후 체크리스트</div>
+            <div class="chip"><span class="chip-dot jade"></span>생체징후 기록</div>
+            <div class="chip"><span class="chip-dot jade"></span>타임스탬프 자동 기록</div>
+            <div class="chip"><span class="chip-dot jade"></span>JSON 저장/불러오기</div>
+          </div>
+        </div>
       </div>
-      <a href="./group-journal.html" class="header-cta">실습일지 열기 →</a>
+
+      <!-- ② 실습일지 -->
+      <div class="tool-card" id="journal">
+        <div class="tool-card-accent blue"></div>
+        <div class="tool-card-body">
+          <div class="tool-card-head">
+            <div class="tool-card-title-group">
+              <div class="tool-tag blue">② 조별 실습 기록</div>
+              <div class="tool-card-name">경혈학실습 &amp; 경혈학임상술기실습 일지</div>
+              <div class="tool-card-en">Group Practice Journal · Acupoint Location &amp; Needling</div>
+            </div>
+            <div class="tool-card-links">
+              <a class="link-btn primary" href="group-journal.html" target="_blank">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/></svg>
+                실습일지 열기
+              </a>
+            </div>
+          </div>
+          <p class="tool-card-desc">탐혈 · 자침 · 초음파영상 기록을 통합한 조별 실습일지입니다. 관찰자 위생·안전 체크리스트, 피시술자 생체징후, 경혈별 자침 기록, 개인 성찰, OSCE 채점 결과를 체계적으로 기록합니다. 조원별 개별 저장 파일을 하나의 최종 일지로 자동 병합하는 <strong>파일 통합 기능</strong>을 지원합니다.</p>
+          <div class="chip-row">
+            <div class="chip"><span class="chip-dot blue"></span>위생·안전 체크리스트</div>
+            <div class="chip"><span class="chip-dot blue"></span>피시술자 생체징후</div>
+            <div class="chip"><span class="chip-dot blue"></span>경혈 기록 (361穴)</div>
+            <div class="chip"><span class="chip-dot blue"></span>초음파영상 첨부</div>
+            <div class="chip"><span class="chip-dot blue"></span>개인 성찰</div>
+            <div class="chip"><span class="chip-dot blue"></span>OSCE 채점</div>
+            <div class="chip"><span class="chip-dot blue"></span>JSON 저장/불러오기</div>
+            <div class="chip"><span class="chip-dot blue"></span>파일 통합(Merge)</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.tool-cards -->
+
+    <div class="info-note" style="margin-top:20px;">
+      <strong>실습 진행 순서:</strong> ① 체크리스트에서 피험자 동의서 및 사전 체크리스트를 먼저 작성 → ② 실습일지에서 탐혈·자침·초음파영상 기록 → ① 체크리스트에서 사후 체크리스트 작성 → 실습일지 파일 통합 → PDF 출력
     </div>
-  </header>
+  </section>
 
-  <main>
+  <!-- ─── 파일 구조 ─── -->
+  <section class="doc-section" id="structure">
+    <h2 class="section-h2">
+      <span class="h2-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>
+      </span>
+      GitHub Pages 파일 구조
+    </h2>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-badge">조별 실습일지 시스템</div>
-        <h1>경혈학실습 &amp;<br><span class="hl">경혈학임상술기실습</span> 일지</h1>
-        <p class="hero-sub">
-          탐혈·자침·초음파영상 통합 실습을 위한 조별 실습일지입니다.<br>
-          단일 HTML 파일로 구성되어 별도 설치 없이 브라우저에서 바로 사용할 수 있습니다.
-        </p>
-        <div class="hero-actions">
-          <a href="./group-journal.html" class="btn-primary">실습일지 열기 →</a>
-          <a href="https://github.com/damjjaeng/kmed-journal" target="_blank" rel="noopener" class="btn-secondary">GitHub ↗</a>
-        </div>
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Features -->
-    <section class="page-section">
-      <div class="container">
-        <p class="section-eyebrow">주요 기능</p>
-        <h2 class="section-title">섹션별 실습 기록</h2>
-        <div class="features-grid">
-
-          <div class="fc">
-            <span class="fc-tag">섹션 1</span>
-            <h3>관찰자 체크리스트</h3>
-            <p>위생·안전관리 체크리스트 자동 채점. 항목별 점수 합산 및 평점이 실시간으로 계산됩니다.</p>
-          </div>
-
-          <div class="fc">
-            <span class="fc-tag">섹션 2</span>
-            <h3>피시술자 정보</h3>
-            <p>생체징후(체온·혈압·혈당) 및 피시술자 기본정보를 구조화된 양식으로 기록합니다.</p>
-          </div>
-
-          <div class="fc">
-            <span class="fc-tag">섹션 3</span>
-            <h3>탐혈·시술 실습 기록</h3>
-            <p>경맥 → 경혈 드롭다운 선택, 경혈별 아코디언 카드로 상세 기록. 경혈별 초음파영상 첨부 가능.</p>
-            <span class="star-note">★ 상용수혈 130穴 (SCM0003-2009) 표시</span>
-          </div>
-
-          <div class="fc">
-            <span class="fc-tag">섹션 4</span>
-            <h3>개인 성찰</h3>
-            <p>조원 각자의 성찰을 개별 입력. 파일 통합 시 전원의 성찰 내용이 자동으로 병합됩니다.</p>
-          </div>
-
-          <div class="fc">
-            <span class="fc-tag">섹션 5</span>
-            <h3>모의 OSCE 채점 이미지</h3>
-            <p>관찰자가 작성한 모의 OSCE 채점표를 이미지(최대 4장)로 첨부합니다.</p>
-          </div>
-
-          <div class="fc merge-card">
-            <span class="fc-tag">파일 통합</span>
-            <h3>조별 일지 자동 병합</h3>
-            <p>조원 각자가 저장한 JSON 파일을 하나의 최종 일지로 자동 통합. 경혈 기록·성찰·이미지가 모두 합산됩니다.</p>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Usage Guide -->
-    <section class="page-section">
-      <div class="container">
-        <p class="section-eyebrow">사용 방법</p>
-        <h2 class="section-title">실습일지 작성 흐름</h2>
-
-        <div class="steps-grid">
-          <div class="step-card" data-n="1">
-            <h3>개별 실습 기록</h3>
-            <ol>
-              <li>실습일지를 열어 <strong>기본정보</strong>(날짜·분반·조·주제·지도교수)를 입력합니다.</li>
-              <li>조원 이름과 역할(시술자·피시술자·관찰자)을 확인합니다.</li>
-              <li>섹션 1→5를 순서대로 작성합니다.</li>
-              <li>작성 중 수시로 <strong>[데이터 저장]</strong>을 눌러 JSON 파일로 저장합니다.</li>
-            </ol>
-          </div>
-
-          <div class="step-card" data-n="2">
-            <h3>조별 최종 일지 완성</h3>
-            <ol>
-              <li>조원 각자가 자신이 담당한 경혈 기록과 성찰을 작성 후 저장합니다.</li>
-              <li>조장이 <strong>[파일 통합]</strong>을 클릭합니다.</li>
-              <li>조원 전체의 JSON 파일을 선택하고 기준 파일을 지정합니다.</li>
-              <li><strong>[통합 실행]</strong>을 클릭하면 최종 일지가 완성됩니다.</li>
-              <li>최종 일지를 저장하거나 PDF로 출력합니다.</li>
-            </ol>
-          </div>
-        </div>
-
-        <!-- Merge algorithm table -->
-        <div class="merge-info">
-          <div class="merge-info-head">파일 통합 알고리즘</div>
-          <table class="merge-tbl">
-            <tbody>
-              <tr>
-                <td>기본정보 · 체크리스트 (섹션 1·2)</td>
-                <td><span class="badge badge-base">기준 파일</span> 적용</td>
-              </tr>
-              <tr>
-                <td>섹션 3 경혈 기록</td>
-                <td><span class="badge badge-all">모든 파일</span> 수집 후 합산</td>
-              </tr>
-              <tr>
-                <td>섹션 4 성찰</td>
-                <td><span class="badge badge-all">모든 파일</span> 비어 있지 않은 항목 수집</td>
-              </tr>
-              <tr>
-                <td>섹션 5 OSCE 이미지</td>
-                <td><span class="badge badge-all">모든 파일</span> 통합 (기준 파일 우선)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Tech specs -->
-    <section class="page-section">
-      <div class="container">
-        <p class="section-eyebrow">기술 정보</p>
-        <h2 class="section-title">브라우저만으로 동작</h2>
-        <p class="spec-desc">
-          별도 설치나 서버 없이 브라우저만으로 동작합니다. 데이터는 사용자 기기에
-          JSON 파일로만 저장되며 외부 서버로 전송되지 않습니다.
-        </p>
-        <div class="chips">
-          <span class="chip">Chrome (권장)</span>
-          <span class="chip">Edge</span>
-          <span class="chip">Safari</span>
-          <span class="chip">Firefox</span>
-          <span class="chip">단일 HTML 파일</span>
-          <span class="chip">Vanilla JS</span>
-          <span class="chip">외부 의존성 없음</span>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Site Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-inner">
-        <div class="footer-info">
-          <p>
-            <strong style="color:var(--text-sub);">원광대학교 한의과대학</strong><br>
-            경혈학교실 · 침구의학교실<br>
-            문의: <a href="mailto:medicdog@wku.ac.kr">medicdog@wku.ac.kr</a>
-          </p>
-        </div>
-        <nav class="footer-nav">
-          <a href="./group-journal.html">실습일지</a>
-          <a href="https://github.com/damjjaeng/kmed-journal" target="_blank" rel="noopener">GitHub</a>
-          <a href="./README.html">README</a>
-        </nav>
-      </div>
-      <p class="footer-ver">
-        group-journal.html v18 · 상용수혈 SCM0003-2009 기준 · 2026
-      </p>
+    <div class="file-tree">
+      <span class="dir">kmed-journal/</span><br>
+      ├── <span style="color:var(--blue);font-weight:600;">index.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 포털 대문 (현재 파일)</span><br>
+      ├── <span class="jade">group-journal.html</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 경혈학실습 &amp; 임상술기실습 일지</span><br>
+      └── <span class="amber">checklist.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 피험자 동의서 및 사전-사후 체크리스트</span>
     </div>
-  </footer>
+
+    <div class="fn-table-wrap">
+      <table class="fn-table" style="margin-top:14px;">
+        <thead><tr><th>파일</th><th>역할</th><th>비고</th></tr></thead>
+        <tbody>
+          <tr><td>index.html</td><td>포털 대문 — 두 도구 진입점, 사용 안내</td><td>현재 페이지</td></tr>
+          <tr><td>group-journal.html</td><td>조별 실습일지 본체 (섹션 1–5)</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
+          <tr><td>checklist.html</td><td>피험자 동의서 + 사전·사후 체크리스트</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ─── 업데이트 이력 ─── -->
+  <section class="doc-section" id="changelog">
+    <h2 class="section-h2">
+      <span class="h2-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
+      </span>
+      업데이트 이력
+    </h2>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--jade);text-transform:uppercase;margin-bottom:10px;">동의서 &amp; 체크리스트 (checklist.html)</p>
+    <div class="version-list">
+      <div class="version-item">
+        <div><div class="ver-badge jade">v6</div></div>
+        <div class="ver-desc">JSON 저장 기능 추가 (blob URL 다운로드), 불러오기 기능, 탭별 입력 타임스탬프 자동 기록, 최종 출력본 타임스탬프 표시</div>
+      </div>
+      <div class="version-item">
+        <div><div class="ver-badge jade">v5</div></div>
+        <div class="ver-desc">기본정보 중복 제거 (동의서 통합), 실습참가자 명단 섹션 통합, 방과후 학습활동 드롭다운 추가</div>
+      </div>
+      <div class="version-item">
+        <div><div class="ver-badge jade">v4</div></div>
+        <div class="ver-desc">피험자 동의서 + 사전·사후 체크리스트 3탭 구조로 통합</div>
+      </div>
+    </div>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--blue);text-transform:uppercase;margin:24px 0 10px;">실습일지 (group-journal.html)</p>
+    <div class="version-list">
+      <div class="version-item">
+        <div><div class="ver-badge">v22</div></div>
+        <div class="ver-desc">식별층 확인 — '피하' → '피하지방' 명칭 변경</div>
+      </div>
+      <div class="version-item">
+        <div><div class="ver-badge">v21</div></div>
+        <div class="ver-desc">피시술자 정보 동적 추가 (최대 4명), 식별층 확인: 신경·혈관 분리 및 내부 장기 추가</div>
+      </div>
+      <div class="version-item">
+        <div><div class="ver-badge">v20</div></div>
+        <div class="ver-desc">탐촉자·Depth/Gain 영상별 개별 입력, 식별층 확인 → 종합 소견 위 이동</div>
+      </div>
+      <div class="version-item">
+        <div><div class="ver-badge">v19</div></div>
+        <div class="ver-desc">섹션 3 초음파영상 — 횡단면/종단면 각 5장, 탐촉자 선택 조건 추가</div>
+      </div>
+      <div class="version-item">
+        <div><div class="ver-badge">v14</div></div>
+        <div class="ver-desc">파일 통합(File Merge) 기능 추가</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 개발 정보 ─── -->
+  <section class="doc-section" id="dev">
+    <h2 class="section-h2">
+      <span class="h2-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/></svg>
+      </span>
+      개발 정보
+    </h2>
+
+    <div class="fn-table-wrap">
+      <table class="fn-table">
+        <tbody>
+          <tr><td>소속</td><td>원광대학교 한의과대학 경혈학교실 · 침구의학교실</td></tr>
+          <tr><td>문의</td><td><a href="mailto:medicdog@wku.ac.kr" style="color:var(--blue);">medicdog@wku.ac.kr</a></td></tr>
+          <tr><td>기술 스택</td><td>단일 HTML 파일 · Vanilla JS · CSS · Google Fonts (외부 의존성 없음)</td></tr>
+          <tr><td>브라우저 호환</td><td>Chrome, Edge, Safari, Firefox 최신 버전</td></tr>
+          <tr><td>저장소</td><td><a href="https://github.com/damjjaeng/kmed-journal" target="_blank" style="color:var(--blue);">github.com/damjjaeng/kmed-journal</a></td></tr>
+          <tr><td>GitHub Pages</td><td><a href="https://damjjaeng.github.io/kmed-journal/" target="_blank" style="color:var(--blue);">damjjaeng.github.io/kmed-journal</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// Active nav highlight
+const navLinks = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('.doc-section, .page-header');
+function updateNav() {
+  let current = '';
+  sections.forEach(sec => {
+    if (sec.getBoundingClientRect().top <= 70) current = sec.id;
+  });
+  const map = { 'tools': '#tools', 'tools-list': '#tools', 'journal': '#journal', 'checklist': '#checklist', 'structure': '#structure', 'changelog': '#changelog', 'dev': '#dev' };
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === (map[current] || '#' + current));
+  });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+</script>
 
 </body>
 </html>
