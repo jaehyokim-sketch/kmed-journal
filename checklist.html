@@ -750,16 +750,27 @@ function restoreData(d) {
   });
 }
 
+/* ─── Stable filename (실습 일자 + 조 기반, 반복 저장 시 동일 파일명) ─── */
+function buildFilename() {
+  const dateVal = (document.getElementById('con-date')?.value || '').replace(/-/g, '');
+  const joEl    = document.getElementById('con-jo');
+  const joVal   = joEl?.value ? joEl.value + '조' : '';
+  const datePart = dateVal || (() => {
+    const t = new Date(), p = n => String(n).padStart(2,'0');
+    return `${t.getFullYear()}${p(t.getMonth()+1)}${p(t.getDate())}`;
+  })();
+  const suffix = joVal ? `_${joVal}` : '';
+  return `동의서체크리스트_${datePart}${suffix}.json`;
+}
+
 /* ─── Save JSON (GitHub Pages / standalone — blob URL download) ─── */
 function saveJSON() {
   const now = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  const dateStr = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
   const payload = {
     _meta: {
       savedAt: now.toISOString(),
       app: '경혈학실습 체크리스트',
-      version: '6'
+      version: '7'
     },
     timestamps: { ...ts },
     fields: collectData()
@@ -768,7 +779,7 @@ function saveJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `경혈학실습_${dateStr}.json`;
+  a.download = buildFilename();
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
