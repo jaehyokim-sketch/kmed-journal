@@ -1329,8 +1329,27 @@ function loadFromFile(event) {
 }
 
 function printToPDF() {
-  setStatus('인쇄 대화상자에서 "PDF로 저장"을 선택하세요');
-  setTimeout(() => window.print(), 200);
+  // 파일명: 날짜(YYYYMMDD)_분반번호_조_실습주제  (예: 20260920_01_10조_족양명위경)
+  const rawDate  = (document.getElementById('pd')    || {}).value || '';
+  const rawCls   = (document.getElementById('cls')   || {}).value || '';
+  const rawGrp   = (document.getElementById('grp')   || {}).value || '';
+  const rawTopic = (document.getElementById('topic') || {}).value || '';
+
+  const date  = rawDate.replace(/-/g, '');                  // 2026-09-20 → 20260920
+  const cls   = rawCls.replace('분반', '').trim();           // 01분반 → 01
+  const grp   = rawGrp.trim();                               // 10조 그대로
+  const topic = rawTopic.replace(/[\\/:*?"<>|]/g, '').trim();
+
+  const parts = [date, cls, grp, topic].filter(Boolean);
+  const pdfTitle = parts.length ? parts.join('_') : document.title;
+
+  const origTitle = document.title;
+  document.title = pdfTitle;                                 // 인쇄 대화상자 기본 파일명
+  setStatus('인쇄 대화상자에서 "PDF로 저장"을 선택하세요 — 파일명: ' + pdfTitle + '.pdf');
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => { document.title = origTitle; }, 2000); // 저장 후 title 복원
+  }, 200);
 }
 
 function resetForm() {
