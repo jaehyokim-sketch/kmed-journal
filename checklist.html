@@ -750,17 +750,23 @@ function restoreData(d) {
   });
 }
 
-/* ─── Stable filename (실습 일자 + 조 기반, 반복 저장 시 동일 파일명) ─── */
+/* ─── Stable filename: 동의서체크리스트_분반-실습조-실습일자.json ─── */
 function buildFilename() {
-  const dateVal = (document.getElementById('con-date')?.value || '').replace(/-/g, '');
-  const joEl    = document.getElementById('con-jo');
-  const joVal   = joEl?.value ? joEl.value + '조' : '';
-  const datePart = dateVal || (() => {
-    const t = new Date(), p = n => String(n).padStart(2,'0');
-    return `${t.getFullYear()}${p(t.getMonth()+1)}${p(t.getDate())}`;
-  })();
-  const suffix = joVal ? `_${joVal}` : '';
-  return `동의서체크리스트_${datePart}${suffix}.json`;
+  // 분반: radio name="con-bun"
+  const bunEl  = document.querySelector('input[name="con-bun"]:checked');
+  const bunVal = bunEl ? bunEl.value + '분반' : '';
+  // 실습 조: select#con-jo
+  const joEl  = document.getElementById('con-jo');
+  const joVal = joEl?.value ? joEl.value + '조' : '';
+  // 실습 일자: input#con-date  (YYYY-MM-DD → YYYYMMDD)
+  const dateVal = (document.getElementById('con-date')?.value || '').replace(/-/g, '')
+    || (() => {
+      const t = new Date(), p = n => String(n).padStart(2,'0');
+      return `${t.getFullYear()}${p(t.getMonth()+1)}${p(t.getDate())}`;
+    })();
+  // 분반-조-일자 (값이 없는 부분은 생략)
+  const parts = [bunVal, joVal, dateVal].filter(Boolean);
+  return `동의서체크리스트_${parts.join('-')}.json`;
 }
 
 /* ─── Save JSON (GitHub Pages / standalone — blob URL download) ─── */
