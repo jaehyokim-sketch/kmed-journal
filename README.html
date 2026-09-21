@@ -12,7 +12,7 @@
   --text:#192E4A;--text-sec:#4A6585;--text-fnt:#8EA3BC;
   --blue:#1A5F96;--blue-mid:#2678BB;--blue-lt:#E1EDF8;
   --jade:#2D8B72;--jade-lt:#E1F4EE;--jade-mid:#3AA88A;
-  --amber:#A05C00;--amber-lt:#FEF5E6;
+  --amber:#A05C00;--amber-lt:#FEF5E6;--amber-mid:#C07008;
   --code-bg:#EEF4FB;--code-border:#C8D8EC;
 }
 @media(prefers-color-scheme:dark){
@@ -21,8 +21,8 @@
     --border:#2A3F5A;--border-lt:#1F3450;
     --text:#CDE0F5;--text-sec:#7AA8CC;--text-fnt:#4A6888;
     --blue:#4AA0DC;--blue-mid:#5DB8F0;--blue-lt:#152840;
-    --jade:#3DB890;--jade-lt:#112B22;
-    --amber:#CCA050;--amber-lt:#2C1E08;
+    --jade:#3DB890;--jade-lt:#112B22;--jade-mid:#3DB890;
+    --amber:#CCA050;--amber-lt:#2C1E08;--amber-mid:#DDB060;
     --code-bg:#0F1E30;--code-border:#2A3F5A;
   }
 }
@@ -43,6 +43,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(
 .btn-blue:hover{background:var(--blue-mid);}
 .btn-jade{background:var(--jade);color:#fff;}
 .btn-jade:hover{background:var(--jade-mid);}
+.btn-amber{background:var(--amber);color:#fff;}
+.btn-amber:hover{background:var(--amber-mid);}
 .btn-ghost{background:var(--surf-alt);color:var(--text-sec);border:1px solid var(--border);}
 .btn-ghost:hover{border-color:var(--blue);color:var(--blue);}
 
@@ -53,6 +55,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(
 .h2-icon{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;}
 .h2-icon.jade{background:var(--jade-lt);color:var(--jade);}
 .h2-icon.blue{background:var(--blue-lt);color:var(--blue);}
+.h2-icon.amber{background:var(--amber-lt);color:var(--amber);}
 .h2-icon.gray{background:var(--surf-alt);color:var(--text-sec);}
 .section-h3{font-size:15px;font-weight:700;color:var(--text);margin:24px 0 12px;padding-bottom:6px;border-bottom:1.5px solid var(--border-lt);}
 
@@ -64,10 +67,12 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(
 .tool-card-bar{height:5px;}
 .tool-card-bar.jade{background:var(--jade);}
 .tool-card-bar.blue{background:var(--blue);}
+.tool-card-bar.amber{background:var(--amber);}
 .tool-card-inner{padding:22px 24px;}
 .tool-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:3px;padding:2px 8px;margin-bottom:8px;}
 .tool-tag.jade{background:var(--jade-lt);color:var(--jade);}
 .tool-tag.blue{background:var(--blue-lt);color:var(--blue);}
+.tool-tag.amber{background:var(--amber-lt);color:var(--amber);}
 .tool-name{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;color:var(--text);margin-bottom:4px;}
 .tool-en{font-size:12px;color:var(--text-fnt);margin-bottom:14px;}
 .tool-desc{font-size:13.5px;color:var(--text-sec);line-height:1.75;margin-bottom:16px;}
@@ -76,6 +81,8 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(
 .tool-link.jade:hover{background:var(--jade-mid);}
 .tool-link.blue{background:var(--blue);color:#fff;}
 .tool-link.blue:hover{background:var(--blue-mid);}
+.tool-link.amber{background:var(--amber);color:#fff;}
+.tool-link.amber:hover{background:var(--amber-mid);}
 
 /* ─── Tables ─── */
 .tbl-wrap{overflow-x:auto;margin:14px 0;}
@@ -94,6 +101,7 @@ pre code{background:none;border:none;padding:0;color:inherit;}
 .file-tree{background:var(--surface);border:1.5px solid var(--border);border-radius:7px;padding:16px 20px;font-family:'Noto Sans Mono','Courier New',monospace;font-size:12.5px;color:var(--text-sec);line-height:2.1;margin:14px 0;}
 .ft-dir{color:var(--blue);font-weight:700;}
 .ft-jade{color:var(--jade);}
+.ft-amber{color:var(--amber);}
 .ft-comment{color:var(--text-fnt);font-size:11.5px;}
 
 /* ─── Flow steps ─── */
@@ -103,6 +111,7 @@ pre code{background:none;border:none;padding:0;color:inherit;}
 .flow-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;}
 .flow-num.jade{background:var(--jade-lt);color:var(--jade);}
 .flow-num.blue{background:var(--blue-lt);color:var(--blue);}
+.flow-num.amber{background:var(--amber-lt);color:var(--amber);}
 .flow-body{font-size:13px;color:var(--text-sec);line-height:1.65;}
 .flow-body strong{color:var(--text);font-weight:600;}
 
@@ -113,7 +122,7 @@ pre code{background:none;border:none;padding:0;color:inherit;}
 .ver-badge{font-size:11px;font-weight:700;border-radius:4px;padding:3px 7px;text-align:center;white-space:nowrap;}
 .ver-badge.jade{background:var(--jade-lt);color:var(--jade);}
 .ver-badge.blue{background:var(--blue-lt);color:var(--blue);}
-.ver-desc{font-size:13px;color:var(--text-sec);line-height:1.6;}
+.ver-badge.amber{background:var(--amber-lt);color:var(--amber);}
 
 /* ─── Badge row ─── */
 .chip-row{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;}
@@ -121,6 +130,7 @@ pre code{background:none;border:none;padding:0;color:inherit;}
 .chip-dot{width:6px;height:6px;border-radius:50%;}
 .chip-dot.jade{background:var(--jade);}
 .chip-dot.blue{background:var(--blue);}
+.chip-dot.amber{background:var(--amber);}
 
 /* ─── Footer ─── */
 .footer{margin-top:60px;padding-top:24px;border-top:1.5px solid var(--border);font-size:12px;color:var(--text-fnt);text-align:center;line-height:1.8;}
@@ -141,11 +151,15 @@ pre code{background:none;border:none;padding:0;color:inherit;}
 <div class="hero">
   <div class="hero-eyebrow">원광대학교 한의과대학 경혈학교실 &amp; 침구의학교실</div>
   <h1 class="hero-h1">경혈학실습 포털</h1>
-  <p class="hero-sub">피험자 동의서·체크리스트 + 조별 실습일지 통합 접속 포털 &mdash; GitHub Pages</p>
+  <p class="hero-sub">피험자 동의서·체크리스트 + 생체징후·위생관리 + 조별 실습일지 통합 접속 포털 &mdash; GitHub Pages</p>
   <div class="hero-links">
     <a class="btn btn-jade" href="checklist.html" target="_blank">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/></svg>
       체크리스트 열기
+    </a>
+    <a class="btn btn-amber" href="vitalsign_CNT.html" target="_blank">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/></svg>
+      생체징후·위생관리
     </a>
     <a class="btn btn-blue" href="group-journal.html" target="_blank">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.746c-.917-.35-2.107-.692-3.287-.811-1.094-.11-2.278-.036-3.213.492V2.687z"/></svg>
@@ -161,9 +175,8 @@ pre code{background:none;border:none;padding:0;color:inherit;}
 <!-- ─── 개요 ─── -->
 <div class="section">
   <h2 class="section-h2"><span class="h2-icon gray">📋</span>개요</h2>
-  <p class="prose">경혈학실습 및 경혈학임상술기실습에서 사용하는 두 가지 웹 기반 실습 도구입니다. 별도 설치 없이 브라우저만으로 사용 가능하며, 모든 데이터는 JSON 파일로 저장·불러오기 할 수 있습니다.</p>
+  <p class="prose">경혈학실습 및 경혈학임상술기실습에서 사용하는 세 가지 웹 기반 실습 도구입니다. 별도 설치 없이 브라우저만으로 사용 가능하며, 모든 데이터는 JSON 파일로 저장·불러오기 할 수 있습니다.</p>
 
-  <!-- 실습 진행 순서 -->
   <h3 class="section-h3">실습 진행 순서</h3>
   <div class="flow">
     <div class="flow-item">
@@ -171,7 +184,11 @@ pre code{background:none;border:none;padding:0;color:inherit;}
       <div class="flow-body"><strong>체크리스트</strong> — 피험자 동의서 및 사전 체크리스트 작성</div>
     </div>
     <div class="flow-item">
-      <div class="flow-num blue">②</div>
+      <div class="flow-num amber">②</div>
+      <div class="flow-body"><strong>생체징후·위생관리</strong> — 혈압·체온·혈당 측정 및 CNT 기록</div>
+    </div>
+    <div class="flow-item">
+      <div class="flow-num blue">③</div>
       <div class="flow-body"><strong>실습일지</strong> — 탐혈·자침·초음파영상 기록</div>
     </div>
     <div class="flow-item">
@@ -179,13 +196,13 @@ pre code{background:none;border:none;padding:0;color:inherit;}
       <div class="flow-body"><strong>체크리스트</strong> — 사후 체크리스트 작성</div>
     </div>
     <div class="flow-item">
-      <div class="flow-num blue">②</div>
+      <div class="flow-num blue">③</div>
       <div class="flow-body"><strong>실습일지</strong> — 파일 통합 (조원별 JSON 합산) → PDF 출력</div>
     </div>
   </div>
 </div>
 
-<!-- ─── 체크리스트 ─── -->
+<!-- ─── ① 체크리스트 ─── -->
 <div class="section">
   <h2 class="section-h2"><span class="h2-icon jade">✅</span>① 피험자 동의 및 시술 사전-사후 체크리스트</h2>
 
@@ -245,14 +262,57 @@ pre code{background:none;border:none;padding:0;color:inherit;}
   </div>
 </div>
 
-<!-- ─── 실습일지 ─── -->
+<!-- ─── ② 생체징후·위생관리 ─── -->
 <div class="section">
-  <h2 class="section-h2"><span class="h2-icon blue">📓</span>② 경혈학실습 &amp; 경혈학임상술기실습 일지</h2>
+  <h2 class="section-h2"><span class="h2-icon amber">🩺</span>② 생체징후 측정 및 감염예방을 위한 위생 관리 실습 기록</h2>
+
+  <div class="tool-card">
+    <div class="tool-card-bar amber"></div>
+    <div class="tool-card-inner">
+      <div class="tool-tag amber">② 생체징후·위생관리 실습 기록</div>
+      <div class="tool-name">생체징후 측정 및 감염예방을 위한 위생 관리 실습 기록</div>
+      <div class="tool-en">Vital Signs Measurement &amp; Clean Needle Technique (CNT) Practice Journal</div>
+      <p class="tool-desc">혈압·체온·혈당 측정 및 감염예방 위생관리(Clean Needle Technique) 실습을 위한 조별 기록지입니다. 사전학습 내용 정리, 조원별 생체징후 측정 결과 및 CNT 수행 기록, 개인 성찰, 실습 준비·종료 체크리스트를 통합 관리합니다.</p>
+      <a class="tool-link amber" href="vitalsign_CNT.html" target="_blank">실습일지 열기 →</a>
+      <div class="chip-row">
+        <div class="chip"><span class="chip-dot amber"></span>혈압 측정 기록</div>
+        <div class="chip"><span class="chip-dot amber"></span>맥박수 측정 기록</div>
+        <div class="chip"><span class="chip-dot amber"></span>체온 측정 기록</div>
+        <div class="chip"><span class="chip-dot amber"></span>혈당 측정 기록</div>
+        <div class="chip"><span class="chip-dot amber"></span>CNT 위생관리</div>
+        <div class="chip"><span class="chip-dot amber"></span>준비·종료 체크리스트</div>
+        <div class="chip"><span class="chip-dot amber"></span>조별 선행학습 요약</div>
+        <div class="chip"><span class="chip-dot amber"></span>개인 성찰</div>
+        <div class="chip"><span class="chip-dot amber"></span>실습 사진 첨부</div>
+        <div class="chip"><span class="chip-dot amber"></span>JSON 저장/불러오기</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="section-h3">섹션 구성</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>섹션</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>섹션 1</td><td>조별 선행학습 내용 요약 정리 (손위생 절차 포함)</td></tr>
+        <tr><td>섹션 2</td><td>실습 준비 안전 체크리스트 (8항목)</td></tr>
+        <tr><td>섹션 3</td><td>조원별 생체징후 측정 및 CNT 수행 기록 (혈압 좌/우·맥박수·체온·혈당, 시술자/피시술자 역할 기록)</td></tr>
+        <tr><td>섹션 4</td><td>학습 성찰 (개인)</td></tr>
+        <tr><td>섹션 5</td><td>실습 종료 체크리스트</td></tr>
+        <tr><td>섹션 6</td><td>실습 사진 첨부 (최대 10장)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ─── ③ 실습일지 ─── -->
+<div class="section">
+  <h2 class="section-h2"><span class="h2-icon blue">📓</span>③ 경혈학실습 &amp; 경혈학임상술기실습 일지</h2>
 
   <div class="tool-card">
     <div class="tool-card-bar blue"></div>
     <div class="tool-card-inner">
-      <div class="tool-tag blue">② 조별 실습 기록</div>
+      <div class="tool-tag blue">③ 조별 실습 기록</div>
       <div class="tool-name">경혈학실습 &amp; 경혈학임상술기실습 일지</div>
       <div class="tool-en">Group Practice Journal · Acupoint Location &amp; Needling</div>
       <p class="tool-desc">탐혈·자침·초음파영상 기록을 통합한 조별 실습일지입니다. 조원별 개별 저장 파일을 하나의 최종 일지로 자동 병합하는 <strong>파일 통합(Merge)</strong> 기능을 지원합니다.</p>
@@ -290,10 +350,11 @@ pre code{background:none;border:none;padding:0;color:inherit;}
   <h2 class="section-h2"><span class="h2-icon gray">📁</span>파일 구조</h2>
   <div class="file-tree">
     <span class="ft-dir">kmed-journal/</span><br>
-    ├── <span style="color:var(--blue);font-weight:600;">index.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← 포털 대문 (진입점)</span><br>
-    ├── <span class="ft-jade">checklist.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← 피험자 동의서 및 사전-사후 체크리스트</span><br>
-    ├── <span style="color:var(--blue);">group-journal.html</span> &nbsp;&nbsp;<span class="ft-comment">← 경혈학실습 &amp; 임상술기실습 일지</span><br>
-    └── <span style="color:var(--text-fnt);">README.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← 현재 파일</span>
+    ├── <span style="color:var(--blue);font-weight:600;">index.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← 포털 대문 (진입점)</span><br>
+    ├── <span class="ft-jade">checklist.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← ① 피험자 동의서 및 사전-사후 체크리스트</span><br>
+    ├── <span class="ft-amber">vitalsign_CNT.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← ② 생체징후 측정 &amp; 위생관리(CNT) 실습일지</span><br>
+    ├── <span style="color:var(--blue);">group-journal.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← ③ 경혈학실습 &amp; 임상술기실습 일지</span><br>
+    └── <span style="color:var(--text-fnt);">README.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-comment">← 현재 파일</span>
   </div>
 </div>
 
@@ -303,9 +364,15 @@ pre code{background:none;border:none;padding:0;color:inherit;}
 
   <h3 class="section-h3" style="color:var(--jade);">checklist.html</h3>
   <div class="ver-list">
-    <div class="ver-item"><div><span class="ver-badge jade">v6</span></div><div class="ver-desc">JSON 저장/불러오기 기능, 탭별 타임스탬프 자동 기록, 출력본 PDF 저장 최종 입력 시각 표시, 섹션 5 초음파 영상관찰 항목 추가</div></div>
+    <div class="ver-item"><div><span class="ver-badge jade">v7</span></div><div class="ver-desc">시술 행위 동의 항목에 초음파 영상관찰 추가 (동의 15종), 타임스탬프 레이블 변경 (→ PDF 저장 최종 입력), JSON 파일명 형식 고정</div></div>
+    <div class="ver-item"><div><span class="ver-badge jade">v6</span></div><div class="ver-desc">JSON 저장/불러오기 기능, 탭별 타임스탬프 자동 기록, 출력본 PDF 저장 최종 입력 시각 표시</div></div>
     <div class="ver-item"><div><span class="ver-badge jade">v5</span></div><div class="ver-desc">기본 정보 중복 제거 (동의서 통합), 실습 참가자 섹션 통합, 방과후 학습활동 드롭다운 추가</div></div>
     <div class="ver-item"><div><span class="ver-badge jade">v4</span></div><div class="ver-desc">피험자 동의서 + 사전·사후 체크리스트 3탭 구조로 통합</div></div>
+  </div>
+
+  <h3 class="section-h3" style="color:var(--amber);margin-top:24px;">vitalsign_CNT.html</h3>
+  <div class="ver-list">
+    <div class="ver-item"><div><span class="ver-badge amber">v1</span></div><div class="ver-desc">최초 출시 — 혈압·체온·혈당 조별 측정 기록, 감염예방 위생관리(CNT) 사전학습 내용 포함, 실습 준비·종료 체크리스트, 조원별 성찰 기록, JSON 임시저장·불러오기 기능</div></div>
   </div>
 
   <h3 class="section-h3" style="color:var(--blue);margin-top:24px;">group-journal.html</h3>
