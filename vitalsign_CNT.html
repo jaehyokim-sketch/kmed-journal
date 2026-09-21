@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>생체징후 측정 및 감염예방 위생관리 실습일지</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap">
+
+<style>
+:root {
+  --c-primary: #1a3c6e;
+  --c-primary-mid: #2d5a9e;
+  --c-primary-hover: #243d5c;
+  --c-guide-bg: #fff8ec;
+  --c-guide-border: #d4a84b;
+  --c-pre-bg: #eaf3fd;
+  --c-pre-border: #8ab4d8;
+  --c-alt: #f5f7fa;
+  --c-bg: #ffffff;
+  --c-border: #c9d2de;
+  --c-border-light: #dce3ec;
+  --c-text: #1c2530;
+  --c-text2: #4a5870;
+  --c-text3: #7a8a9e;
+  --c-red: #b52b2b;
+  --c-input-bg: #ffffff;
+  --c-check: #1a3c6e;
+  --c-meas-bg: #f0f4fa;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c-primary: #6b9bd6;
+    --c-primary-mid: #4f7fc0;
+    --c-primary-hover: #8cb5e8;
+    --c-guide-bg: #2c2410;
+    --c-guide-border: #8a6a20;
+    --c-pre-bg: #162336;
+    --c-pre-border: #3a6080;
+    --c-alt: #1a1e28;
+    --c-bg: #0f1218;
+    --c-border: #30394a;
+    --c-border-light: #252e3e;
+    --c-text: #dce8f5;
+    --c-text2: #8fa8c8;
+    --c-text3: #5a7090;
+    --c-red: #f07070;
+    --c-input-bg: #161c28;
+    --c-check: #6b9bd6;
+    --c-meas-bg: #1c2538;
+  }
+}
+:root[data-theme="dark"] {
+  --c-primary: #6b9bd6;
+  --c-primary-mid: #4f7fc0;
+  --c-primary-hover: #8cb5e8;
+  --c-guide-bg: #2c2410;
+  --c-guide-border: #8a6a20;
+  --c-pre-bg: #162336;
+  --c-pre-border: #3a6080;
+  --c-alt: #1a1e28;
+  --c-bg: #0f1218;
+  --c-border: #30394a;
+  --c-border-light: #252e3e;
+  --c-text: #dce8f5;
+  --c-text2: #8fa8c8;
+  --c-text3: #5a7090;
+  --c-red: #f07070;
+  --c-input-bg: #161c28;
+  --c-check: #6b9bd6;
+  --c-meas-bg: #1c2538;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--c-text);
+  background: var(--c-bg);
+  margin: 0;
+  padding-inline: 20px;
+  padding-block: 24px;
+}
+
+.wrap { max-width: 860px; margin-inline: auto; }
+
+/* Title */
+.title-block { text-align: center; margin-block: 0 22px; }
+.title-dept {
+  font-size: 12.5px; font-weight: 600; color: var(--c-text2);
+  letter-spacing: 0.1px; margin: 0 0 6px;
+}
+.main-title {
+  font-size: 21px; font-weight: 700; color: var(--c-primary);
+  margin-block: 0 6px; letter-spacing: -0.4px; text-wrap: balance;
+}
+.main-subtitle {
+  font-size: 12.5px; font-weight: 500; color: var(--c-text3);
+  margin: 0; letter-spacing: 0.1px;
+}
+/* Select fields */
+.fi-sel {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%234a5870' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 28px; cursor: pointer;
+}
+
+/* Tables */
+.jt {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid var(--c-primary);
+  margin-block-end: 14px;
+}
+.jt td, .jt th {
+  border: 1px solid var(--c-border);
+  padding-inline: 12px;
+  padding-block: 8px;
+  vertical-align: top;
+  background: var(--c-bg);
+}
+
+/* Section headers */
+.sh { background: var(--c-primary) !important; color: white !important; text-align: center; font-weight: 700; font-size: 13.5px; padding-block: 10px !important; letter-spacing: 0.4px; }
+.sh-guide { background: var(--c-guide-bg) !important; border-block: 2px solid var(--c-guide-border) !important; text-align: center; font-weight: 700; font-size: 13.5px; padding-block: 10px !important; color: var(--c-text) !important; }
+.sh-pre { background: var(--c-pre-bg) !important; border-block: 2px solid var(--c-pre-border) !important; text-align: center; font-weight: 700; font-size: 13.5px; padding-block: 10px !important; color: var(--c-text) !important; }
+
+/* Label cells */
+.lbl { background: var(--c-alt) !important; font-weight: 600; color: var(--c-text2); white-space: nowrap; font-size: 12px; }
+.lbl-c { background: var(--c-alt) !important; font-weight: 600; color: var(--c-text2); text-align: center; font-size: 12px; vertical-align: middle !important; }
+
+/* Inputs */
+.fi {
+  width: 100%; border: none; border-block-end: 1px solid var(--c-border); background: transparent;
+  font-family: inherit; font-size: 13px; color: var(--c-text); padding-block: 2px; outline: none;
+}
+.fi:focus { border-block-end-color: var(--c-primary-mid); }
+.ta {
+  width: 100%; min-height: 90px; border: 1px dashed var(--c-border); border-radius: 4px;
+  background: var(--c-input-bg); font-family: inherit; font-size: 13px; color: var(--c-text);
+  padding-inline: 10px; padding-block: 8px; resize: vertical; outline: none; line-height: 1.7;
+}
+.ta:focus { border-color: var(--c-primary-mid); border-style: solid; }
+.ta-sm { min-height: 56px; }
+
+/* Measurement block */
+.meas-wrap { margin-block-end: 8px; }
+.meas-title { font-size: 12px; font-weight: 700; color: var(--c-primary); margin-block: 8px 5px; padding-inline-start: 8px; border-inline-start: 3px solid var(--c-primary); }
+.meas-row { display: flex; gap: 8px; flex-wrap: wrap; margin-block-end: 6px; }
+.meas-box {
+  display: flex; align-items: center; gap: 4px; background: var(--c-meas-bg);
+  border: 1px solid var(--c-border-light); border-radius: 5px; padding-inline: 10px; padding-block: 5px;
+  font-size: 12px;
+}
+.meas-label { color: var(--c-text2); font-weight: 600; white-space: nowrap; }
+.mi {
+  width: 52px; border: none; border-block-end: 1px solid var(--c-primary-mid);
+  background: transparent; font-family: inherit; font-size: 13px; font-weight: 600;
+  color: var(--c-text); text-align: center; padding-block: 1px; outline: none;
+}
+.meas-unit { color: var(--c-text2); font-size: 11px; white-space: nowrap; }
+
+/* Guide content */
+.guide-body { background: var(--c-guide-bg) !important; }
+.guide-body ul { list-style: none; margin: 0; padding-inline-start: 0; }
+.guide-body ul li { padding-inline-start: 14px; margin-block-end: 5px; position: relative; }
+.guide-body ul li::before { content: "│"; position: absolute; left: 0; font-weight: 700; color: var(--c-primary); }
+.guide-label { color: var(--c-red); font-weight: 700; font-size: 12px; margin-block-end: 5px; }
+.guide-items { list-style: none; margin: 0; padding-inline-start: 0; }
+.guide-items li { padding-inline-start: 14px; margin-block-end: 3px; position: relative; font-size: 12px; }
+.guide-items li::before { content: "✦"; position: absolute; left: 0; font-size: 9px; color: var(--c-primary-mid); top: 3px; }
+.guide-row-bg { background: var(--c-guide-bg) !important; padding-block: 10px !important; }
+
+/* Pre-study content */
+.pre-body { background: var(--c-pre-bg) !important; }
+.pre-ol { margin: 4px 0; padding-inline-start: 20px; }
+.pre-ol li { margin-block-end: 4px; }
+.pre-ul { list-style: disc; margin: 4px 0; padding-inline-start: 18px; }
+.pre-ul li { margin-block-end: 3px; }
+.subsect { font-size: 12px; font-weight: 700; color: var(--c-primary); margin-block: 10px 4px; padding-inline-start: 8px; border-inline-start: 3px solid var(--c-primary); }
+.note { color: var(--c-red); font-weight: 600; }
+strong { font-weight: 700; }
+
+/* Student cells */
+.student-cell {
+  background: var(--c-alt) !important; font-weight: 600; text-align: center;
+  vertical-align: middle !important; width: 76px;
+}
+.student-cell input { text-align: center; font-weight: 600; }
+
+/* Checklist */
+.chk-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px 20px; padding-block: 4px; }
+.chk-item { display: flex; align-items: flex-start; gap: 7px; font-size: 12px; }
+.chk-item input[type="checkbox"] { margin-block-start: 2px; accent-color: var(--c-check); flex-shrink: 0; }
+.chk-note { font-size: 11.5px; color: var(--c-text2); padding-block: 3px 0; }
+
+/* Photo section */
+.photo-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px; margin-block-end: 10px;
+}
+.photo-item {
+  position: relative; border-radius: 6px; overflow: hidden;
+  border: 1px solid var(--c-border); aspect-ratio: 4/3; background: var(--c-alt);
+}
+.photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-remove {
+  position: absolute; top: 4px; right: 4px; width: 22px; height: 22px;
+  border-radius: 50%; border: none; background: rgba(0,0,0,0.55); color: white;
+  font-size: 14px; line-height: 1; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; padding: 0;
+}
+.photo-remove:hover { background: rgba(180,40,40,0.85); }
+.photo-add-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 72px; border: 2px dashed var(--c-border); border-radius: 6px;
+  color: var(--c-text2); font-size: 13px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
+  background: transparent;
+}
+.photo-add-btn:hover { border-color: var(--c-primary-mid); color: var(--c-primary); }
+.photo-add-btn svg { flex-shrink: 0; }
+.photo-count { font-size: 11px; color: var(--c-text3); margin-block-start: 6px; }
+
+/* Responsive */
+@media (max-width: 580px) {
+  body { padding-inline: 12px; }
+  .main-title { font-size: 17px; }
+  .chk-grid { grid-template-columns: 1fr; }
+  .meas-row { gap: 6px; }
+  .student-cell { width: 56px; font-size: 12px; }
+}
+
+/* Topbar */
+.topbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--c-primary); color: white;
+  display: flex; align-items: center; justify-content: space-between;
+  padding-inline: 20px; padding-block: 9px; gap: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.18);
+  margin-inline: -20px; margin-block-end: 0;
+}
+.topbar-logo { font-size: 13px; font-weight: 600; opacity: 0.88; white-space: nowrap; }
+.topbar-actions { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.tb-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding-inline: 13px; padding-block: 6px; border-radius: 5px;
+  font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+  border: 1.5px solid rgba(255,255,255,0.3); background: transparent; color: white;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.tb-btn:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.55); }
+.tb-btn-save { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.45); }
+.tb-btn-save:hover { background: rgba(255,255,255,0.24); }
+.tb-btn-print { border-color: rgba(255,255,255,0.25); }
+.tb-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.2); flex-shrink: 0; }
+.save-time { font-size: 10.5px; opacity: 0.55; white-space: nowrap; }
+
+/* Modal */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.52); z-index: 200;
+  align-items: center; justify-content: center; padding-inline: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--c-bg); border-radius: 10px; width: 100%; max-width: 520px;
+  max-height: 88vh; display: flex; flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.32);
+}
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-inline: 20px; padding-block: 14px;
+  border-block-end: 1px solid var(--c-border); flex-shrink: 0;
+}
+.modal-title { font-size: 14px; font-weight: 700; color: var(--c-primary); }
+.modal-close {
+  background: none; border: none; font-size: 22px; cursor: pointer;
+  color: var(--c-text2); padding: 0; line-height: 1; width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center; border-radius: 4px;
+}
+.modal-close:hover { background: var(--c-alt); }
+.modal-body {
+  padding-inline: 20px; padding-block: 16px;
+  display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1;
+}
+.modal-hint { font-size: 12.5px; color: var(--c-text2); line-height: 1.7; margin: 0; }
+.json-display {
+  width: 100%; height: 200px; border: 1px solid var(--c-border); border-radius: 5px;
+  font-family: 'Courier New', monospace; font-size: 11px; color: var(--c-text);
+  background: var(--c-alt); padding-inline: 10px; padding-block: 8px; resize: vertical;
+}
+.modal-footer {
+  padding-inline: 20px; padding-block: 13px;
+  border-block-start: 1px solid var(--c-border);
+  display: flex; gap: 8px; justify-content: flex-end; flex-shrink: 0;
+}
+.modal-btn {
+  padding-inline: 16px; padding-block: 7px; border-radius: 5px;
+  font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  border: 1.5px solid var(--c-border); background: transparent; color: var(--c-text);
+  transition: background 0.15s;
+}
+.modal-btn:hover { background: var(--c-alt); }
+.modal-btn-p {
+  background: var(--c-primary); color: white;
+  border-color: var(--c-primary);
+}
+.modal-btn-p:hover { background: var(--c-primary-mid); border-color: var(--c-primary-mid); }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 26px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--c-text); color: var(--c-bg);
+  padding-inline: 20px; padding-block: 10px; border-radius: 24px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.22); z-index: 400;
+  opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Print styles */
+@media print {
+  body { padding-inline: 12mm; padding-block: 8mm; font-size: 11px; max-width: 100%; }
+  .title-dept { font-size: 11px; }
+  .main-title { font-size: 17px; }
+  .main-subtitle { font-size: 11px; }
+  .topbar { display: none !important; }
+  .modal-overlay { display: none !important; }
+  .photo-add-btn { display: none !important; }
+  .photo-remove { display: none !important; }
+  .photo-count { display: none !important; }
+  .ta { min-height: 60px; border: 1px dashed #bbb !important; }
+  .ta-sm { min-height: 40px; }
+  .jt { border: 1.5px solid #1a3c6e; page-break-inside: avoid; }
+  .sh, .sh-guide, .sh-pre { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .guide-body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pre-body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .student-cell { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span class="topbar-logo">🩺 경혈학실습 일지</span>
+  <div class="topbar-actions">
+    <span id="save-time" class="save-time"></span>
+    <button class="tb-btn" onclick="loadJSON()">📂 불러오기</button>
+    <button class="tb-btn tb-btn-save" onclick="saveJSON()">💾 임시저장</button>
+    <span class="tb-divider"></span>
+    <button class="tb-btn tb-btn-print" onclick="window.print()">🖨️ 인쇄 / PDF</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- TITLE -->
+<div class="title-block" style="margin-block-start:20px;">
+  <p class="title-dept">원광대학교 한의과대학 경혈학교실 &amp; 침구의학교실</p>
+  <h1 class="main-title">경혈학실습 &amp; 경혈학임상술기실습 일지</h1>
+  <p class="main-subtitle">생체징후 측정 및 감염예방을 위한 위생 관리 실습 기록부 (Group Practice Report)</p>
+</div>
+
+<!-- BASIC INFO -->
+<table class="jt">
+  <tr>
+    <td class="lbl" style="width:100px;">분반</td>
+    <td style="width:36%">
+      <select class="fi fi-sel" style="max-width:140px;">
+        <option value="">-- 선택 --</option>
+        <option value="01">01분반</option>
+        <option value="02">02분반</option>
+      </select>
+    </td>
+    <td class="lbl" style="width:44px;">조</td>
+    <td>
+      <select class="fi fi-sel" style="max-width:110px;">
+        <option value="">-- 선택 --</option>
+        <option value="1">1조</option>
+        <option value="2">2조</option>
+        <option value="3">3조</option>
+        <option value="4">4조</option>
+        <option value="5">5조</option>
+        <option value="6">6조</option>
+        <option value="7">7조</option>
+        <option value="8">8조</option>
+        <option value="9">9조</option>
+        <option value="10">10조</option>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td class="lbl">실습 날짜</td>
+    <td colspan="3"><input class="fi" type="date" style="max-width:200px;"></td>
+  </tr>
+  <tr>
+    <td class="lbl">지도 교수</td>
+    <td colspan="3"><input class="fi" type="text" placeholder="지도 교수명을 입력하세요."></td>
+  </tr>
+  <tr>
+    <td class="lbl">실습참여자 명단</td>
+    <td colspan="3"><input class="fi" type="text" placeholder="이름 1, 이름 2, 이름 3, 이름 4, 이름 5, 이름 6"></td>
+  </tr>
+</table>
+
+<!-- PRACTICE GUIDE -->
+<table class="jt">
+  <tr><td class="sh-guide" colspan="2">실습가이드</td></tr>
+  <tr>
+    <td colspan="2" class="guide-body" style="padding-inline:16px; padding-block:12px;">
+      <ul>
+        <li>조별로 사전학습을 통해 <strong>생체징후 측정법 및 감염예방 위생 관리(CNT) 내용</strong>을 실습일지에 미리 정리</li>
+        <li>모든 조원이 혈압·체온·혈당 측정 각각 <strong>시술자 1회, 피시술자 1회</strong> 경험할 수 있도록 역할 정하기</li>
+        <li>모든 학생은 자신의 피시술자에게 실습 동의서 내용을 직접 설명하고 동의 받기 <span class="note">(동의서 미작성 시 실습 중단)</span></li>
+        <li>모든 학생은 각자 <strong>〈실습 준비 안전 체크리스트〉</strong>를 작성하기</li>
+        <li>시술자·피시술자 역할이 아닐 때는 <strong>관찰자</strong>가 되어 시술자의 수행을 관찰하고 위생·안전관리 준수 여부를 점검하여 피드백하기</li>
+        <li>시술자는 생체징후 측정의 전 과정을 <strong>다른 조원의 도움 없이 수행</strong>하고, 실습일지에 측정 결과 및 수행 내용·피드백을 직접 기록하기</li>
+        <li>실습 종료 시 모든 학생은 각자 <strong>〈실습 종료 체크리스트〉</strong>를 작성하기</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+<!-- PRE-STUDY CONTENT -->
+<table class="jt">
+  <tr><td class="sh-pre" colspan="2">사전학습 내용</td></tr>
+
+  <!-- 혈압 -->
+  <tr>
+    <td class="lbl-c" style="width:110px;">혈압 측정 방법<br><small>(수동 혈압계)</small></td>
+    <td style="padding-inline:14px; padding-block:10px;">
+      <ol class="pre-ol">
+        <li><strong>안정 및 준비:</strong> 측정 전 5분 이상 안정을 취하고, 의자에 기대어 팔을 심장 높이로 테이블에 올립니다. 측정 30분 전 카페인 섭취, 흡연, 운동 등을 금합니다.</li>
+        <li><strong>커프 착용:</strong> 팔꿈치 위 2~3cm에 커프를 감고, 손가락 1~2개가 들어갈 여유를 두며, 청진기 호스가 팔 안쪽 동맥 라인을 지나도록 위치시킵니다.</li>
+        <li><strong>청진기 배치:</strong> 팔꿈치 안쪽의 상완동맥(수궐음심포경 곡택혈 위치)을 손가락으로 찾고, 그 위에 청진기를 가볍게 댑니다.</li>
+        <li><strong>공기 주입:</strong> 조절 밸브를 시계 방향으로 잠그고 평소 수축기 혈압보다 높게(약 180~200mmHg) 공기를 주입합니다.</li>
+        <li><strong>수축기 혈압 확인:</strong> 밸브를 반시계 방향으로 풀어 초당 2~3mmHg씩 압력을 낮춥니다. 청진기에서 '툭, 툭' 소리가 처음 들리는 눈금이 수축기(최고) 혈압입니다.</li>
+        <li><strong>이완기 혈압 확인:</strong> 계속 공기를 빼면서 소리가 완전히 사라지는 순간의 눈금이 이완기(최저) 혈압입니다.</li>
+        <li><strong>마무리:</strong> 밸브를 완전히 열어 남은 공기를 빼고 커프를 풀어줍니다.</li>
+      </ol>
+      <p style="margin:5px 0 0; font-size:12px;"><span class="note">※ 주의:</span> 단시간 내 동일 부위에 반복 측정하지 않습니다. 좌우 양측을 각각 측정합니다.</p>
+    </td>
+  </tr>
+
+  <!-- 체온 -->
+  <tr>
+    <td class="lbl-c">체온 측정 방법</td>
+    <td style="padding-inline:14px; padding-block:10px;">
+      <strong>귀 체온(고막 체온계) 기준:</strong>
+      <ol class="pre-ol">
+        <li>탐침에 일회용 덮개를 씌웁니다.</li>
+        <li>성인의 경우 귓바퀴를 뒤쪽 위로 당겨 귀를 일직선으로 폅니다.</li>
+        <li>탐침을 귀에 부드럽게 삽입 후 측정 버튼을 누릅니다.</li>
+        <li>종료음이 나면 체온계를 빼고 온도를 확인합니다.</li>
+      </ol>
+      <p style="margin:5px 0 0; font-size:12px;"><strong>정상 체온:</strong> 항문 36.6~37.9℃ | 구강 35.5~37.5℃ | 귀(고막) 36.6~37.9℃ | 겨드랑이 34.7~37.3℃</p>
+    </td>
+  </tr>
+
+  <!-- 혈당 -->
+  <tr>
+    <td class="lbl-c">혈당 측정 방법</td>
+    <td style="padding-inline:14px; padding-block:10px;">
+      <ol class="pre-ol">
+        <li>손을 비누와 따뜻한 물로 씻고 완전히 말립니다. 시술자는 위생장갑을 착용합니다.</li>
+        <li>채혈 부위(손가락 측면)를 핀셋으로 알코올 솜을 이용하여 닦은 후 <span class="note">알코올이 완전히 마를 때까지 기다립니다.</span></li>
+        <li>혈당 측정기에 새 혈당 시험지(스틱)를 삽입하여 전원을 켭니다.</li>
+        <li>채혈기에 란셋 바늘을 넣고 채혈 깊이를 설정합니다. 손가락 끝 가장자리(측면)를 찌릅니다.</li>
+        <li>맺힌 핏방울을 시험지 끝부분에 대어 충분히 흡수시킨 뒤 수치를 확인합니다. 억지로 짜지 않습니다.</li>
+        <li>채혈 부위를 알코올 솜으로 눌러 지혈하고, 사용한 란셋은 즉시 손상성 의료폐기물 전용 용기에 폐기합니다.</li>
+      </ol>
+      <p style="margin:5px 0 0; font-size:12px;"><strong>혈당 기준(mg/dL):</strong> 공복 70-99(정상) | 100-125(공복혈당장애) | 126 이상(당뇨 의심) | 식후 2시간 140 미만(정상) | 140-199(내당능장애) | 200 이상(당뇨 의심)</p>
+    </td>
+  </tr>
+
+  <!-- CNT -->
+  <tr>
+    <td class="lbl-c">감염예방을 위한<br>위생 관리<br><small>(Clean Needle<br>Technique)</small></td>
+    <td style="padding-inline:14px; padding-block:10px;">
+      <div class="subsect">1. CNT 핵심 원칙</div>
+      <ul class="pre-ul">
+        <li>CNT는 자침 과정에서 환자·시술자·의료환경 사이의 교차감염을 차단하고 침습적 시술로 인한 감염 위험을 최소화하기 위한 감염관리 원칙입니다.</li>
+        <li><strong>손 위생</strong>이 가장 기본적인 원칙: 침습적 시술 전후, 환자가 바뀔 때, 상처·혈액·체액 접촉 전후, 환자 주변 환경이나 의료기구 접촉 후 반드시 손을 씻어야 합니다.</li>
+        <li>알코올 손소독제는 기름 등 물리적 오염은 제거하지 못하므로, 손이 오염된 경우 비누와 물을 이용한 세척이 기본입니다.</li>
+      </ul>
+
+      <div class="subsect">2. 손 위생 절차 (비누와 물을 이용한 손씻기)</div>
+      <ol class="pre-ol">
+        <li>소매를 걷어 올리고 시계·반지·장신구를 모두 제거한다.</li>
+        <li>비누와 손에 물을 충분히 적신다.</li>
+        <li>비누를 칠하여 거품을 낸다.</li>
+        <li>손가락 사이, 손톱 주변·밑, 손목까지 모든 피부를 <strong>15초 이상</strong> 세척한다.</li>
+        <li>수도꼭지에서 흐르는 물로 손을 충분히 헹군다.</li>
+        <li>물이 손가락 끝으로 흘러내리도록 손을 아래쪽으로 향하게 한다.</li>
+        <li>비누칠 후 손 세척 과정을 한 번 더 반복한다.</li>
+        <li>마무리 헹굼을 한다.</li>
+        <li>수건이나 팔꿈치로 수도꼭지를 잠근다 (세척에 사용한 수건으로 손을 닦지 않는다).</li>
+        <li>깨끗한 종이 수건 또는 새 헝겊 수건으로 손을 꼼꼼히 건조한다. 손톱은 항상 짧고 청결하게 유지한다.</li>
+      </ol>
+
+      <div class="subsect">3. 피부 소독법</div>
+      <ul class="pre-ul">
+        <li>자침 부위는 <strong>70~80% 에틸알코올 또는 이소프로필알코올</strong>로 소독하고, <span class="note">소독제가 완전히 건조된 것을 확인한 뒤 자침합니다.</span></li>
+        <li>포비돈 사용 시 30~60초 이상 건조 대기합니다.</li>
+        <li>소독 후 피부를 다시 촉진하는 경우 손 위생을 재시행해야 합니다.</li>
+      </ul>
+
+      <div class="subsect">4. 의료폐기물 안전 처리</div>
+      <ul class="pre-ul">
+        <li>침은 멸균 일회용 제품을 사용하며, 개봉 후 침체·침첨이 비멸균 부위에 닿지 않도록 주의합니다.</li>
+        <li>사용한 침과 란셋은 <strong>손상성 의료폐기물 전용 용기(황색)</strong>에 즉시 폐기합니다.</li>
+        <li>사용한 알코올 솜 등은 일반 의료폐기물 용기에 처리합니다.</li>
+      </ul>
+    </td>
+  </tr>
+
+  <!-- 조별 선행학습 -->
+  <tr>
+    <td class="lbl-c" style="font-size:11px;">조별 선행학습<br>내용 요약 정리</td>
+    <td style="padding-inline:14px; padding-block:10px;">
+      <textarea class="ta" style="min-height:90px;" placeholder="조원들이 사전에 학습한 내용을 함께 요약하여 기록합니다.&#10;(주요 개념, 절차, 주의사항 등)"></textarea>
+    </td>
+  </tr>
+</table>
+
+<!-- PRE-PRACTICE CHECKLIST -->
+<table class="jt">
+  <tr><td class="sh" colspan="2">실습 준비 안전 체크리스트</td></tr>
+  <tr>
+    <td colspan="2" class="chk-note" style="padding-inline:14px;">
+      ※ 시술자로서 자신의 피시술자를 대상으로 각 항목을 확인하고 체크하세요.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding-inline:14px; padding-block:10px;">
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> 피시술자의 채혈 부위(손가락)에 상처·피부질환 등이 없음을 확인하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 피시술자의 혈압 측정 팔에 특별한 이상이 없음을 확인하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 혈압계·청진기·혈당계·체온계가 정상 작동함을 확인하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 알코올 솜, 소독 물품(핀셋 포함), 위생장갑이 준비되어 있다.</label>
+        <label class="chk-item"><input type="checkbox"> 혈당 측정기에 유효기간 내 혈당 시험지(스틱)가 준비되어 있다.</label>
+        <label class="chk-item"><input type="checkbox"> 손상성 의료폐기물 전용 용기(란셋·침 폐기용)가 준비되어 있다.</label>
+        <label class="chk-item"><input type="checkbox"> 시술 전 30초 이상 비누로 손 씻기 또는 손소독제를 사용하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 피시술자에게 안정 자세 및 측정 방법을 안내하였다.</label>
+      </div>
+    </td>
+  </tr>
+</table>
+
+<!-- PRACTICE CONTENT -->
+<table class="jt">
+  <tr>
+    <td class="sh" style="width:76px;">작성자</td>
+    <td class="sh">실습내용</td>
+  </tr>
+  <tr>
+    <td colspan="2" class="guide-row-bg" style="padding-inline:16px;">
+      <div class="guide-label">* 실습내용 작성 가이드: 다음 내용을 포함하여 작성할 수 있다.</div>
+      <ul class="guide-items">
+        <li>실습에 사용한 재료 및 물품</li>
+        <li>시술자로서 측정 대상(조원 이름), 측정한 방법 및 결과 (혈압·체온·혈당 수치 포함)</li>
+        <li>피시술자로서 생체징후 측정 경험 및 느낌</li>
+        <li>위생 관리(CNT) 수행 내용: 손 위생, 피부 소독, 의료폐기물 처리 등</li>
+        <li>교수 혹은 다른 조원에게 피드백 받은 내용</li>
+      </ul>
+    </td>
+  </tr>
+
+  <!-- Student 1 -->
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <div class="meas-title">시술자로서 생체징후 측정 결과</div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">측정대상</span><input class="fi" type="text" placeholder="피시술자 이름" style="width:80px; margin-inline-start:4px;"></div>
+      </div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">혈압 (좌)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">혈압 (우)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">체온</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">℃</span></div>
+        <div class="meas-box"><span class="meas-label">혈당</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">mg/dL</span></div>
+      </div>
+      <div class="meas-title">실습 수행 내용 및 위생관리(CNT) 기록</div>
+      <textarea class="ta" placeholder="- 사용 재료 및 물품:&#10;- 측정 과정 및 특이사항:&#10;- 위생 관리(CNT) 수행 내용 (손 위생, 피부 소독, 폐기물 처리 등):&#10;- 피드백 받은 내용:"></textarea>
+      <div class="meas-title">피시술자로서의 경험 및 느낌</div>
+      <textarea class="ta ta-sm" placeholder="측정 시 신체적 감각, 불편함, 느낀 점 등을 기록하세요."></textarea>
+    </td>
+  </tr>
+
+  <!-- Student 2 -->
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <div class="meas-title">시술자로서 생체징후 측정 결과</div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">측정대상</span><input class="fi" type="text" placeholder="피시술자 이름" style="width:80px; margin-inline-start:4px;"></div>
+      </div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">혈압 (좌)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">혈압 (우)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">체온</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">℃</span></div>
+        <div class="meas-box"><span class="meas-label">혈당</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">mg/dL</span></div>
+      </div>
+      <div class="meas-title">실습 수행 내용 및 위생관리(CNT) 기록</div>
+      <textarea class="ta" placeholder="- 사용 재료 및 물품:&#10;- 측정 과정 및 특이사항:&#10;- 위생 관리(CNT) 수행 내용 (손 위생, 피부 소독, 폐기물 처리 등):&#10;- 피드백 받은 내용:"></textarea>
+      <div class="meas-title">피시술자로서의 경험 및 느낌</div>
+      <textarea class="ta ta-sm" placeholder="측정 시 신체적 감각, 불편함, 느낀 점 등을 기록하세요."></textarea>
+    </td>
+  </tr>
+
+  <!-- Student 3 -->
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <div class="meas-title">시술자로서 생체징후 측정 결과</div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">측정대상</span><input class="fi" type="text" placeholder="피시술자 이름" style="width:80px; margin-inline-start:4px;"></div>
+      </div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">혈압 (좌)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">혈압 (우)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">체온</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">℃</span></div>
+        <div class="meas-box"><span class="meas-label">혈당</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">mg/dL</span></div>
+      </div>
+      <div class="meas-title">실습 수행 내용 및 위생관리(CNT) 기록</div>
+      <textarea class="ta" placeholder="- 사용 재료 및 물품:&#10;- 측정 과정 및 특이사항:&#10;- 위생 관리(CNT) 수행 내용 (손 위생, 피부 소독, 폐기물 처리 등):&#10;- 피드백 받은 내용:"></textarea>
+      <div class="meas-title">피시술자로서의 경험 및 느낌</div>
+      <textarea class="ta ta-sm" placeholder="측정 시 신체적 감각, 불편함, 느낀 점 등을 기록하세요."></textarea>
+    </td>
+  </tr>
+
+  <!-- Student 4 -->
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <div class="meas-title">시술자로서 생체징후 측정 결과</div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">측정대상</span><input class="fi" type="text" placeholder="피시술자 이름" style="width:80px; margin-inline-start:4px;"></div>
+      </div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">혈압 (좌)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">혈압 (우)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">체온</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">℃</span></div>
+        <div class="meas-box"><span class="meas-label">혈당</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">mg/dL</span></div>
+      </div>
+      <div class="meas-title">실습 수행 내용 및 위생관리(CNT) 기록</div>
+      <textarea class="ta" placeholder="- 사용 재료 및 물품:&#10;- 측정 과정 및 특이사항:&#10;- 위생 관리(CNT) 수행 내용 (손 위생, 피부 소독, 폐기물 처리 등):&#10;- 피드백 받은 내용:"></textarea>
+      <div class="meas-title">피시술자로서의 경험 및 느낌</div>
+      <textarea class="ta ta-sm" placeholder="측정 시 신체적 감각, 불편함, 느낀 점 등을 기록하세요."></textarea>
+    </td>
+  </tr>
+
+  <!-- Student 5 -->
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <div class="meas-title">시술자로서 생체징후 측정 결과</div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">측정대상</span><input class="fi" type="text" placeholder="피시술자 이름" style="width:80px; margin-inline-start:4px;"></div>
+      </div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">혈압 (좌)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">혈압 (우)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">체온</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">℃</span></div>
+        <div class="meas-box"><span class="meas-label">혈당</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">mg/dL</span></div>
+      </div>
+      <div class="meas-title">실습 수행 내용 및 위생관리(CNT) 기록</div>
+      <textarea class="ta" placeholder="- 사용 재료 및 물품:&#10;- 측정 과정 및 특이사항:&#10;- 위생 관리(CNT) 수행 내용 (손 위생, 피부 소독, 폐기물 처리 등):&#10;- 피드백 받은 내용:"></textarea>
+      <div class="meas-title">피시술자로서의 경험 및 느낌</div>
+      <textarea class="ta ta-sm" placeholder="측정 시 신체적 감각, 불편함, 느낀 점 등을 기록하세요."></textarea>
+    </td>
+  </tr>
+
+  <!-- Student 6 -->
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <div class="meas-title">시술자로서 생체징후 측정 결과</div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">측정대상</span><input class="fi" type="text" placeholder="피시술자 이름" style="width:80px; margin-inline-start:4px;"></div>
+      </div>
+      <div class="meas-row">
+        <div class="meas-box"><span class="meas-label">혈압 (좌)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">혈압 (우)</span><input class="mi" type="text" placeholder="___">&nbsp;/&nbsp;<input class="mi" type="text" placeholder="___"><span class="meas-unit">mmHg</span></div>
+        <div class="meas-box"><span class="meas-label">체온</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">℃</span></div>
+        <div class="meas-box"><span class="meas-label">혈당</span><input class="mi" type="text" placeholder="___"><span class="meas-unit">mg/dL</span></div>
+      </div>
+      <div class="meas-title">실습 수행 내용 및 위생관리(CNT) 기록</div>
+      <textarea class="ta" placeholder="- 사용 재료 및 물품:&#10;- 측정 과정 및 특이사항:&#10;- 위생 관리(CNT) 수행 내용 (손 위생, 피부 소독, 폐기물 처리 등):&#10;- 피드백 받은 내용:"></textarea>
+      <div class="meas-title">피시술자로서의 경험 및 느낌</div>
+      <textarea class="ta ta-sm" placeholder="측정 시 신체적 감각, 불편함, 느낀 점 등을 기록하세요."></textarea>
+    </td>
+  </tr>
+
+  <!-- Photo row -->
+  <tr>
+    <td class="lbl-c" style="font-size:11.5px;">실습 사진<br><small>(최대 10장)</small></td>
+    <td style="padding-inline:14px; padding-block:12px;">
+      <div id="photo-grid" class="photo-grid"></div>
+      <div id="photo-add-btn" class="photo-add-btn" onclick="document.getElementById('photo-input').click()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+        사진 추가하기
+      </div>
+      <div id="photo-count" class="photo-count">0 / 10장</div>
+      <input type="file" id="photo-input" accept="image/*" multiple hidden>
+    </td>
+  </tr>
+</table>
+
+<!-- REFLECTION -->
+<table class="jt">
+  <tr>
+    <td class="sh" style="width:76px;">작성자</td>
+    <td class="sh">학습에 대한 성찰</td>
+  </tr>
+  <tr>
+    <td colspan="2" class="guide-row-bg" style="padding-inline:16px;">
+      <div class="guide-label">* 실습내용 작성 가이드: 자신의 학습을 돌이켜보고 객관적으로 평가하며, 필요한 부분을 보완한다. 다음 내용을 포함하여 작성할 수 있다.</div>
+      <ul class="guide-items">
+        <li>오늘 나의 학습태도는 어땠는가?</li>
+        <li>자신의 실습 수행이나 학습에서 개선해야 할 점이 있다면 무엇인가?</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <textarea class="ta" style="min-height:110px;" placeholder="1. 오늘 나의 학습태도는:&#10;&#10;2. 개선해야 할 점:"></textarea>
+    </td>
+  </tr>
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <textarea class="ta" style="min-height:110px;" placeholder="1. 오늘 나의 학습태도는:&#10;&#10;2. 개선해야 할 점:"></textarea>
+    </td>
+  </tr>
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <textarea class="ta" style="min-height:110px;" placeholder="1. 오늘 나의 학습태도는:&#10;&#10;2. 개선해야 할 점:"></textarea>
+    </td>
+  </tr>
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <textarea class="ta" style="min-height:110px;" placeholder="1. 오늘 나의 학습태도는:&#10;&#10;2. 개선해야 할 점:"></textarea>
+    </td>
+  </tr>
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <textarea class="ta" style="min-height:110px;" placeholder="1. 오늘 나의 학습태도는:&#10;&#10;2. 개선해야 할 점:"></textarea>
+    </td>
+  </tr>
+  <tr>
+    <td class="student-cell"><input class="fi" type="text" placeholder="이름"></td>
+    <td style="padding-inline:12px; padding-block:10px;">
+      <textarea class="ta" style="min-height:110px;" placeholder="1. 오늘 나의 학습태도는:&#10;&#10;2. 개선해야 할 점:"></textarea>
+    </td>
+  </tr>
+</table>
+
+<!-- CLOSING CHECKLIST -->
+<table class="jt">
+  <tr><td class="sh" colspan="2">실습 종료 체크리스트</td></tr>
+  <tr>
+    <td colspan="2" class="chk-note" style="padding-inline:14px;">
+      ※ 실습 종료 전 모든 항목을 확인하고 체크하세요.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding-inline:14px; padding-block:10px;">
+      <div class="chk-grid">
+        <label class="chk-item"><input type="checkbox"> 사용한 란셋을 손상성 의료폐기물 전용 용기에 즉시 폐기하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 혈당 측정기 및 채혈기를 안전하게 보관하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 혈압계·청진기·체온계를 정리하고 제자리에 두었다.</label>
+        <label class="chk-item"><input type="checkbox"> 알코올 솜 등 사용한 소모품을 일반 의료폐기물 용기에 처리하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 실습 공간 및 사용한 테이블을 깨끗이 정리하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 실습 종료 후 비누와 물로 30초 이상 손을 씻었다.</label>
+        <label class="chk-item"><input type="checkbox"> 실습일지의 모든 항목(실습내용·학습 성찰)을 기록하였다.</label>
+        <label class="chk-item"><input type="checkbox"> 실습복 착용 채로 실습 공간 외부로 나가지 않았다.</label>
+      </div>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+<!-- Save Modal -->
+<div id="save-modal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">💾 임시저장 — JSON 내보내기</div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-hint">
+        아래 JSON 데이터를 <strong>클립보드에 복사</strong>한 후, 메모장(텍스트 편집기)에 붙여넣어<br>
+        파일명 <strong id="modal-filename">경혈학실습일지.json</strong>으로 저장하세요.<br>
+        <em>다음 번에 <strong>불러오기</strong> 버튼으로 복원할 수 있습니다.</em>
+      </p>
+      <textarea id="modal-json-text" class="json-display" readonly></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn" onclick="closeModal()">닫기</button>
+      <button class="modal-btn modal-btn-p" onclick="copyJSON()">📋 클립보드 복사</button>
+    </div>
+  </div>
+</div>
+
+<div id="form-toast" class="toast"></div>
+<input type="file" id="json-input" accept=".json" hidden>
+
+<script>
+// ===== 사진 기능 =====
+var _photos = [];
+var _PHOTO_MAX = 10;
+
+function renderPhotos() {
+  var grid = document.getElementById('photo-grid');
+  var addBtn = document.getElementById('photo-add-btn');
+  var countEl = document.getElementById('photo-count');
+  grid.innerHTML = _photos.map(function(p) {
+    return '<div class="photo-item"><img src="' + p.src + '" alt="실습 사진">' +
+      '<button class="photo-remove" onclick="removePhoto(' + p.id + ')">&#xd7;</button></div>';
+  }).join('');
+  countEl.textContent = _photos.length + ' / ' + _PHOTO_MAX + '장';
+  addBtn.style.display = _photos.length >= _PHOTO_MAX ? 'none' : 'flex';
+}
+
+window.removePhoto = function(id) {
+  _photos = _photos.filter(function(p) { return p.id !== id; });
+  renderPhotos();
+};
+
+document.getElementById('photo-input').addEventListener('change', function(e) {
+  var files = Array.from(e.target.files);
+  var toAdd = files.slice(0, _PHOTO_MAX - _photos.length);
+  var loaded = 0;
+  if (!toAdd.length) return;
+  toAdd.forEach(function(file) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      _photos.push({ id: Date.now() + Math.random(), src: ev.target.result });
+      if (++loaded === toAdd.length) renderPhotos();
+    };
+    reader.readAsDataURL(file);
+  });
+  this.value = '';
+});
+
+renderPhotos();
+
+// ===== 임시저장 / 불러오기 =====
+function collectFormData() {
+  return {
+    version: '1.1',
+    savedAt: new Date().toISOString(),
+    inputs: Array.from(document.querySelectorAll('input[type="text"], input[type="date"]')).map(function(i){ return i.value; }),
+    selects: Array.from(document.querySelectorAll('select')).map(function(s){ return s.value; }),
+    textareas: Array.from(document.querySelectorAll('textarea:not(.json-display)')).map(function(t){ return t.value; }),
+    checkboxes: Array.from(document.querySelectorAll('input[type="checkbox"]')).map(function(c){ return c.checked; }),
+    photos: _photos.map(function(p){ return p.src; })
+  };
+}
+
+function populateFormData(data) {
+  var inputs = Array.from(document.querySelectorAll('input[type="text"], input[type="date"]'));
+  var selects = Array.from(document.querySelectorAll('select'));
+  var textareas = Array.from(document.querySelectorAll('textarea:not(.json-display)'));
+  var checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+  (data.inputs || []).forEach(function(v, i){ if (inputs[i]) inputs[i].value = v; });
+  (data.selects || []).forEach(function(v, i){ if (selects[i]) selects[i].value = v; });
+  (data.textareas || []).forEach(function(v, i){ if (textareas[i]) textareas[i].value = v; });
+  (data.checkboxes || []).forEach(function(v, i){ if (checkboxes[i]) checkboxes[i].checked = v; });
+  _photos = (data.photos || []).map(function(src, idx){ return { id: Date.now() + idx, src: src }; });
+  renderPhotos();
+}
+
+function getDateStr() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function updateSaveTime(isoStr) {
+  var el = document.getElementById('save-time');
+  if (!el) return;
+  var d = isoStr ? new Date(isoStr) : new Date();
+  var m = d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0');
+  var t = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  el.textContent = '저장: ' + m + ' ' + t;
+}
+
+window.saveJSON = function() {
+  var data = collectFormData();
+  var json = JSON.stringify(data, null, 2);
+  var filename = '위생관리실습일지_' + getDateStr() + '.json';
+
+  // Native file save via Blob + anchor
+  try {
+    var blob = new Blob([json], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    updateSaveTime();
+    showToast('✅ 파일이 저장되었습니다!');
+    return;
+  } catch(e) {}
+  openSaveModal(json, filename);
+};
+
+window.loadJSON = function() {
+  document.getElementById('json-input').click();
+};
+
+document.getElementById('json-input').addEventListener('change', function(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      var data = JSON.parse(ev.target.result);
+      populateFormData(data);
+      if (data.savedAt) updateSaveTime(data.savedAt);
+      showToast('✅ 불러오기 완료!');
+    } catch(err) {
+      showToast('❌ 파일 형식이 올바르지 않습니다.');
+    }
+  };
+  reader.readAsText(file);
+  this.value = '';
+});
+
+// ===== 모달 =====
+function openSaveModal(json, filename) {
+  var el = document.getElementById('modal-json-text');
+  var fn = document.getElementById('modal-filename');
+  if (el) el.value = json;
+  if (fn) fn.textContent = filename;
+  var overlay = document.getElementById('save-modal');
+  if (overlay) overlay.classList.add('open');
+}
+
+window.closeModal = function() {
+  var overlay = document.getElementById('save-modal');
+  if (overlay) overlay.classList.remove('open');
+};
+
+window.copyJSON = function() {
+  var el = document.getElementById('modal-json-text');
+  if (!el) return;
+  var doCopy = function() {
+    el.select(); el.setSelectionRange(0, 99999);
+    document.execCommand('copy');
+    showToast('📋 클립보드에 복사되었습니다!');
+    updateSaveTime();
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(el.value).then(function() {
+      showToast('📋 클립보드에 복사되었습니다!');
+      updateSaveTime();
+    }).catch(doCopy);
+  } else { doCopy(); }
+};
+
+document.getElementById('save-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ===== 토스트 =====
+var _toastTimer;
+function showToast(msg) {
+  var toast = document.getElementById('form-toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2600);
+}
+</script>
+</body>
+</html>

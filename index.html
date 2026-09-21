@@ -236,9 +236,13 @@ body {
     <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/><path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0zM7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5zm-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0z"/></svg>
     동의서·체크리스트
   </a>
+  <a class="nav-link" href="#vitalsign">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 1a6 6 0 1 1 0 12A6 6 0 0 1 8 2zm0 1a5 5 0 1 0 0 10A5 5 0 0 0 8 3zm0 1a4 4 0 1 1 0 8A4 4 0 0 1 8 4zm-.5 2v2.5H6a.5.5 0 0 0 0 1h2a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-1 0z"/></svg>
+    생체징후·위생관리
+  </a>
   <a class="nav-link" href="#journal">
     <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.746c-.917-.35-2.107-.692-3.287-.811-1.094-.11-2.278-.036-3.213.492V2.687z"/></svg>
-    실습일지
+    경혈학 실습일지
   </a>
 
   <div class="nav-divider"></div>
@@ -280,7 +284,7 @@ body {
       </span>
       실습 도구 목록
     </h2>
-    <p class="prose" style="margin-bottom:20px;">아래 두 도구를 순서대로 활용하여 실습을 진행합니다. 브라우저만 있으면 별도 설치 없이 사용 가능합니다.</p>
+    <p class="prose" style="margin-bottom:20px;">아래 세 도구를 순서대로 활용하여 실습을 진행합니다. 브라우저만 있으면 별도 설치 없이 사용 가능합니다.</p>
 
     <div class="tool-cards">
 
@@ -316,13 +320,45 @@ body {
         </div>
       </div>
 
-      <!-- ② 실습일지 -->
+      <!-- ② 생체징후·위생관리 실습일지 -->
+      <div class="tool-card" id="vitalsign">
+        <div class="tool-card-accent amber"></div>
+        <div class="tool-card-body">
+          <div class="tool-card-head">
+            <div class="tool-card-title-group">
+              <div class="tool-tag amber">② 생체징후·위생관리 실습 기록</div>
+              <div class="tool-card-name">생체징후 측정 및 감염예방을 위한 위생 관리 실습 기록</div>
+              <div class="tool-card-en">Vital Signs Measurement &amp; Clean Needle Technique (CNT) Practice Journal</div>
+            </div>
+            <div class="tool-card-links">
+              <a class="link-btn amber-btn" href="vitalsign_CNT.html" target="_blank">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/></svg>
+                실습일지 열기
+              </a>
+            </div>
+          </div>
+          <p class="tool-card-desc">혈압·체온·혈당 측정 및 감염예방 위생관리(Clean Needle Technique) 실습을 위한 조별 기록지입니다. 사전학습 내용 정리, 조원별 생체징후 측정 결과 및 CNT 수행 기록, 개인 성찰, 실습 준비·종료 체크리스트를 통합 관리합니다. JSON 파일로 임시저장·불러오기가 가능합니다.</p>
+          <div class="chip-row">
+            <div class="chip"><span class="chip-dot amber"></span>혈압 측정 기록</div>
+            <div class="chip"><span class="chip-dot amber"></span>체온 측정 기록</div>
+            <div class="chip"><span class="chip-dot amber"></span>혈당 측정 기록</div>
+            <div class="chip"><span class="chip-dot amber"></span>CNT 위생관리</div>
+            <div class="chip"><span class="chip-dot amber"></span>준비·종료 체크리스트</div>
+            <div class="chip"><span class="chip-dot amber"></span>조별 선행학습 요약</div>
+            <div class="chip"><span class="chip-dot amber"></span>개인 성찰</div>
+            <div class="chip"><span class="chip-dot amber"></span>실습 사진 첨부</div>
+            <div class="chip"><span class="chip-dot amber"></span>JSON 저장/불러오기</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ③ 경혈학 실습일지 -->
       <div class="tool-card" id="journal">
         <div class="tool-card-accent blue"></div>
         <div class="tool-card-body">
           <div class="tool-card-head">
             <div class="tool-card-title-group">
-              <div class="tool-tag blue">② 조별 실습 기록</div>
+              <div class="tool-tag blue">③ 조별 실습 기록</div>
               <div class="tool-card-name">경혈학실습 &amp; 경혈학임상술기실습 일지</div>
               <div class="tool-card-en">Group Practice Journal · Acupoint Location &amp; Needling</div>
             </div>
@@ -350,7 +386,7 @@ body {
     </div><!-- /.tool-cards -->
 
     <div class="info-note" style="margin-top:20px;">
-      <strong>실습 진행 순서:</strong> ① 체크리스트에서 피험자 동의서 및 사전 체크리스트를 먼저 작성 → ② 실습일지에서 탐혈·자침·초음파영상 기록 → ① 체크리스트에서 사후 체크리스트 작성 → 실습일지 파일 통합 → PDF 출력
+      <strong>실습 진행 순서:</strong> ① 체크리스트에서 피험자 동의서 및 사전 체크리스트 작성 → ② 생체징후·위생관리 실습일지 작성 (혈압·체온·혈당 측정 및 CNT 기록) → ③ 경혈학 실습일지에서 탐혈·자침·초음파영상 기록 → ① 체크리스트에서 사후 체크리스트 작성 → 실습일지 파일 통합 → PDF 출력
     </div>
   </section>
 
@@ -365,18 +401,20 @@ body {
 
     <div class="file-tree">
       <span class="dir">kmed-journal/</span><br>
-      ├── <span style="color:var(--blue);font-weight:600;">index.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 포털 대문 (현재 파일)</span><br>
-      ├── <span class="jade">checklist.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← ① 피험자 동의서 및 사전-사후 체크리스트</span><br>
-      └── <span style="color:var(--blue);">group-journal.html</span> &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← ② 경혈학실습 &amp; 임상술기실습 일지</span>
+      ├── <span style="color:var(--blue);font-weight:600;">index.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← 포털 대문 (현재 파일)</span><br>
+      ├── <span class="jade">checklist.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← ① 피험자 동의서 및 사전-사후 체크리스트</span><br>
+      ├── <span class="amber">vitalsign_CNT.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← ② 생체징후 측정 &amp; 위생관리(CNT) 실습일지</span><br>
+      └── <span style="color:var(--blue);">group-journal.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← ③ 경혈학실습 &amp; 임상술기실습 일지</span>
     </div>
 
     <div class="fn-table-wrap">
       <table class="fn-table" style="margin-top:14px;">
         <thead><tr><th>파일</th><th>역할</th><th>비고</th></tr></thead>
         <tbody>
-          <tr><td>index.html</td><td>포털 대문 — 두 도구 진입점, 사용 안내</td><td>현재 페이지</td></tr>
+          <tr><td>index.html</td><td>포털 대문 — 세 도구 진입점, 사용 안내</td><td>현재 페이지</td></tr>
           <tr><td>checklist.html</td><td>① 피험자 동의서 + 사전·사후 체크리스트 (3탭)</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
-          <tr><td>group-journal.html</td><td>② 조별 실습일지 본체 (섹션 1–5)</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
+          <tr><td>vitalsign_CNT.html</td><td>② 생체징후 측정 (혈압·체온·혈당) + 위생관리(CNT) 조별 실습일지</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
+          <tr><td>group-journal.html</td><td>③ 조별 실습일지 본체 (섹션 1–5)</td><td>Vanilla JS, 외부 의존성 없음</td></tr>
         </tbody>
       </table>
     </div>
@@ -411,7 +449,15 @@ body {
       </div>
     </div>
 
-    <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--blue);text-transform:uppercase;margin:24px 0 10px;">실습일지 (group-journal.html)</p>
+    <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--amber);text-transform:uppercase;margin:24px 0 10px;">생체징후·위생관리 실습일지 (vitalsign_CNT.html)</p>
+    <div class="version-list">
+      <div class="version-item">
+        <div><div class="ver-badge amber">v1</div></div>
+        <div class="ver-desc">최초 출시 — 혈압·체온·혈당 조별 측정 기록, 감염예방 위생관리(CNT) 사전학습 내용 포함, 실습 준비·종료 체크리스트, 조원별 성찰 기록, JSON 임시저장·불러오기 기능</div>
+      </div>
+    </div>
+
+    <p style="font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--blue);text-transform:uppercase;margin:24px 0 10px;">경혈학 실습일지 (group-journal.html)</p>
     <div class="version-list">
       <div class="version-item">
         <div><div class="ver-badge">v22</div></div>
@@ -470,7 +516,7 @@ function updateNav() {
   sections.forEach(sec => {
     if (sec.getBoundingClientRect().top <= 70) current = sec.id;
   });
-  const map = { 'tools': '#tools', 'tools-list': '#tools', 'journal': '#journal', 'checklist': '#checklist', 'structure': '#structure', 'changelog': '#changelog', 'dev': '#dev' };
+  const map = { 'tools': '#tools', 'tools-list': '#tools', 'vitalsign': '#vitalsign', 'journal': '#journal', 'checklist': '#checklist', 'structure': '#structure', 'changelog': '#changelog', 'dev': '#dev' };
   navLinks.forEach(link => {
     link.classList.toggle('active', link.getAttribute('href') === (map[current] || '#' + current));
   });
