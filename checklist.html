@@ -193,6 +193,31 @@ label.proc-lbl.na:has(input:checked) .proc-dot{background:var(--text3);border-co
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:#fff;font-size:13px;font-weight:600;padding:10px 22px;border-radius:24px;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* PDF Modal */
+.pdf-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:1100;display:flex;align-items:center;justify-content:center;padding:16px}
+.pdf-modal-box{background:var(--surface);border-radius:14px;padding:26px 26px 20px;max-width:440px;width:100%;box-shadow:0 10px 50px rgba(0,0,0,.3);border:1.5px solid var(--border)}
+.pdf-modal-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.pdf-modal-title{font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.pdf-modal-close{background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;line-height:1;padding:0 2px}
+.pdf-modal-desc{font-size:12.5px;color:var(--text3);margin-bottom:16px;line-height:1.55}
+.pdf-group-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:14px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--border-lt,var(--border))}
+.pdf-sec-list{display:flex;flex-direction:column;gap:7px}
+.pdf-sec-item{display:flex;align-items:center;gap:10px;background:var(--surf2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;transition:border-color .2s}
+.pdf-sec-item.done{border-color:var(--ok)}
+.pdf-sec-icon{font-size:16px;flex-shrink:0;width:22px;text-align:center}
+.pdf-sec-info{flex:1;min-width:0}
+.pdf-sec-name{font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:2px}
+.pdf-sec-ts{font-size:10.5px;color:var(--text3)}
+.pdf-sec-ts.filled{color:var(--ok);font-weight:500}
+.pdf-sec-badge{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-weight:700;background:var(--border);color:var(--text3)}
+.pdf-sec-badge.done{background:var(--ok);color:#fff}
+.btn-pdf-sm{background:var(--primary);color:#fff;font-size:11.5px;font-weight:700;padding:5px 12px;border-radius:6px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;font-family:inherit;transition:all .15s}
+.btn-pdf-sm:hover{filter:brightness(1.1)}
+.pdf-merged-row{display:flex;align-items:center;gap:12px;background:var(--surf2);border:1.5px solid var(--primary);border-radius:9px;padding:12px 14px}
+.pdf-modal-footer{display:flex;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px;margin-top:16px}
+.btn-pdf{background:var(--primary);color:#fff;font-size:13px}
+.btn-pdf:hover{filter:brightness(1.1)}
+
 /* Responsive */
 @media(max-width:500px){
   .fg-2{grid-template-columns:1fr}
@@ -231,6 +256,9 @@ label.proc-lbl.na:has(input:checked) .proc-dot{background:var(--text3);border-co
   .sec-ts{display:flex!important}
   /* Print header per tab */
   .print-tab-header{display:block!important}
+  /* Single-section print mode: hide non-target panels */
+  body.print-single .tab-panel{display:none!important}
+  body.print-single .tab-panel.print-target{display:block!important}
 }
 .print-tab-header{display:none;font-size:14px;font-weight:700;color:#1B4A6B;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #1B4A6B}
 </style>
@@ -624,7 +652,63 @@ label.proc-lbl.na:has(input:checked) .proc-dot{background:var(--text3);border-co
   </div>
   <div class="actions-group">
     <button class="btn btn-save" onclick="saveJSON()">💾 데이터 저장</button>
-    <button class="btn btn-primary" onclick="printPDF()">🖨 PDF 저장/출력</button>
+    <button class="btn btn-pdf btn" onclick="openPdfModal()">📑 PDF 저장</button>
+  </div>
+</div>
+
+<!-- PDF 저장 모달 -->
+<div id="pdf-modal" class="pdf-modal-overlay" style="display:none" onclick="if(event.target===this)closePdfModal()">
+  <div class="pdf-modal-box">
+    <div class="pdf-modal-hd">
+      <div class="pdf-modal-title">📑 PDF 저장</div>
+      <button class="pdf-modal-close" onclick="closePdfModal()" aria-label="닫기">✕</button>
+    </div>
+    <p class="pdf-modal-desc">섹션별 개별 저장 또는 3개 섹션 통합 저장을 선택하세요.<br>브라우저 인쇄 대화상자에서 <strong>PDF로 저장</strong>을 선택하세요.</p>
+
+    <div class="pdf-group-lbl">개별 저장</div>
+    <div class="pdf-sec-list">
+      <div class="pdf-sec-item" id="mpdf-row-consent">
+        <span class="pdf-sec-icon">📄</span>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-name">피험자 동의서</div>
+          <div class="pdf-sec-ts" id="mpdf-ts-consent">미입력</div>
+        </div>
+        <span class="pdf-sec-badge" id="mpdf-badge-consent">—</span>
+        <button class="btn-pdf-sm" onclick="doPrint('consent')">저장</button>
+      </div>
+      <div class="pdf-sec-item" id="mpdf-row-pre">
+        <span class="pdf-sec-icon">📋</span>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-name">사전 체크리스트</div>
+          <div class="pdf-sec-ts" id="mpdf-ts-pre">미입력</div>
+        </div>
+        <span class="pdf-sec-badge" id="mpdf-badge-pre">—</span>
+        <button class="btn-pdf-sm" onclick="doPrint('pre')">저장</button>
+      </div>
+      <div class="pdf-sec-item" id="mpdf-row-post">
+        <span class="pdf-sec-icon">✅</span>
+        <div class="pdf-sec-info">
+          <div class="pdf-sec-name">사후 체크리스트</div>
+          <div class="pdf-sec-ts" id="mpdf-ts-post">미입력</div>
+        </div>
+        <span class="pdf-sec-badge" id="mpdf-badge-post">—</span>
+        <button class="btn-pdf-sm" onclick="doPrint('post')">저장</button>
+      </div>
+    </div>
+
+    <div class="pdf-group-lbl">통합 저장</div>
+    <div class="pdf-merged-row">
+      <span style="font-size:18px;flex-shrink:0">📑</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">3개 섹션 통합</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:1px">동의서 · 사전 · 사후 체크리스트</div>
+      </div>
+      <button class="btn-pdf-sm" onclick="doPrint()">🖨 통합 저장</button>
+    </div>
+
+    <div class="pdf-modal-footer">
+      <button class="btn btn-outline" onclick="closePdfModal()">닫기</button>
+    </div>
   </div>
 </div>
 
@@ -758,6 +842,21 @@ function restoreData(d) {
   });
 }
 
+/* ─── Downloads capability init ─── */
+let dlCap = null;
+(async () => {
+  try {
+    if (window.claude) dlCap = await window.claude.use('downloads');
+  } catch (_) {}
+  const saveBtn = document.querySelector('.btn-save');
+  if (!dlCap && saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.title = '이 환경에서는 파일 저장이 지원되지 않습니다';
+    saveBtn.style.opacity = '0.45';
+    saveBtn.style.cursor = 'not-allowed';
+  }
+})();
+
 /* ─── Stable filename: 동의서체크리스트_분반-실습조-실습일자.json ─── */
 function buildFilename() {
   // 분반: radio name="con-bun"
@@ -777,8 +876,12 @@ function buildFilename() {
   return `동의서체크리스트_${parts.join('-')}.json`;
 }
 
-/* ─── Save JSON (GitHub Pages / standalone — blob URL download) ─── */
-function saveJSON() {
+/* ─── Save JSON ─── */
+async function saveJSON() {
+  if (!dlCap) {
+    showToast('⚠ 이 환경에서는 파일 저장이 지원되지 않습니다.', true);
+    return;
+  }
   const now = new Date();
   const payload = {
     _meta: {
@@ -789,16 +892,21 @@ function saveJSON() {
     timestamps: { ...ts },
     fields: collectData()
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = buildFilename();
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('💾 데이터가 저장되었습니다.');
+  try {
+    await dlCap.save({
+      filename: buildFilename(),
+      data: JSON.stringify(payload, null, 2)
+    });
+    showToast('💾 데이터가 저장되었습니다.');
+  } catch (err) {
+    if (err?.code === 'declined') {
+      showToast('저장이 취소되었습니다.', false);
+    } else if (err?.code === 'rate_limited') {
+      showToast('⚠ 잠시 후 다시 시도해 주세요.', true);
+    } else {
+      showToast('⚠ 저장 중 오류가 발생했습니다.', true);
+    }
+  }
 }
 
 /* ─── Load JSON ─── */
@@ -829,17 +937,52 @@ function handleFileLoad(e) {
   reader.readAsText(file, 'utf-8');
 }
 
+/* ─── PDF Modal ─── */
+function openPdfModal() {
+  const sections = [
+    { key: 'consent' },
+    { key: 'pre' },
+    { key: 'post' }
+  ];
+  sections.forEach(({ key }) => {
+    const filled = !!ts[key];
+    const tsText  = filled ? fmtKST(ts[key]) : '미입력';
+    const tsEl    = document.getElementById(`mpdf-ts-${key}`);
+    const badgeEl = document.getElementById(`mpdf-badge-${key}`);
+    const rowEl   = document.getElementById(`mpdf-row-${key}`);
+    tsEl.textContent = tsText;
+    tsEl.className   = 'pdf-sec-ts' + (filled ? ' filled' : '');
+    badgeEl.textContent = filled ? '✓' : '—';
+    badgeEl.className   = 'pdf-sec-badge' + (filled ? ' done' : '');
+    rowEl.classList.toggle('done', filled);
+  });
+  document.getElementById('pdf-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closePdfModal() {
+  document.getElementById('pdf-modal').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
 /* ─── Print ─── */
-function printPDF() {
+function doPrint(target) {
+  closePdfModal();
   document.querySelectorAll('.tab-panel').forEach(p => {
     p.dataset.wasActive = p.classList.contains('active') ? '1' : '';
-    p.style.display = 'block';
   });
+  if (target) {
+    // 개별 저장: 대상 패널만 표시
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.toggle('print-target', p.id === 'tab-' + target);
+    });
+    document.body.classList.add('print-single');
+  }
   window.print();
 }
 window.addEventListener('afterprint', () => {
+  document.body.classList.remove('print-single');
   document.querySelectorAll('.tab-panel').forEach(p => {
-    p.style.display = '';
+    p.classList.remove('print-target');
     if (!p.dataset.wasActive) p.classList.remove('active');
     delete p.dataset.wasActive;
   });
