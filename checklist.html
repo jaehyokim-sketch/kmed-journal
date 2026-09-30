@@ -267,8 +267,8 @@ label.proc-lbl.na:has(input:checked) .proc-dot{background:var(--text3);border-co
   <div class="hd-badge">원광대학교 한의과대학</div>
   <h1>피험자 동의 및 시술<br>사전-사후 체크리스트</h1>
   <div class="hd-meta">
-    <span class="hd-ver">v7</span>
-    <span class="hd-date">업데이트 2026-09-30</span>
+    <span class="hd-ver">v8</span>
+    <span class="hd-date">업데이트 2026-10-01</span>
   </div>
   <p class="sub">동의서 작성 → 사전 체크리스트 → 사후 체크리스트 순으로 작성 후 PDF 저장 제출</p>
 </div>
@@ -871,7 +871,7 @@ function buildFilename() {
 async function saveJSON() {
   const filename = buildFilename();
   const payload = {
-    _meta: { savedAt: new Date().toISOString(), app: '경혈학실습 체크리스트', version: '7' },
+    _meta: { savedAt: new Date().toISOString(), app: '경혈학실습 체크리스트', version: '8' },
     timestamps: { ...ts },
     fields: collectData()
   };
@@ -953,11 +953,40 @@ const PDF_SECTION = {
 };
 
 /* 캔버스를 A4 페이지 단위로 분할하여 PDF에 삽입 */
-function _canvasToPdfPages(pdf, canvas, margin) {
+function _canvasToPdfPages(pdf, canvas, margin, target) {
   const pageW   = 210 - margin * 2;
   const pageH   = 297 - margin * 2;
   const pxPerMm = canvas.width / pageW;
   const pageHpx = pageH * pxPerMm;
+
+  /* 요소 경계 수집: 페이지 자름 시 요소 중간을 피하기 위해 */
+  let bounds = [];
+  if (target) {
+    const targetRect = target.getBoundingClientRect();
+    const scaleY = canvas.height / Math.max(targetRect.height || 1, target.offsetHeight || 1);
+    const els = target.querySelectorAll(
+      'tr, p, li, dt, dd, h2, h3, h4, fieldset, .form-row, label, textarea, .ts-block, .print-section'
+    );
+    bounds = Array.from(els).map(el => {
+      const r = el.getBoundingClientRect();
+      return {
+        top:    Math.round((r.top - targetRect.top) * scaleY),
+        bottom: Math.round((r.bottom - targetRect.top) * scaleY)
+      };
+    }).filter(b => b.top >= 0 && b.bottom <= canvas.height + 10 && b.bottom > b.top);
+  }
+
+  /* 스마트 페이지 자름: targetY가 요소 내부이면 그 요소 시작점으로 이동 */
+  function safeBreak(minY, targetY) {
+    let best = targetY;
+    for (const b of bounds) {
+      if (b.top > minY && b.top < targetY && b.bottom > targetY) {
+        if (b.top < best) best = b.top;
+      }
+    }
+    return best > minY ? best : targetY;
+  }
+
   let yPx = 0;
   let firstSlice = true;
 
@@ -965,7 +994,14 @@ function _canvasToPdfPages(pdf, canvas, margin) {
     if (!firstSlice) pdf.addPage();
     firstSlice = false;
 
-    const sliceH = Math.min(pageHpx, canvas.height - yPx);
+    const remaining = canvas.height - yPx;
+    let sliceH;
+    if (remaining <= pageHpx) {
+      sliceH = remaining;
+    } else {
+      sliceH = safeBreak(yPx, yPx + pageHpx) - yPx;
+    }
+
     const sl = document.createElement('canvas');
     sl.width  = canvas.width;
     sl.height = Math.ceil(sliceH);
@@ -1056,7 +1092,7 @@ async function doPrint(target) {
       if (!firstPage) pdf.addPage();
       firstPage = false;
 
-      _canvasToPdfPages(pdf, canvas, margin);
+      _canvasToPdfPages(pdf, canvas, margin, fc);
     }
 
     /* GitHub Pages: Blob URL 직접 다운로드 */
