@@ -2,6 +2,8 @@
 <title>피험자 동의 및 시술 사전-사후 체크리스트</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 :root {
@@ -256,9 +258,6 @@ label.proc-lbl.na:has(input:checked) .proc-dot{background:var(--text3);border-co
   .sec-ts{display:flex!important}
   /* Print header per tab */
   .print-tab-header{display:block!important}
-  /* Single-section print mode: hide non-target panels */
-  body.print-single .tab-panel{display:none!important}
-  body.print-single .tab-panel.print-target{display:block!important}
 }
 .print-tab-header{display:none;font-size:14px;font-weight:700;color:#1B4A6B;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid #1B4A6B}
 </style>
@@ -712,6 +711,13 @@ label.proc-lbl.na:has(input:checked) .proc-dot{background:var(--text3);border-co
   </div>
 </div>
 
+<!-- PDF 로딩 오버레이 (렌더 컨테이너는 doPrint()에서 동적 생성) -->
+<div id="pdf-loading-overlay" style="display:none;position:fixed;inset:0;z-index:9995;background:rgba(255,255,255,.97);flex-direction:column;align-items:center;justify-content:center;gap:14px">
+  <div style="font-size:28px">📄</div>
+  <div style="font-size:15px;font-weight:700;color:#1B4A6B">PDF 생성 중…</div>
+  <div style="font-size:12px;color:#666">잠시만 기다려 주세요</div>
+</div>
+
 <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFileLoad(event)">
 <div class="toast" id="toast"></div>
 
@@ -842,21 +848,6 @@ function restoreData(d) {
   });
 }
 
-/* ─── Downloads capability init ─── */
-let dlCap = null;
-(async () => {
-  try {
-    if (window.claude) dlCap = await window.claude.use('downloads');
-  } catch (_) {}
-  const saveBtn = document.querySelector('.btn-save');
-  if (!dlCap && saveBtn) {
-    saveBtn.disabled = true;
-    saveBtn.title = '이 환경에서는 파일 저장이 지원되지 않습니다';
-    saveBtn.style.opacity = '0.45';
-    saveBtn.style.cursor = 'not-allowed';
-  }
-})();
-
 /* ─── Stable filename: 동의서체크리스트_분반-실습조-실습일자.json ─── */
 function buildFilename() {
   // 분반: radio name="con-bun"
@@ -876,37 +867,21 @@ function buildFilename() {
   return `동의서체크리스트_${parts.join('-')}.json`;
 }
 
-/* ─── Save JSON ─── */
+/* ─── Save JSON (GitHub Pages — blob URL download) ─── */
 async function saveJSON() {
-  if (!dlCap) {
-    showToast('⚠ 이 환경에서는 파일 저장이 지원되지 않습니다.', true);
-    return;
-  }
-  const now = new Date();
+  const filename = buildFilename();
   const payload = {
-    _meta: {
-      savedAt: now.toISOString(),
-      app: '경혈학실습 체크리스트',
-      version: '7'
-    },
+    _meta: { savedAt: new Date().toISOString(), app: '경혈학실습 체크리스트', version: '7' },
     timestamps: { ...ts },
     fields: collectData()
   };
-  try {
-    await dlCap.save({
-      filename: buildFilename(),
-      data: JSON.stringify(payload, null, 2)
-    });
-    showToast('💾 데이터가 저장되었습니다.');
-  } catch (err) {
-    if (err?.code === 'declined') {
-      showToast('저장이 취소되었습니다.', false);
-    } else if (err?.code === 'rate_limited') {
-      showToast('⚠ 잠시 후 다시 시도해 주세요.', true);
-    } else {
-      showToast('⚠ 저장 중 오류가 발생했습니다.', true);
-    }
-  }
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('💾 저장 완료');
 }
 
 /* ─── Load JSON ─── */
@@ -940,13 +915,13 @@ function handleFileLoad(e) {
 /* ─── PDF Modal ─── */
 function openPdfModal() {
   const sections = [
-    { key: 'consent' },
-    { key: 'pre' },
-    { key: 'post' }
+    { key: 'consent', label: '미입력' },
+    { key: 'pre',     label: '미입력' },
+    { key: 'post',    label: '미입력' }
   ];
   sections.forEach(({ key }) => {
     const filled = !!ts[key];
-    const tsText  = filled ? fmtKST(ts[key]) : '미입력';
+    const tsText = filled ? fmtKST(ts[key]) : '미입력';
     const tsEl    = document.getElementById(`mpdf-ts-${key}`);
     const badgeEl = document.getElementById(`mpdf-badge-${key}`);
     const rowEl   = document.getElementById(`mpdf-row-${key}`);
@@ -964,29 +939,145 @@ function closePdfModal() {
   document.body.style.overflow = '';
 }
 
-/* ─── Print ─── */
-function doPrint(target) {
-  closePdfModal();
-  document.querySelectorAll('.tab-panel').forEach(p => {
-    p.dataset.wasActive = p.classList.contains('active') ? '1' : '';
-  });
-  if (target) {
-    // 개별 저장: 대상 패널만 표시
-    document.querySelectorAll('.tab-panel').forEach(p => {
-      p.classList.toggle('print-target', p.id === 'tab-' + target);
-    });
-    document.body.classList.add('print-single');
-  }
-  window.print();
+/* ─── PDF filename helper ─── */
+function buildPdfFilename(label) {
+  const base = buildFilename().replace(/\.json$/, '');
+  return (label ? label + '_' : '') + base + '.pdf';
 }
-window.addEventListener('afterprint', () => {
-  document.body.classList.remove('print-single');
-  document.querySelectorAll('.tab-panel').forEach(p => {
-    p.classList.remove('print-target');
-    if (!p.dataset.wasActive) p.classList.remove('active');
-    delete p.dataset.wasActive;
+
+/* ─── PDF 저장 (html2canvas + jsPDF 직접 캡처 방식) ─── */
+const PDF_SECTION = {
+  consent: { name: '피험자동의서', icon: '📄' },
+  pre:     { name: '사전체크리스트', icon: '📋' },
+  post:    { name: '사후체크리스트', icon: '✅' }
+};
+
+/* 캔버스를 A4 페이지 단위로 분할하여 PDF에 삽입 */
+function _canvasToPdfPages(pdf, canvas, margin) {
+  const pageW   = 210 - margin * 2;
+  const pageH   = 297 - margin * 2;
+  const pxPerMm = canvas.width / pageW;
+  const pageHpx = pageH * pxPerMm;
+  let yPx = 0;
+  let firstSlice = true;
+
+  while (yPx < canvas.height) {
+    if (!firstSlice) pdf.addPage();
+    firstSlice = false;
+
+    const sliceH = Math.min(pageHpx, canvas.height - yPx);
+    const sl = document.createElement('canvas');
+    sl.width  = canvas.width;
+    sl.height = Math.ceil(sliceH);
+    const ctx = sl.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, sl.width, sl.height);
+    ctx.drawImage(canvas, 0, yPx, canvas.width, sliceH, 0, 0, canvas.width, sliceH);
+
+    const sliceImgH = sliceH / pxPerMm;
+    pdf.addImage(sl.toDataURL('image/jpeg', 0.95), 'JPEG', margin, margin, pageW, sliceImgH);
+    yPx += sliceH;
+  }
+}
+
+async function doPrint(target) {
+  closePdfModal();
+
+  const keys     = target ? [target] : ['consent', 'pre', 'post'];
+  const label    = target ? PDF_SECTION[target].name : '통합';
+  const filename  = buildPdfFilename(label);
+  const overlay   = document.getElementById('pdf-loading-overlay');
+
+  /* ── 1. 현재 DOM 상태 저장 ── */
+  const allPanels  = [...document.querySelectorAll('.tab-panel')];
+  const savedPanel = allPanels.map(p => ({ el: p, d: p.style.display }));
+
+  const uiEls  = [...document.querySelectorAll('.tabs-nav,.ts-global,[data-pdf-hide]')];
+  const btnEls = [...document.querySelectorAll('.btn-ts,.ts-record-btn')];
+  const phEls  = [...document.querySelectorAll('.print-tab-header')];
+  const tsEls  = [...document.querySelectorAll('.sec-ts')];
+  const savedUi  = uiEls.map(e  => ({ el: e, d: e.style.display }));
+  const savedBtn = btnEls.map(e => ({ el: e, d: e.style.display }));
+  const savedPh  = phEls.map(e  => ({ el: e, d: e.style.display }));
+  const savedTs  = tsEls.map(e  => ({ el: e, d: e.style.display }));
+
+  /* ── 2. PDF 모드 적용 (클론 없이 실제 패널 조작) ── */
+  allPanels.forEach(p => {
+    const k = p.id?.replace('tab-', '');
+    p.style.display = keys.includes(k) ? 'block' : 'none';
   });
-});
+  uiEls.forEach(e  => (e.style.display = 'none'));
+  btnEls.forEach(e => (e.style.display = 'none'));
+  phEls.forEach(e  => (e.style.display = 'block'));
+  tsEls.forEach(e  => (e.style.display = 'flex'));
+
+  const savedScrollY = window.scrollY || 0;
+  window.scrollTo(0, 0);
+  if (overlay) overlay.style.display = 'flex';
+
+  /* ── 3. 레이아웃 안정화 대기 ── */
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await new Promise(r => setTimeout(r, 300));
+
+  /* ── 4. 상태 복구 함수 ── */
+  const restore = () => {
+    savedPanel.forEach(s => (s.el.style.display = s.d));
+    savedUi.forEach(s  => (s.el.style.display = s.d));
+    savedBtn.forEach(s => (s.el.style.display = s.d));
+    savedPh.forEach(s  => (s.el.style.display = s.d));
+    savedTs.forEach(s  => (s.el.style.display = s.d));
+    window.scrollTo(0, savedScrollY);
+    if (overlay) overlay.style.display = 'none';
+  };
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const pdf    = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+    const margin = 10;
+    let firstPage = true;
+
+    for (const key of keys) {
+      const panel = document.getElementById('tab-' + key);
+      if (!panel) continue;
+
+      /* .fc 콘텐츠 영역만 캡처 → A4 폭에 꽉 맞춤 */
+      const fc = panel.querySelector('.fc') || panel;
+      const canvas = await html2canvas(fc, {
+        scale:        2,
+        useCORS:      true,
+        allowTaint:   false,
+        logging:      false,
+        scrollX:      0,
+        scrollY:      -window.scrollY,
+        windowWidth:  document.documentElement.offsetWidth,
+        windowHeight: document.documentElement.scrollHeight
+      });
+
+      if (!firstPage) pdf.addPage();
+      firstPage = false;
+
+      _canvasToPdfPages(pdf, canvas, margin);
+    }
+
+    /* GitHub Pages: Blob URL 직접 다운로드 */
+    const blob = pdf.output('blob');
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+    showToast('✓ PDF 저장 완료', 0);
+  } catch (err) {
+    console.error('PDF error:', err);
+    showToast('PDF 생성 실패 — 다시 시도하세요', 1);
+  } finally {
+    restore();
+  }
+}
 
 /* ─── Reset ─── */
 function resetAll() {
