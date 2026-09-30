@@ -59,7 +59,7 @@ body{font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;background:var(
 .mi{background:var(--surface-alt);border:1px solid var(--border);border-radius:4px;padding:5px 9px;font-size:12.5px;color:var(--text-pri);font-family:inherit;width:100%;outline:none;transition:border-color .15s;}
 .mi:focus{border-color:var(--accent-line);}
 .mi::placeholder{color:var(--text-faint);}
-textarea.mi{min-height:56px;resize:none;line-height:1.55;}
+textarea.mi{min-height:56px;resize:none;line-height:1.55;overflow:hidden;box-sizing:border-box;}
 
 /* ─── Participants ─── */
 .participants{border:1px solid var(--border);border-radius:5px;overflow:hidden;}
@@ -101,8 +101,9 @@ textarea.mi{min-height:56px;resize:none;line-height:1.55;}
 .fi{background:var(--surface-alt);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-size:13px;color:var(--text-pri);font-family:inherit;width:100%;outline:none;resize:none;transition:border-color .15s;}
 .fi:focus{border-color:var(--accent-line);}
 .fi::placeholder{color:var(--text-faint);}
-textarea.fi{min-height:68px;line-height:1.6;}
+textarea.fi{min-height:68px;line-height:1.6;overflow:hidden;box-sizing:border-box;}
 select.fi{cursor:pointer;}
+/* 인쇄용 textarea 대체 div — 화면에서는 숨김 */
 
 /* ─── Two/Three col ─── */
 .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
@@ -248,10 +249,12 @@ select.fi{cursor:pointer;}
 .rt-th{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-sec);border-right:1px solid var(--border);}
 .rt-th:last-child{border-right:none;}
 .rt-row{display:grid;grid-template-columns:120px 1fr;border-top:1px solid var(--border-lt);}
-.rt-name{padding:10px 12px;font-size:12px;font-weight:600;color:var(--text-pri);border-right:1px solid var(--border-lt);display:flex;align-items:center;}
+.rt-name{padding:10px 12px;font-size:12px;font-weight:600;color:var(--text-pri);border-right:1px solid var(--border-lt);display:flex;flex-direction:column;gap:5px;justify-content:center;}
 .rt-name input{background:transparent;border:none;border-bottom:1.5px solid var(--border);outline:none;font-size:12.5px;font-family:inherit;color:var(--text-pri);width:100%;}
 .rt-name input:focus{border-color:var(--accent-line);}
-.rt-text textarea{background:transparent;border:none;width:100%;padding:10px 12px;font-size:12.5px;font-family:inherit;color:var(--text-pri);resize:none;min-height:66px;line-height:1.6;outline:none;}
+.rt-role{background:transparent;border:1px solid var(--border);border-radius:4px;outline:none;font-size:11px;font-family:inherit;color:var(--text-sec);padding:2px 5px;width:100%;cursor:pointer;}
+.rt-role:focus{border-color:var(--accent-line);color:var(--text-pri);}
+.rt-text textarea{background:transparent;border:none;width:100%;padding:10px 12px;font-size:12.5px;font-family:inherit;color:var(--text-pri);resize:none;min-height:66px;line-height:1.6;outline:none;overflow:hidden;box-sizing:border-box;}
 .rt-text textarea::placeholder{color:var(--text-faint);}
 
 /* ─── WAFFLE ─── */
@@ -288,15 +291,16 @@ select.fi{cursor:pointer;}
   .tb-btn{padding:6px 9px;}
 }
 
+@page{margin:1.5cm;}
 @media print{
   body{background:#fff;color:#000;}
-  .toolbar,.btn-print,.ae-del,.btn-add-acu{display:none!important;}
+  /* ── position:sticky / fixed → static 해제 (Chrome print renderer 충돌 방지) ── */
+  *{position:static!important;}
+  .toolbar,.btn-print,.ae-del,.btn-add-acu,.modal-backdrop{display:none!important;}
   .guide-body{display:block!important;}
   .pw{padding:10px 6px;}
-  .sc{break-inside:avoid;}
   .ae-body{display:block!important;}
-  img.img-preview,img.osce-preview{display:block!important;max-width:100%;max-height:200px;}
-  @page{margin:1.5cm;}
+  img.img-preview{display:block!important;max-width:100%;max-height:200px;}
 }
 
 /* ─── Merge Modal ─── */
@@ -349,7 +353,7 @@ select.fi{cursor:pointer;}
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0H4zM9 0v4h4L9 0zM4 9h8v1H4V9zm0 2h5v1H4v-1z"/></svg>
       <span>PDF 저장</span>
     </button>
-    <button class="tb-btn" onclick="window.print()" title="인쇄">
+    <button class="tb-btn" onclick="printToPDF()" title="인쇄 (PDF 저장과 동일)">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/></svg>
       <span>인쇄</span>
     </button>
@@ -421,8 +425,8 @@ select.fi{cursor:pointer;}
       <div class="journal-sub">탐혈·자침·초음파영상 통합 실습 기록부 (Group Practice Journal)</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
-      <span class="ver-badge"><strong>v27</strong> · 2026-09-28</span>
-      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">파일 통합 버그 수정 · 맥박수 추가</span>
+      <span class="ver-badge"><strong>v37</strong> · 2026-09-30</span>
+      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">html2pdf 직접생성 · OSCE 삭제</span>
     </div>
   </div>
   <div class="meta-g" style="margin-bottom:14px;">
@@ -567,10 +571,6 @@ select.fi{cursor:pointer;}
     <div id="subj-wrap"></div>
     <button type="button" class="btn-add-acu" id="btn-add-subj" onclick="addSubject()" style="margin-bottom:16px;">＋ 피시술자 추가 (최대 3명)</button>
 
-    <div class="fr" style="margin-top:4px;">
-      <label class="fl">시술자별 수행 관찰 및 피드백 (피시술자 작성)</label>
-      <textarea class="fi" style="min-height:80px;" placeholder="각 시술자의 수행 태도, 의사소통, 술기 능숙도 등에 대한 관찰 내용과 피드백을 기재하시오."></textarea>
-    </div>
   </div>
 </div>
 
@@ -602,53 +602,30 @@ select.fi{cursor:pointer;}
     </div>
   </div>
   <div class="sc-body">
-    <div style="font-size:11.5px;color:var(--text-sec);margin-bottom:12px;padding:9px 12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:5px;">자신의 학습을 돌이켜보고 객관적으로 평가하시오. ① 오늘 나의 학습태도 ② 개선해야 할 점 ③ 교수자에게 질문하고 싶은 내용</div>
-    <div class="reflect-table">
-      <div class="rt-head"><div class="rt-th">이름</div><div class="rt-th">성찰 내용 · Reflection</div></div>
-      <div class="rt-row"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
-      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div></div>
+    <div style="font-size:11.5px;color:var(--text-sec);margin-bottom:12px;padding:9px 12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:5px;">자신의 학습을 돌이켜보고 객관적으로 평가하시오. ① 오늘 나의 학습태도 ② 개선해야 할 점</div>
+    <div class="reflect-table" id="reflect-main">
+      <div class="rt-head"><div class="rt-th">역할 · 이름</div><div class="rt-th">성찰 내용 · Reflection</div></div>
+      <div class="rt-row"><div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div></div>
+      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div></div>
+      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div></div>
+      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div></div>
+      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div></div>
+      <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div></div>
     </div>
-  </div>
-</div>
 
-<!-- ══ SECTION 5: 관찰자 모의 OSCE 채점 ══ -->
-<div class="sc">
-  <div class="sc-head">
-    <div class="sc-num">5</div>
-    <div>
-      <div class="sc-title">관찰자 모의 OSCE 채점 결과</div>
-      <div class="sc-en">Observer Mock OSCE Scoring</div>
-    </div>
-  </div>
-  <div class="sc-body">
-    <div style="font-size:11.5px;color:var(--text-sec);margin-bottom:14px;">OSCE 수행 후 구글 설문에서 캡처한 이미지를 각 시술자별로 첨부하시오.</div>
-    <div class="osce-grid">
-      <div class="osce-item">
-        <div><div class="osce-name">시술자 1 · Practitioner 1</div><input class="fi" type="text" placeholder="시술자 이름" style="margin-bottom:8px;"><div class="osce-label">OSCE 설문 캡처 이미지</div><img class="osce-preview" id="osce-prev-0" alt=""></div>
-        <div><div class="img-upload-btn"><input type="file" accept="image/*" onchange="oscePrev(this,'osce-prev-0')">📎 이미지 첨부</div></div>
-      </div>
-      <div class="osce-item">
-        <div><div class="osce-name">시술자 2 · Practitioner 2</div><input class="fi" type="text" placeholder="시술자 이름" style="margin-bottom:8px;"><div class="osce-label">OSCE 설문 캡처 이미지</div><img class="osce-preview" id="osce-prev-1" alt=""></div>
-        <div><div class="img-upload-btn"><input type="file" accept="image/*" onchange="oscePrev(this,'osce-prev-1')">📎 이미지 첨부</div></div>
-      </div>
-      <div class="osce-item">
-        <div><div class="osce-name">시술자 3 · Practitioner 3</div><input class="fi" type="text" placeholder="시술자 이름" style="margin-bottom:8px;"><div class="osce-label">OSCE 설문 캡처 이미지</div><img class="osce-preview" id="osce-prev-2" alt=""></div>
-        <div><div class="img-upload-btn"><input type="file" accept="image/*" onchange="oscePrev(this,'osce-prev-2')">📎 이미지 첨부</div></div>
+    <!-- 피시술자 수행 관찰 피드백 -->
+    <div style="margin-top:16px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text-pri);margin-bottom:6px;">시술자별 수행 관찰 및 피드백 <span style="font-size:11.5px;font-weight:500;color:var(--text-sec);">(피시술자 작성)</span></div>
+      <div class="reflect-table" id="reflect-sf">
+        <div class="rt-head"><div class="rt-th">피시술자 이름</div><div class="rt-th">관찰 내용 및 피드백 · Practitioner Feedback</div></div>
+        <div class="rt-row"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="각 시술자의 수행 태도, 의사소통, 술기 능숙도 등에 대한 관찰 내용과 피드백을 기재하시오."></textarea></div></div>
+        <div class="rt-row" style="border-top:1px solid var(--border-lt);"><div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="각 시술자의 수행 태도, 의사소통, 술기 능숙도 등에 대한 관찰 내용과 피드백을 기재하시오."></textarea></div></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══ Footer ══ -->
-<div class="sig-footer">
-  <div class="sig-item"><span class="sig-lbl">조장 서명 · Group Leader</span><input class="sig-inp" type="text" placeholder=""></div>
-  <div class="sig-item"><span class="sig-lbl">교수 확인 · Supervisor</span><input class="sig-inp" type="text" placeholder=""></div>
-  <div class="sig-item"><span class="sig-lbl">확인 일자 · Review Date</span><input class="sig-inp" type="date"></div>
-</div>
+
 
 </div><!-- .pw -->
 
@@ -988,22 +965,6 @@ function addAE() {
         <button type="button" class="us-add-btn" id="ae${n}-l-addbtn" onclick="addUSImg(${n},'l')">+ 이미지 추가 (최대 5장)</button>
       </div>
     </div>
-    <div class="us-obs-cols">
-      <div class="us-obs-col">
-        <div class="it-cell-lbl">횡단면 관찰 소견</div>
-        <div class="obs-list">
-          <div class="obs-item"><input type="checkbox"><label>Out-of-plane 고에코 점 음영 (침 음영) 확인<div class="obs-sub"><span style="font-size:11px;color:var(--text-sec);">관찰 층:</span><input class="obs-si" type="text" placeholder="예) 전경골근 내"></div></label></div>
-          <div class="obs-item"><input type="checkbox"><label>위험 구조물 안전거리 확인<div class="obs-sub"><span style="font-size:11px;color:var(--text-sec);">구조물:</span><input class="obs-si" type="text" placeholder="장기/기관"><span style="font-size:11px;color:var(--text-sec);">거리:</span><input class="obs-si" type="text" placeholder="mm" style="max-width:60px;"></div></label></div>
-        </div>
-      </div>
-      <div class="us-obs-col">
-        <div class="it-cell-lbl">종단면 관찰 소견</div>
-        <div class="obs-list">
-          <div class="obs-item"><input type="checkbox"><label>In-plane 바늘 전체 경로(Shaft) 관찰</label></div>
-          <div class="obs-item"><input type="checkbox"><label>주위 조직 변화 확인<div class="obs-sub"><span style="font-size:11px;color:var(--text-sec);">삽입 깊이:</span><input class="obs-si" type="text" placeholder="mm" style="max-width:60px;"></div></label></div>
-        </div>
-      </div>
-    </div>
     <div class="fr" style="flex-direction:column;gap:8px;">
       <label class="fl">초음파 영상 종합 소견</label>
       <div style="display:flex;flex-direction:column;gap:4px;">
@@ -1016,6 +977,8 @@ function addAE() {
   </div>`;
 
   wrap.appendChild(card);
+  // 새 카드 내 textarea auto-resize 등록
+  card.querySelectorAll('textarea').forEach(ta => bindTaResize(ta));
   // Auto-open new entry
   openAE(n);
   // Update add button
@@ -1204,9 +1167,16 @@ function collectState() {
     topic:   (document.getElementById('topic') || {}).value || '',
   };
   // reflectEntries: 섹션4 성찰 데이터 (통합용)
-  const reflectRows = document.querySelectorAll('.reflect-table .rt-row');
+  const reflectRows = document.querySelectorAll('#reflect-main .rt-row');
   state.reflectEntries = Array.from(reflectRows).map(row => ({
-    name:    (row.querySelector('.rt-name input')   || {}).value || '',
+    role:    (row.querySelector('.rt-name .rt-role') || {}).value || '',
+    name:    (row.querySelector('.rt-name input')    || {}).value || '',
+    content: (row.querySelector('.rt-text textarea') || {}).value || '',
+  }));
+  // subjectFeedbackEntries: 시술자별 수행 관찰 및 피드백 (피시술자 작성)
+  const sfRows = document.querySelectorAll('#reflect-sf .rt-row');
+  state.subjectFeedbackEntries = Array.from(sfRows).map(row => ({
+    name:    (row.querySelector('.rt-name input')    || {}).value || '',
     content: (row.querySelector('.rt-text textarea') || {}).value || '',
   }));
   document.querySelectorAll('.st-score').forEach(sg => {
@@ -1288,25 +1258,56 @@ function applyState(state) {
   });
   // 섹션4 성찰 데이터 적용 (reflectEntries 우선, 필요시 행 자동 추가)
   if (state.reflectEntries && state.reflectEntries.length > 0) {
-    const reflTable = document.querySelector('.reflect-table');
+    const reflTable = document.getElementById('reflect-main');
     let rows = reflTable.querySelectorAll('.rt-row');
     // 부족한 행은 동적으로 추가
     while (rows.length < state.reflectEntries.length) {
       const newRow = document.createElement('div');
       newRow.className = 'rt-row';
       newRow.style.borderTop = '1px solid var(--border-lt)';
-      newRow.innerHTML = '<div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div>';
+      newRow.innerHTML = '<div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div>';
       reflTable.appendChild(newRow);
+      const newTa = newRow.querySelector('textarea');
+      if (newTa) bindTaResize(newTa);
       rows = reflTable.querySelectorAll('.rt-row');
     }
     state.reflectEntries.forEach((e, i) => {
       if (i >= rows.length) return;
+      const roleEl    = rows[i].querySelector('.rt-name .rt-role');
       const nameEl    = rows[i].querySelector('.rt-name input');
       const contentEl = rows[i].querySelector('.rt-text textarea');
+      if (roleEl)    roleEl.value    = e.role    || '';
       if (nameEl)    nameEl.value    = e.name    || '';
       if (contentEl) contentEl.value = e.content || '';
     });
   }
+  // 피시술자 피드백 복원
+  if (state.subjectFeedbackEntries && state.subjectFeedbackEntries.length > 0) {
+    const sfTable = document.getElementById('reflect-sf');
+    let sfRows = sfTable.querySelectorAll('.rt-row');
+    while (sfRows.length < state.subjectFeedbackEntries.length) {
+      const newRow = document.createElement('div');
+      newRow.className = 'rt-row';
+      newRow.style.borderTop = '1px solid var(--border-lt)';
+      newRow.innerHTML = '<div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="각 시술자의 수행 태도, 의사소통, 술기 능숙도 등에 대한 관찰 내용과 피드백을 기재하시오."></textarea></div>';
+      sfTable.appendChild(newRow);
+      const newTa = newRow.querySelector('textarea');
+      if (newTa) bindTaResize(newTa);
+      sfRows = sfTable.querySelectorAll('.rt-row');
+    }
+    state.subjectFeedbackEntries.forEach((e, i) => {
+      if (i >= sfRows.length) return;
+      const nameEl    = sfRows[i].querySelector('.rt-name input');
+      const contentEl = sfRows[i].querySelector('.rt-text textarea');
+      if (nameEl)    nameEl.value    = e.name    || '';
+      if (contentEl) contentEl.value = e.content || '';
+    });
+  }
+  // 모든 textarea 높이 재계산 (복원된 내용 반영)
+  document.querySelectorAll('textarea').forEach(ta => {
+    bindTaResize(ta);
+    taAutoResize(ta);
+  });
   setStatus('✓ 불러오기 완료', true);
 }
 
@@ -1342,28 +1343,120 @@ function loadFromFile(event) {
   reader.readAsText(file); event.target.value = '';
 }
 
-function printToPDF() {
-  // 파일명: 날짜(YYYYMMDD)_분반번호_조_실습주제  (예: 20260920_01_10조_족양명위경)
+/* ── html2pdf.js 동적 로더 ── */
+function _loadHtml2pdf() {
+  return new Promise((resolve, reject) => {
+    if (window.html2pdf) { resolve(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('CDN 로드 실패 — 인터넷 연결을 확인하세요.'));
+    document.head.appendChild(s);
+  });
+}
+
+async function printToPDF() {
+  // ── 파일명 생성 ──
   const rawDate  = (document.getElementById('pd')    || {}).value || '';
   const rawCls   = (document.getElementById('cls')   || {}).value || '';
   const rawGrp   = (document.getElementById('grp')   || {}).value || '';
   const rawTopic = (document.getElementById('topic') || {}).value || '';
-
-  const date  = rawDate.replace(/-/g, '');                  // 2026-09-20 → 20260920
-  const cls   = rawCls.replace('분반', '').trim();           // 01분반 → 01
-  const grp   = rawGrp.trim();                               // 10조 그대로
+  const date  = rawDate.replace(/-/g, '');
+  const cls   = rawCls.replace('분반', '').trim();
+  const grp   = rawGrp.trim();
   const topic = rawTopic.replace(/[\\/:*?"<>|]/g, '').trim();
-
   const parts = [date, cls, grp, topic].filter(Boolean);
   const pdfTitle = parts.length ? parts.join('_') : document.title;
 
-  const origTitle = document.title;
-  document.title = pdfTitle;                                 // 인쇄 대화상자 기본 파일명
-  setStatus('인쇄 대화상자에서 "PDF로 저장"을 선택하세요 — 파일명: ' + pdfTitle + '.pdf');
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => { document.title = origTitle; }, 2000); // 저장 후 title 복원
-  }, 200);
+  // ── html2pdf 라이브러리 로드 ──
+  setStatus('⏳ PDF 라이브러리 로딩 중...');
+  try {
+    await _loadHtml2pdf();
+  } catch (e) {
+    setStatus('❌ ' + e.message + ' — 인터넷 연결 후 재시도하세요.');
+    return;
+  }
+
+  // ── 캡처 전 준비 ──
+
+  // 1. 인쇄 불필요 요소 숨기기
+  const hideEls = document.querySelectorAll('.toolbar, .ae-del, .btn-add-acu, .btn-print, .modal-backdrop');
+  hideEls.forEach(el => { el.dataset._ph = el.style.display || ''; el.style.setProperty('display','none','important'); });
+
+  // 2. 접힌 섹션 펼치기
+  document.querySelectorAll('.guide-body').forEach(el => { el.dataset._phd = el.style.display || ''; el.style.display = 'block'; });
+  document.querySelectorAll('.ae-body').forEach(el => { el.dataset._phd2 = el.style.display || ''; el.style.display = 'block'; });
+
+  // 3. textarea → <div> 치환 (html2canvas textarea 렌더링 버그 우회)
+  //    — textarea 내용이 잘리는 문제: html2canvas는 textarea 내부 텍스트를 정확히 렌더링하지 못함
+  const proxies = []; // { ta, proxy }
+  document.querySelectorAll('textarea').forEach(ta => {
+    const cs = window.getComputedStyle(ta);
+    const proxy = document.createElement('div');
+    // textarea와 동일한 시각적 스타일 복사
+    // ※ width는 고정 px 대신 자연스러운 블록 100% 사용
+    //   → .sc{overflow:hidden} 환경에서 고정 px 값이 미세하게 넘쳐 오른쪽이 잘리는 문제 방지
+    proxy.style.cssText = [
+      'display:block',
+      'width:100%',
+      'box-sizing:border-box',
+      'white-space:pre-wrap',
+      'word-break:break-word',
+      'overflow-wrap:break-word',
+      'overflow:hidden',
+      'font-family:' + cs.fontFamily,
+      'font-size:' + cs.fontSize,
+      'line-height:' + cs.lineHeight,
+      'color:' + cs.color,
+      'background:' + cs.backgroundColor,
+      'border:' + cs.border,
+      'border-radius:' + cs.borderRadius,
+      'padding:' + cs.padding,
+      'min-height:' + cs.minHeight,
+    ].join(';');
+    proxy.textContent = ta.value;
+    ta.parentNode.insertBefore(proxy, ta);
+    ta.style.display = 'none';
+    proxies.push({ ta, proxy });
+  });
+
+  setStatus('⏳ PDF 생성 중... 잠시 기다려 주세요.');
+
+  const opt = {
+    margin:     [13, 13, 13, 13],
+    filename:   pdfTitle + '.pdf',
+    image:      { type: 'jpeg', quality: 0.93 },
+    html2canvas: {
+      scale:         2,
+      useCORS:       true,
+      allowTaint:    false,
+      letterRendering: true,
+      logging:       false,
+      scrollX:       0,
+      scrollY:       0,
+      windowWidth:   document.documentElement.scrollWidth
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'] }
+  };
+
+  // ── 캡처 실행 ──
+  try {
+    await html2pdf().set(opt).from(document.body).save();
+    setStatus('✓ PDF 저장 완료 — ' + pdfTitle + '.pdf', true);
+  } catch (err) {
+    setStatus('❌ PDF 생성 실패: ' + err.message);
+  } finally {
+    // ── 복원 ──
+    // textarea 복원 (proxy div 제거)
+    proxies.forEach(({ ta, proxy }) => {
+      proxy.remove();
+      ta.style.display = '';
+    });
+    hideEls.forEach(el => { el.style.display = el.dataset._ph || ''; delete el.dataset._ph; });
+    document.querySelectorAll('.guide-body').forEach(el => { el.style.display = el.dataset._phd || ''; delete el.dataset._phd; });
+    document.querySelectorAll('.ae-body').forEach(el => { el.style.display = el.dataset._phd2 || ''; delete el.dataset._phd2; });
+  }
 }
 
 function resetForm() {
@@ -1483,7 +1576,8 @@ function renderMergeUI() {
   // AE 통합 요약
   const totalAE = _mf.reduce((s, f) => s + (f.state.nEntries || 0), 0);
   const totalReflect = _mf.reduce((s, f) => {
-    return s + (f.state.reflectEntries || []).filter(e => (e.name||'').trim() || (e.content||'').trim()).length;
+    return s + (f.state.reflectEntries || []).filter(e => (e.name||'').trim() || (e.content||'').trim()).length
+             + (f.state.subjectFeedbackEntries || []).filter(e => (e.name||'').trim() || (e.content||'').trim()).length;
   }, 0);
   document.getElementById('merge-ae-info').innerHTML =
     `경혈기록 <strong>${totalAE}</strong>개 + 성찰 <strong>${totalReflect}</strong>개 통합`;
@@ -1650,13 +1744,39 @@ function executeMerge() {
     if (ct) ct.value = e.content || '';
   });
 
+  // 통합 후 전체 textarea 높이 재계산
+  document.querySelectorAll('textarea').forEach(ta => { bindTaResize(ta); taAutoResize(ta); });
+
   closeMergeModal();
   setStatus(`✓ ${_mf.length}개 파일 통합 완료 — 경혈기록 ${globalCardIdx}개, 성찰 ${allReflect.length}개`, true);
 }
+
+
+// ══ 전체 textarea auto-resize ══
+function taAutoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+// 단일 textarea에 auto-resize 이벤트 등록 (중복 방지)
+function bindTaResize(ta) {
+  if (ta._taResizeBound) return;
+  ta._taResizeBound = true;
+  ta.addEventListener('input', () => taAutoResize(ta));
+}
+// 페이지 내 모든 textarea에 적용 (신규 추가분은 bindTaResize 직접 호출)
+function initAllTaResize() {
+  document.querySelectorAll('textarea').forEach(ta => {
+    bindTaResize(ta);
+    taAutoResize(ta);
+  });
+}
+// 하위 호환: 구형 이름 유지
+function rtAutoResize(ta) { taAutoResize(ta); }
 
 // ══ Init ══
 document.getElementById('pd').value = new Date().toISOString().split('T')[0];
 const _restored = checkAutoSave();
 if (!_restored) addAE();
 _asTimer = setInterval(autoSave, 30000);
+initAllTaResize();
 </script>
