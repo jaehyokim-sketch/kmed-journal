@@ -145,6 +145,18 @@ body {
 .ta:focus { border-color: var(--c-primary-mid); border-style: solid; }
 .ta-sm { min-height: 56px; }
 
+/* Proxy div — textarea 대체 (PDF 출력 시 잘림 방지) */
+.ta-proxy {
+  display: none;
+  width: 100%; min-height: 90px;
+  border: 1px dashed var(--c-border); border-radius: 4px;
+  background: var(--c-input-bg);
+  font-family: inherit; font-size: 13px; color: var(--c-text);
+  padding-inline: 10px; padding-block: 8px; line-height: 1.7;
+  white-space: pre-wrap; word-break: break-word; box-sizing: border-box;
+}
+.ta-proxy.ta-proxy-sm { min-height: 56px; }
+
 /* Measurement block */
 .meas-wrap { margin-block-end: 8px; }
 .meas-title { font-size: 12px; font-weight: 700; color: var(--c-primary); margin-block: 8px 5px; padding-inline-start: 8px; border-inline-start: 3px solid var(--c-primary); }
@@ -342,6 +354,7 @@ strong { font-weight: 700; }
   .student-cell { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -353,7 +366,7 @@ strong { font-weight: 700; }
     <button class="tb-btn" onclick="loadJSON()">📂 불러오기</button>
     <button class="tb-btn tb-btn-save" onclick="saveJSON()">💾 임시저장</button>
     <span class="tb-divider"></span>
-    <button class="tb-btn tb-btn-print" onclick="window.print()">🖨️ 인쇄 / PDF</button>
+    <button class="tb-btn tb-btn-print" onclick="exportPDF()">🖨️ 인쇄 / PDF</button>
   </div>
 </div>
 
@@ -883,6 +896,7 @@ function populateFormData(data) {
   (data.inputs || []).forEach(function(v, i){ if (inputs[i]) inputs[i].value = v; });
   (data.selects || []).forEach(function(v, i){ if (selects[i]) selects[i].value = v; });
   (data.textareas || []).forEach(function(v, i){ if (textareas[i]) textareas[i].value = v; });
+  textareas.forEach(function(ta) { autoResize(ta); });
   (data.checkboxes || []).forEach(function(v, i){ if (checkboxes[i]) checkboxes[i].checked = v; });
   _photos = (data.photos || []).map(function(src, idx){ return { id: Date.now() + idx, src: src }; });
   renderPhotos();
@@ -993,6 +1007,143 @@ function showToast(msg) {
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2600);
 }
+
+// ===== PDF 내보내기 (html2pdf.js) =====
+function prepareForPDF() {
+  document.querySelectorAll('.topbar, .modal-overlay, .toast, #photo-add-btn, .photo-remove, .photo-count').forEach(function(el) {
+    el.setAttribute('data-pdf-hidden', '1');
+    el.style.display = 'none';
+  });
+  document.querySelectorAll('textarea:not(.json-display)').forEach(function(ta) {
+    var proxy = document.createElement('div');
+    proxy.className = 'ta-proxy' + (ta.classList.contains('ta-sm') ? ' ta-proxy-sm' : '');
+    proxy.setAttribute('data-pdf-proxy', '1');
+    proxy.textContent = ta.value;
+    ta.parentNode.insertBefore(proxy, ta);
+    proxy.style.display = 'block';
+    ta.setAttribute('data-pdf-hidden', '1');
+    ta.style.display = 'none';
+  });
+}
+
+function restoreFromPDF() {
+  document.querySelectorAll('[data-pdf-hidden]').forEach(function(el) {
+    el.style.display = '';
+    el.removeAttribute('data-pdf-hidden');
+  });
+  document.querySelectorAll('[data-pdf-proxy]').forEach(function(el) {
+    el.parentNode.removeChild(el);
+  });
+}
+
+// 쪽 경계가 글줄·표 테두리 한가운데를 지나지 않도록,
+// 기본 분할 위치 근처에서 "가로줄 전체가 비어 있는(=글자 없는)" 행을 찾아 그곳에서 자른다.
+function findSafeBreak(canvas, idealEnd, minEnd) {
+  var w = canvas.width, ctx = canvas.getContext('2d');
+  var top = Math.max(1, Math.floor(minEnd));
+  var h = Math.floor(idealEnd) - top + 1;
+  if (h < 3) return Math.floor(idealEnd);
+  var data = ctx.getImageData(0, top - 1, w, h + 1).data;   // 윗행 비교용으로 1행 더
+  var stride = w * 4;
+  function rowDiff(r) {        // r행과 r-1행의 차이(글자가 있으면 큼)
+    var d = 0, o1 = r * stride, o0 = (r - 1) * stride;
+    for (var x = 0; x < w; x += 2) {
+      var i = x * 4;
+      d += Math.abs(data[o1 + i] - data[o0 + i]) +
+           Math.abs(data[o1 + i + 1] - data[o0 + i + 1]) +
+           Math.abs(data[o1 + i + 2] - data[o0 + i + 2]);
+      if (d > 60) return d;
+    }
+    return d;
+  }
+  // 아래쪽(이상적 위치)에서 위로 훑으며 연속 4행이 모두 "변화 없음"인 지점을 찾는다
+  var run = 0;
+  for (var r = h; r >= 1; r--) {
+    if (rowDiff(r) <= 60) { run++; if (run >= 4) return top - 1 + r + 3; }
+    else run = 0;
+  }
+  return Math.floor(idealEnd);   // 못 찾으면 기본 위치
+}
+
+window.exportPDF = function() {
+  var sx = window.scrollX || 0, sy = window.scrollY || 0;
+  window.scrollTo(0, 0);
+  prepareForPDF();
+
+  var wrap = document.querySelector('.wrap');
+  var PDF_W = 860;   // 캡처 기준 폭(px) = .wrap max-width
+  var MARGIN = [10, 12, 10, 12];
+
+  var opt = {
+    margin: MARGIN,
+    filename: '위생관리실습일지_' + getDateStr() + '.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      scrollX: 0,
+      scrollY: 0,
+      windowWidth: Math.max(window.innerWidth, PDF_W)
+    },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  function _restore() {
+    restoreFromPDF();
+    window.scrollTo(sx, sy);
+  }
+
+  // html2pdf는 복제본을 "용지 안쪽 폭(mm)" 컨테이너에 넣어 캡처한다.
+  // 컨테이너 폭을 860px로 직접 고정해야 레이아웃이 잘리거나 축소되지 않는다.
+  html2pdf().set(opt).from(wrap).toContainer().then(function() {
+    var c = this.prop.container;
+    c.style.width = PDF_W + 'px';
+    c.style.left = '0'; c.style.right = 'auto'; c.style.margin = '0';   // 창 폭과 무관하게 x=0 고정
+    c.style.background = getComputedStyle(document.body).backgroundColor || '#fff';
+  }).toCanvas().toPdf().then(function() {
+    // 기본 분할(글줄 중간이 잘릴 수 있음)로 만든 페이지를 버리고, 안전한 위치에서 다시 나눈다.
+    var canvas = this.prop.canvas, pdf = this.prop.pdf;
+    var innerW = this.prop.pageSize.inner.width;              // mm
+    var pxPageH = Math.floor(canvas.width * this.prop.pageSize.inner.ratio);
+    var mmPerPx = innerW / canvas.width;
+    var oldPages = pdf.getNumberOfPages();
+
+    var y = 0, first = true;
+    while (y < canvas.height - 1) {
+      var end = y + pxPageH;
+      if (end >= canvas.height) end = canvas.height;
+      else end = findSafeBreak(canvas, end, y + pxPageH * 0.6);
+      if (end <= y) end = Math.min(y + pxPageH, canvas.height);
+      var sh = end - y;
+
+      var pc = document.createElement('canvas');
+      pc.width = canvas.width; pc.height = sh;
+      var pctx = pc.getContext('2d');
+      pctx.fillStyle = 'white'; pctx.fillRect(0, 0, pc.width, pc.height);
+      pctx.drawImage(canvas, 0, y, canvas.width, sh, 0, 0, canvas.width, sh);
+
+      pdf.addPage();
+      pdf.addImage(pc.toDataURL('image/jpeg', 0.98), 'jpeg', MARGIN[1], MARGIN[0], innerW, sh * mmPerPx);
+      y = end; first = false;
+    }
+    for (var i = 0; i < oldPages; i++) pdf.deletePage(1);
+  }).save()
+    .then(_restore)
+    .catch(function(e) { console.error(e); _restore(); });
+};
+
+// ===== textarea 자동 높이 확장 =====
+function autoResize(ta) {
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+(function initAutoResize() {
+  document.querySelectorAll('textarea:not(.json-display)').forEach(function(ta) {
+    ta.addEventListener('input', function() { autoResize(this); });
+    autoResize(ta);
+  });
+})();
 </script>
 </body>
 </html>
