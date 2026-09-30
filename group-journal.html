@@ -353,10 +353,6 @@ select.fi{cursor:pointer;}
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5L9.5 0H4zM9 0v4h4L9 0zM4 9h8v1H4V9zm0 2h5v1H4v-1z"/></svg>
       <span>PDF 저장</span>
     </button>
-    <button class="tb-btn" onclick="printToPDF()" title="인쇄 (PDF 저장과 동일)">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/></svg>
-      <span>인쇄</span>
-    </button>
     <div class="tb-sep"></div>
     <button class="tb-btn danger" onclick="resetForm()" title="모든 내용 초기화">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1z"/></svg>
@@ -404,9 +400,11 @@ select.fi{cursor:pointer;}
 
         <div class="merge-warn" id="merge-warn" style="display:none"></div>
 
+        <!-- 충돌 해결 패널 (충돌 감지 시 표시) -->
+
         <div class="merge-acts">
           <button class="tb-btn" onclick="closeMergeModal()" style="padding:8px 18px;">취소</button>
-          <button class="tb-btn primary" onclick="executeMerge()" style="padding:8px 18px;">통합 실행</button>
+          <button class="tb-btn primary" id="merge-exec-btn" onclick="executeMerge()" style="padding:8px 18px;">통합 실행</button>
         </div>
       </div>
     </div>
@@ -465,7 +463,6 @@ select.fi{cursor:pointer;}
       <li>관찰자는 시술 전·후 체크리스트를 작성한다.</li>
       <li>시술자는 자침의 전 과정을 다른 조원의 도움 없이 수행하고 실습일지에 직접 기록한다.</li>
       <li>관찰자는 시술자의 수행을 관찰하고 위생·안전관리 준수 여부를 점검하여 기록한다.</li>
-      <li>실습 종료 후 관찰자는 교수자가 제시한 경혈에 각 시술자별로 1회씩 호침 시술하도록 하고, 체크리스트에 따라 채점하고(OSCE) 피드백한다.</li>
     </ol>
   </div>
 </div>
@@ -1722,27 +1719,64 @@ function executeMerge() {
   for (const f of _mf) {
     for (const e of (f.state.reflectEntries || [])) {
       if (!(e.name || '').trim() && !(e.content || '').trim()) continue;
-      const key = ((e.name || '').trim()) + '\x00' + ((e.content || '').trim());
-      if (!seen.has(key)) { seen.add(key); allReflect.push(e); }
+      const dedupeKey = ((e.role || '').trim()) + '\x00' + ((e.name || '').trim()) + '\x00' + ((e.content || '').trim());
+      if (!seen.has(dedupeKey)) { seen.add(dedupeKey); allReflect.push(e); }
     }
   }
-  const reflTable = document.querySelector('.reflect-table');
+  // ↑ 버그 수정: querySelector('.reflect-table') → getElementById('reflect-main')
+  const reflTable = document.getElementById('reflect-main');
   let reflRows = reflTable.querySelectorAll('.rt-row');
   while (reflRows.length < allReflect.length) {
     const row = document.createElement('div');
     row.className = 'rt-row';
     row.style.borderTop = '1px solid var(--border-lt)';
-    row.innerHTML = '<div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점, 질문 사항 등을 기술하시오."></textarea></div>';
+    row.innerHTML = '<div class="rt-name"><select class="rt-role"><option value="">역할 선택</option><option value="시술자">시술자</option><option value="관찰자">관찰자</option><option value="피시술자">피시술자</option></select><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="오늘 나의 학습 태도, 개선할 점 등을 기술하시오."></textarea></div>';
     reflTable.appendChild(row);
+    const newTa = row.querySelector('textarea');
+    if (newTa) bindTaResize(newTa);
     reflRows = reflTable.querySelectorAll('.rt-row');
   }
   allReflect.forEach((e, i) => {
     if (i >= reflRows.length) return;
-    const nm = reflRows[i].querySelector('.rt-name input');
-    const ct = reflRows[i].querySelector('.rt-text textarea');
-    if (nm) nm.value = e.name || '';
-    if (ct) ct.value = e.content || '';
+    const roleEl = reflRows[i].querySelector('.rt-name .rt-role');
+    const nm     = reflRows[i].querySelector('.rt-name input');
+    const ct     = reflRows[i].querySelector('.rt-text textarea');
+    if (roleEl) roleEl.value = e.role    || '';
+    if (nm)     nm.value     = e.name    || '';
+    if (ct)     ct.value     = e.content || '';
   });
+
+  // ── STEP 4b: 피시술자 수행 관찰 피드백 통합 ──
+  const seenSF = new Set();
+  const allSF  = [];
+  for (const f of _mf) {
+    for (const e of (f.state.subjectFeedbackEntries || [])) {
+      if (!(e.name || '').trim() && !(e.content || '').trim()) continue;
+      const sfKey = ((e.name || '').trim()) + '\x00' + ((e.content || '').trim());
+      if (!seenSF.has(sfKey)) { seenSF.add(sfKey); allSF.push(e); }
+    }
+  }
+  if (allSF.length > 0) {
+    const sfTable = document.getElementById('reflect-sf');
+    let sfRows = sfTable.querySelectorAll('.rt-row');
+    while (sfRows.length < allSF.length) {
+      const row = document.createElement('div');
+      row.className = 'rt-row';
+      row.style.borderTop = '1px solid var(--border-lt)';
+      row.innerHTML = '<div class="rt-name"><input type="text" placeholder="이름"></div><div class="rt-text"><textarea placeholder="각 시술자의 수행 태도, 의사소통, 술기 능숙도 등에 대한 관찰 내용과 피드백을 기재하시오."></textarea></div>';
+      sfTable.appendChild(row);
+      const newTa = row.querySelector('textarea');
+      if (newTa) bindTaResize(newTa);
+      sfRows = sfTable.querySelectorAll('.rt-row');
+    }
+    allSF.forEach((e, i) => {
+      if (i >= sfRows.length) return;
+      const nm = sfRows[i].querySelector('.rt-name input');
+      const ct = sfRows[i].querySelector('.rt-text textarea');
+      if (nm) nm.value = e.name    || '';
+      if (ct) ct.value = e.content || '';
+    });
+  }
 
   // 통합 후 전체 textarea 높이 재계산
   document.querySelectorAll('textarea').forEach(ta => { bindTaResize(ta); taAutoResize(ta); });
