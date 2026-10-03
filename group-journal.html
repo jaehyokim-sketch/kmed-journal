@@ -174,7 +174,7 @@ select.fi{cursor:pointer;}
 .it-cell{padding:11px 12px;border-right:1px solid var(--border);}
 .it-cell:last-child{border-right:none;}
 .it-cell-lbl{font-size:10.5px;font-weight:600;color:var(--text-sec);margin-bottom:7px;}
-.img-ph{border:2px dashed var(--border);border-radius:5px;background:var(--surface-alt);min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;}
+.img-ph{border:2px dashed var(--border);border-radius:5px;background:var(--surface-alt);min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden;page-break-inside:avoid;break-inside:avoid;}
 .img-ph:hover{border-color:var(--accent-line);background:var(--accent-lt);}
 .img-ph input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
 .img-ph-ico{font-size:26px;opacity:.35;}
@@ -189,7 +189,7 @@ select.fi{cursor:pointer;}
 @media(max-width:560px){.it-head,.it-row{grid-template-columns:1fr;}.it-cell{border-right:none;border-top:1px solid var(--border);}.it-ch{border-right:none;border-bottom:1px solid var(--border);}.it-ch:last-child{border-bottom:none;}}
 
 /* ─── Multi-image ultrasound slots ─── */
-.us-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:14px;}
+.us-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:14px;page-break-inside:avoid;break-inside:avoid;}
 .us-col{padding:12px;}
 .us-col:first-child{border-right:1px solid var(--border);}
 .us-col-head{font-size:11px;font-weight:700;color:var(--accent);background:var(--surface-alt);margin:-12px -12px 10px;padding:9px 12px;border-bottom:1px solid var(--border);}
@@ -1417,6 +1417,26 @@ async function printToPDF() {
     proxies.push({ ta, proxy });
   });
 
+  // 4. 이미지 잘림 방지: overflow:hidden 컨테이너 임시 해제 + page-break-inside 설정
+  //    — html2pdf는 overflow:hidden 요소의 경계를 잘못 인식해 avoid가 동작하지 않을 수 있음
+  const imgBreakEls = document.querySelectorAll('.img-ph, .us-cols, .us-slot');
+  imgBreakEls.forEach(el => {
+    el.dataset._bkOvf = el.style.overflow;
+    el.dataset._bkPbi = el.style.pageBreakInside;
+    el.dataset._bkBki = el.style.breakInside;
+    el.style.overflow        = 'visible';
+    el.style.pageBreakInside = 'avoid';
+    el.style.breakInside     = 'avoid';
+  });
+
+  // 4-1. 자침 사진 부모(.ae-card) overflow:hidden 임시 해제 — 렌더링 클립 방지
+  //      page-break-inside는 미적용 (카드 전체가 다음 페이지로 밀리는 현상 방지)
+  const cardOverflowEls = document.querySelectorAll('.ae-card');
+  cardOverflowEls.forEach(el => {
+    el.dataset._cOvf = el.style.overflow;
+    el.style.overflow = 'visible';
+  });
+
   setStatus('⏳ PDF 생성 중... 잠시 기다려 주세요.');
 
   const opt = {
@@ -1434,7 +1454,7 @@ async function printToPDF() {
       windowWidth:   document.documentElement.scrollWidth
     },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: ['css', 'legacy'] }
+    pagebreak: { mode: ['css', 'legacy'], avoid: ['img', '.img-ph', '.us-cols', '.us-slot'] }
   };
 
   // ── 캡처 실행 ──
@@ -1453,6 +1473,18 @@ async function printToPDF() {
     hideEls.forEach(el => { el.style.display = el.dataset._ph || ''; delete el.dataset._ph; });
     document.querySelectorAll('.guide-body').forEach(el => { el.style.display = el.dataset._phd || ''; delete el.dataset._phd; });
     document.querySelectorAll('.ae-body').forEach(el => { el.style.display = el.dataset._phd2 || ''; delete el.dataset._phd2; });
+    // 이미지 잘림 방지용 스타일 복원
+    imgBreakEls.forEach(el => {
+      el.style.overflow        = el.dataset._bkOvf || '';
+      el.style.pageBreakInside = el.dataset._bkPbi || '';
+      el.style.breakInside     = el.dataset._bkBki || '';
+      delete el.dataset._bkOvf; delete el.dataset._bkPbi; delete el.dataset._bkBki;
+    });
+    // ae-card overflow 복원
+    cardOverflowEls.forEach(el => {
+      el.style.overflow = el.dataset._cOvf || '';
+      delete el.dataset._cOvf;
+    });
   }
 }
 
