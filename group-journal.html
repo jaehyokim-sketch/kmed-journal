@@ -425,8 +425,8 @@ select.fi{cursor:pointer;}
       <div class="journal-sub">탐혈·자침·초음파영상 통합 실습 기록부 (Group Practice Journal)</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
-      <span class="ver-badge"><strong>v39</strong> · 2026-10-05</span>
-      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">50p 자동분할 저장 · 그림/텍스트 절단 방지</span>
+      <span class="ver-badge"><strong>v40</strong> · 2026-10-05</span>
+      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">파일 통합 완전성 강화 (Gn·Depth·탐촉자·관측조직 정밀 복원) · 50p 자동분할</span>
     </div>
   </div>
   <div class="meta-g" style="margin-bottom:14px;">
@@ -1130,23 +1130,371 @@ setupScoring('hygiene-table', 'hygiene-total', 14);
 setupScoring('safety-table', 'safety-total', 20);
 
 // ══ Data Save / Load ══
+
+// Helper: Collect single AE card structured data
+function collectAECard(cardEl, n) {
+  const merEl = document.getElementById('ae-mer-' + n);
+  const acuEl = document.getElementById('ae-acu-' + n);
+  const pracEl = document.getElementById('ae-prac-inp-' + n);
+
+  let needleDir = '';
+  const dirRadios = cardEl.querySelectorAll('input[name="nd' + n + '"]');
+  dirRadios.forEach(r => { if (r.checked) needleDir = r.value; });
+
+  const angleInp = cardEl.querySelector('.angle-in');
+  const depthBoxes = cardEl.querySelectorAll('.depth-box input');
+  const needleDepth = depthBoxes[0] ? depthBoxes[0].value : '';
+  const needleGauge = depthBoxes[1] ? depthBoxes[1].value : '';
+  const targetTissue = depthBoxes[2] ? depthBoxes[2].value : '';
+
+  const allTas = Array.from(cardEl.querySelectorAll('textarea'));
+  const preMethod = allTas[0] ? allTas[0].value : '';
+  const preAnatomy = allTas[1] ? allTas[1].value : '';
+  const prePrecautions = allTas[2] ? allTas[2].value : '';
+  const locProcess = allTas[3] ? allTas[3].value : '';
+  const deqiText = allTas[4] ? allTas[4].value : '';
+  const adverseEvent = allTas[5] ? allTas[5].value : '';
+  const usSummary = allTas[6] ? allTas[6].value : '';
+
+  const deqiCb = cardEl.querySelector('.chk-g input[type=checkbox]');
+  const deqiGroup = deqiCb ? deqiCb.closest('.chk-g') : (cardEl.querySelectorAll('.chk-g')[1] || null);
+  const deqiChecks = deqiGroup ? Array.from(deqiGroup.querySelectorAll('input[type=checkbox]')).map(c => c.checked) : [];
+
+  const tSlots = [];
+  const tSlotEls = cardEl.querySelectorAll('#ae' + n + '-t-list .us-slot');
+  tSlotEls.forEach((slot, sIdx) => {
+    let probe = '';
+    const prs = slot.querySelectorAll('input[name="pb' + n + '-t-' + sIdx + '"]');
+    prs.forEach(r => { if (r.checked) probe = r.value; });
+    const pvals = slot.querySelectorAll('.probe-val');
+    tSlots.push({
+      probe: probe,
+      depth: pvals[0] ? pvals[0].value : '',
+      gain: pvals[1] ? pvals[1].value : ''
+    });
+  });
+
+  const lSlots = [];
+  const lSlotEls = cardEl.querySelectorAll('#ae' + n + '-l-list .us-slot');
+  lSlotEls.forEach((slot, sIdx) => {
+    let probe = '';
+    const prs = slot.querySelectorAll('input[name="pb' + n + '-l-' + sIdx + '"]');
+    prs.forEach(r => { if (r.checked) probe = r.value; });
+    const pvals = slot.querySelectorAll('.probe-val');
+    lSlots.push({
+      probe: probe,
+      depth: pvals[0] ? pvals[0].value : '',
+      gain: pvals[1] ? pvals[1].value : ''
+    });
+  });
+
+  const layerChks = Array.from(cardEl.querySelectorAll('.chk-layers input[type=checkbox]')).map(c => c.checked);
+
+  return {
+    mer: merEl ? merEl.value : '',
+    acu: acuEl ? acuEl.value : '',
+    practitioner: pracEl ? pracEl.value : '',
+    preMethod, preAnatomy, prePrecautions, locProcess,
+    needleDir,
+    needleAngle: angleInp ? angleInp.value : '',
+    needleDepth, needleGauge, targetTissue,
+    deqiChecks, deqiText, adverseEvent,
+    tSlots, lSlots,
+    layers: layerChks,
+    usSummary
+  };
+}
+
+// Helper: Extract AE cards from any state (v40 structured aeEntries OR v39 / legacy vals)
+function extractAECards(state) {
+  if (!state) return [];
+  if (Array.isArray(state.aeEntries) && state.aeEntries.length > 0) {
+    return JSON.parse(JSON.stringify(state.aeEntries));
+  }
+
+  const vals = state.vals || [];
+  const entries = state.entries || [];
+  const nCards = state.nEntries || entries.length || 0;
+  if (!nCards || vals.length === 0) return [];
+
+  let cur = 0;
+  if (state._ae && typeof state._ae.start === 'number' && state._ae.start >= 0 && state._ae.start < vals.length) {
+    cur = state._ae.start;
+  } else {
+    cur = 26 + 9 * (state.nSubjects || 0);
+    if (cur >= vals.length) cur = 0;
+  }
+
+  // Double check start position against meridian key if available
+  if (entries.length > 0 && entries[0].mer && cur < vals.length) {
+    if (vals[cur] && vals[cur].v !== entries[0].mer) {
+      const matchIdx = vals.findIndex((item, idx) => idx >= 20 && item.v === entries[0].mer);
+      if (matchIdx !== -1) cur = matchIdx;
+    }
+  }
+
+  const cards = [];
+  for (let cIdx = 0; cIdx < nCards; cIdx++) {
+    if (cur >= vals.length || cur + 23 > vals.length) break;
+
+    const prefix = vals.slice(cur, cur + 23);
+    const entry = entries[cIdx] || {};
+
+    const mer = (prefix[0] && prefix[0].v) || entry.mer || '';
+    const acu = (prefix[1] && prefix[1].v) || entry.acu || '';
+    const prac = (prefix[2] && prefix[2].v) || '';
+    const preMethod = (prefix[3] && prefix[3].v) || '';
+    const preAnatomy = (prefix[4] && prefix[4].v) || '';
+    const prePrecautions = (prefix[5] && prefix[5].v) || '';
+    const locProcess = (prefix[6] && prefix[6].v) || '';
+
+    let needleDir = '';
+    if (prefix[7] && prefix[7].v) needleDir = 'p';
+    else if (prefix[8] && prefix[8].v) needleDir = 'o';
+    else if (prefix[9] && prefix[9].v) needleDir = 't';
+    else if (prefix[10] && prefix[10].v) needleDir = 'x';
+
+    const needleAngle = (prefix[11] && prefix[11].v) || '';
+    const needleDepth = (prefix[12] && prefix[12].v) || '';
+    const needleGauge = (prefix[13] && prefix[13].v) || '';
+    const targetTissue = (prefix[14] && prefix[14].v) || '';
+
+    const deqiChecks = [
+      !!(prefix[15] && prefix[15].v),
+      !!(prefix[16] && prefix[16].v),
+      !!(prefix[17] && prefix[17].v),
+      !!(prefix[18] && prefix[18].v),
+      !!(prefix[19] && prefix[19].v),
+      !!(prefix[20] && prefix[20].v),
+    ];
+    const deqiText = (prefix[21] && prefix[21].v) || '';
+    const adverseEvent = (prefix[22] && prefix[22].v) || '';
+
+    cur += 23;
+
+    // Collect probe slots: [Linear(c), Convex(c), Depth(v), Gain(v)]
+    const rawSlots = [];
+    while (cur + 4 <= vals.length) {
+      if (cur + 9 <= vals.length) {
+        const isLayers = [0,1,2,3,4,5,6,7].every(k => vals[cur + k].t === 'c') && vals[cur + 8].t === 'v';
+        if (isLayers) break;
+      }
+      if (vals[cur].t === 'c' && vals[cur+1].t === 'c' && vals[cur+2].t === 'v' && vals[cur+3].t === 'v') {
+        const lin = !!vals[cur].v;
+        const cvx = !!vals[cur+1].v;
+        rawSlots.push({
+          probe: lin ? 'l' : (cvx ? 'c' : ''),
+          depth: vals[cur+2].v != null ? String(vals[cur+2].v) : '',
+          gain: vals[cur+3].v != null ? String(vals[cur+3].v) : ''
+        });
+        cur += 4;
+      } else {
+        break;
+      }
+    }
+
+    // 8 layers checkboxes (피부, 피하지방, 신경, 혈관, 근막, 근육, 뼈, 내부 장기)
+    const layers = [];
+    if (cur + 8 <= vals.length && [0,1,2,3,4,5,6,7].every(k => vals[cur + k].t === 'c')) {
+      for (let k = 0; k < 8; k++) layers.push(!!vals[cur + k].v);
+      cur += 8;
+    } else {
+      for (let k = 0; k < 8; k++) layers.push(false);
+    }
+
+    // 1 ultrasound summary textarea
+    let usSummary = '';
+    if (cur < vals.length && vals[cur].t === 'v') {
+      usSummary = vals[cur].v != null ? String(vals[cur].v) : '';
+      cur += 1;
+    }
+
+    // Determine T vs L slots using state.imgs
+    let tCount = 1;
+    let lCount = 1;
+    if (state.imgs) {
+      let maxT = 0, maxL = 0;
+      Object.keys(state.imgs).forEach(id => {
+        const mt = id.match(new RegExp('^ae' + cIdx + '-iv-t-(\\\\d+)$'));
+        if (mt) maxT = Math.max(maxT, parseInt(mt[1]) + 1);
+        const ml = id.match(new RegExp('^ae' + cIdx + '-iv-l-(\\\\d+)$'));
+        if (ml) maxL = Math.max(maxL, parseInt(ml[1]) + 1);
+      });
+      if (maxT > 0 || maxL > 0) {
+        tCount = Math.max(1, maxT);
+        lCount = Math.max(1, maxL);
+      }
+    }
+
+    if (rawSlots.length > 0) {
+      if (rawSlots.length > tCount + lCount) {
+        tCount += (rawSlots.length - (tCount + lCount));
+      } else if (rawSlots.length < tCount + lCount) {
+        if (rawSlots.length >= 2) { tCount = 1; lCount = rawSlots.length - 1; }
+        else if (rawSlots.length === 1) { tCount = 1; lCount = 0; }
+        else { tCount = 0; lCount = 0; }
+      }
+    } else {
+      tCount = 1; lCount = 1;
+    }
+
+    const tSlots = rawSlots.slice(0, tCount);
+    const lSlots = rawSlots.slice(tCount, tCount + lCount);
+    if (tSlots.length === 0) tSlots.push({ probe: '', depth: '', gain: '' });
+    if (lSlots.length === 0) lSlots.push({ probe: '', depth: '', gain: '' });
+
+    cards.push({
+      mer, acu, practitioner: prac,
+      preMethod, preAnatomy, prePrecautions, locProcess,
+      needleDir, needleAngle, needleDepth, needleGauge, targetTissue,
+      deqiChecks, deqiText, adverseEvent,
+      tSlots, lSlots, layers, usSummary
+    });
+  }
+
+  return cards;
+}
+
+// Helper: Render card n cleanly into DOM with all values, extra slots, layers, and images
+function renderAECard(n, cardData, cardImgs) {
+  addAE();
+  const cardEl = document.getElementById('ae-' + n);
+  if (!cardEl) return;
+
+  const merEl = document.getElementById('ae-mer-' + n);
+  if (merEl && cardData.mer) {
+    merEl.value = cardData.mer;
+    updateAcuPts(n);
+    const acuEl = document.getElementById('ae-acu-' + n);
+    if (acuEl && cardData.acu) acuEl.value = cardData.acu;
+    updateAETitle(n);
+  }
+
+  const pracEl = document.getElementById('ae-prac-inp-' + n);
+  if (pracEl && cardData.practitioner !== undefined) {
+    pracEl.value = cardData.practitioner;
+    updateAESub(n);
+  }
+
+  const allTas = Array.from(cardEl.querySelectorAll('textarea'));
+  if (allTas[0] && cardData.preMethod !== undefined) allTas[0].value = cardData.preMethod;
+  if (allTas[1] && cardData.preAnatomy !== undefined) allTas[1].value = cardData.preAnatomy;
+  if (allTas[2] && cardData.prePrecautions !== undefined) allTas[2].value = cardData.prePrecautions;
+  if (allTas[3] && cardData.locProcess !== undefined) allTas[3].value = cardData.locProcess;
+  if (allTas[4] && cardData.deqiText !== undefined) allTas[4].value = cardData.deqiText;
+  if (allTas[5] && cardData.adverseEvent !== undefined) allTas[5].value = cardData.adverseEvent;
+  if (allTas[6] && cardData.usSummary !== undefined) allTas[6].value = cardData.usSummary;
+
+  if (cardData.needleDir) {
+    const dirRadios = cardEl.querySelectorAll('input[name="nd' + n + '"]');
+    dirRadios.forEach(r => { r.checked = (r.value === cardData.needleDir); });
+  }
+
+  const angleInp = cardEl.querySelector('.angle-in');
+  if (angleInp && cardData.needleAngle !== undefined) angleInp.value = cardData.needleAngle;
+  const depthBoxes = cardEl.querySelectorAll('.depth-box input');
+  if (depthBoxes[0] && cardData.needleDepth !== undefined) depthBoxes[0].value = cardData.needleDepth;
+  if (depthBoxes[1] && cardData.needleGauge !== undefined) depthBoxes[1].value = cardData.needleGauge;
+  if (depthBoxes[2] && cardData.targetTissue !== undefined) depthBoxes[2].value = cardData.targetTissue;
+
+  if (cardData.deqiChecks && Array.isArray(cardData.deqiChecks)) {
+    const deqiCb = cardEl.querySelector('.chk-g input[type=checkbox]');
+    const deqiGroup = deqiCb ? deqiCb.closest('.chk-g') : (cardEl.querySelectorAll('.chk-g')[1] || null);
+    if (deqiGroup) {
+      const chks = deqiGroup.querySelectorAll('input[type=checkbox]');
+      cardData.deqiChecks.forEach((val, i) => { if (chks[i]) chks[i].checked = !!val; });
+    }
+  }
+
+  // Pre-create and populate Transverse slots
+  const tSlots = (cardData.tSlots && cardData.tSlots.length > 0) ? cardData.tSlots : [{ probe: '', depth: '', gain: '' }];
+  const tListEl = document.getElementById('ae' + n + '-t-list');
+  if (tListEl) {
+    while (tListEl.querySelectorAll('.us-slot').length < tSlots.length) {
+      addUSImg(n, 't');
+    }
+    const renderedTSlots = tListEl.querySelectorAll('.us-slot');
+    tSlots.forEach((slot, sIdx) => {
+      if (sIdx >= renderedTSlots.length) return;
+      const slotEl = renderedTSlots[sIdx];
+      if (slot.probe) {
+        const prs = slotEl.querySelectorAll('input[name="pb' + n + '-t-' + sIdx + '"]');
+        prs.forEach(r => { r.checked = (r.value === slot.probe); });
+      }
+      const pvals = slotEl.querySelectorAll('.probe-val');
+      if (pvals[0] && slot.depth !== undefined) pvals[0].value = slot.depth;
+      if (pvals[1] && slot.gain !== undefined) pvals[1].value = slot.gain;
+    });
+  }
+
+  // Pre-create and populate Longitudinal slots
+  const lSlots = (cardData.lSlots && cardData.lSlots.length > 0) ? cardData.lSlots : [{ probe: '', depth: '', gain: '' }];
+  const lListEl = document.getElementById('ae' + n + '-l-list');
+  if (lListEl) {
+    while (lListEl.querySelectorAll('.us-slot').length < lSlots.length) {
+      addUSImg(n, 'l');
+    }
+    const renderedLSlots = lListEl.querySelectorAll('.us-slot');
+    lSlots.forEach((slot, sIdx) => {
+      if (sIdx >= renderedLSlots.length) return;
+      const slotEl = renderedLSlots[sIdx];
+      if (slot.probe) {
+        const prs = slotEl.querySelectorAll('input[name="pb' + n + '-l-' + sIdx + '"]');
+        prs.forEach(r => { r.checked = (r.value === slot.probe); });
+      }
+      const pvals = slotEl.querySelectorAll('.probe-val');
+      if (pvals[0] && slot.depth !== undefined) pvals[0].value = slot.depth;
+      if (pvals[1] && slot.gain !== undefined) pvals[1].value = slot.gain;
+    });
+  }
+
+  // Identified layers (8 checkboxes: 피부, 피하지방, 신경, 혈관, 근막, 근육, 뼈, 내부 장기)
+  if (cardData.layers && Array.isArray(cardData.layers)) {
+    const layerChks = cardEl.querySelectorAll('.chk-layers input[type=checkbox]');
+    cardData.layers.forEach((val, i) => { if (layerChks[i]) layerChks[i].checked = !!val; });
+  }
+
+  // Restore images for this card
+  if (cardImgs) {
+    Object.entries(cardImgs).forEach(([id, src]) => {
+      const img = document.getElementById(id);
+      if (!img || !src) return;
+      img.src = src; img.style.display = 'block';
+      const ph = img.closest('.img-ph');
+      if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
+    });
+  }
+
+  cardEl.querySelectorAll('textarea').forEach(ta => { bindTaResize(ta); taAutoResize(ta); });
+}
+
 function collectState() {
-  const state = { v: 2, ts: new Date().toISOString(), nEntries: 0, entries: [], nSubjects: 0, vals: [], scores: [], imgs: {} };
+  const state = {
+    v: 3,
+    ts: new Date().toISOString(),
+    nEntries: 0,
+    entries: [],
+    aeEntries: [],
+    nSubjects: subjCount,
+    vals: [],
+    scores: [],
+    imgs: {}
+  };
   const cards = document.querySelectorAll('#ae-wrap .ae-card');
   state.nEntries = cards.length;
-  state.nSubjects = subjCount;
   cards.forEach(card => {
     const n = parseInt(card.id.split('-')[1]);
     const m = document.getElementById('ae-mer-' + n);
     const a = document.getElementById('ae-acu-' + n);
     state.entries.push({ mer: m ? m.value : '', acu: a ? a.value : '' });
+    state.aeEntries.push(collectAECard(card, n));
   });
   const allEls = Array.from(document.querySelectorAll('input:not([type=file]), textarea, select'));
   allEls.forEach(el => {
     if (el.type === 'checkbox' || el.type === 'radio') state.vals.push({ t: 'c', v: el.checked });
     else state.vals.push({ t: 'v', v: el.value });
   });
-  // _ae: 통합(merge)을 위한 AE 섹션 경계 정보
+  // _ae: 통합(merge) 및 하위 호환을 위한 AE 섹션 경계 정보
   const aeWrap = document.getElementById('ae-wrap');
   const aeInputs = Array.from(aeWrap.querySelectorAll('input:not([type=file]), textarea, select'));
   if (aeInputs.length > 0 && cards.length > 0) {
@@ -1189,44 +1537,22 @@ function collectState() {
 }
 
 function applyState(state) {
-  if (!state || !state.v) { alert('올바른 저장 파일이 아닙니다.'); return; }
-  // Rebuild dynamic subject cards first (positional vals[] depends on DOM order)
+  if (!state || (!state.v && state.v !== 0)) { alert('올바른 저장 파일이 아닙니다.'); return; }
+  // Rebuild dynamic subject cards first
   subjCount = 0;
   document.getElementById('subj-wrap').querySelectorAll('.subj-card').forEach(c => c.remove());
   document.getElementById('btn-add-subj').style.display = '';
   const nS = state.nSubjects || 0;
   for (let i = 0; i < nS; i++) addSubject();
-  // Rebuild AE cards
+
+  // Extract AE cards with full structure
+  const aeCards = extractAECards(state);
+
+  // Clear AE cards
   aeCount = 0;
   document.getElementById('ae-wrap').querySelectorAll('.ae-card').forEach(c => c.remove());
   document.getElementById('btn-add').style.display = '';
-  const nE = state.nEntries || 1;
-  for (let i = 0; i < nE; i++) addAE();
-  (state.entries || []).forEach((e, i) => {
-    const mer = document.getElementById('ae-mer-' + i);
-    if (mer && e.mer) {
-      mer.value = e.mer; updateAcuPts(i);
-      const acu = document.getElementById('ae-acu-' + i);
-      if (acu && e.acu) acu.value = e.acu;
-      updateAETitle(i);
-    }
-  });
-  const els = Array.from(document.querySelectorAll('input:not([type=file]), textarea, select'));
-  (state.vals || []).forEach((item, i) => {
-    if (i >= els.length) return;
-    const el = els[i];
-    if (el.id && /^ae-mer-\d+$|^ae-acu-\d+$/.test(el.id)) return;
-    if (item.t === 'c') el.checked = item.v;
-    else el.value = item.v;
-  });
-  for (let i = 0; i < nE; i++) { const p = document.getElementById('ae-prac-inp-' + i); if (p) updateAESub(i); }
-  const sgs = document.querySelectorAll('.st-score');
-  (state.scores || []).forEach((v, gi) => {
-    if (gi >= sgs.length || v === null) return;
-    sgs[gi].querySelectorAll('.score-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.v === String(v)));
-  });
-  updateTotal('hygiene-table', 'hygiene-total', 14);
-  updateTotal('safety-table', 'safety-total', 20);
+
   // Migrate old single-slot keys ae{n}-iv-t / ae{n}-iv-l → ae{n}-iv-t-0 / ae{n}-iv-l-0
   const migratedImgs = {};
   Object.entries(state.imgs || {}).forEach(([id, src]) => {
@@ -1234,32 +1560,57 @@ function applyState(state) {
     if (oldFmt) { migratedImgs[`${oldFmt[1]}-iv-${oldFmt[2]}-0`] = src; }
     else { migratedImgs[id] = src; }
   });
-  // Pre-create extra slots as needed before restoring images
-  const slotCounts = {};
-  Object.keys(migratedImgs).forEach(id => {
-    const m = id.match(/^ae(\d+)-iv-([tl])-(\d+)$/);
-    if (m) { const key = `ae${m[1]}-${m[2]}`; const idx = parseInt(m[3]); slotCounts[key] = Math.max(slotCounts[key] || 0, idx + 1); }
+
+  // Render each AE card with renderAECard
+  if (aeCards.length > 0) {
+    aeCards.forEach((cData, i) => {
+      const cardImgs = {};
+      Object.entries(migratedImgs).forEach(([id, src]) => {
+        if (id.startsWith('ae' + i + '-')) cardImgs[id] = src;
+      });
+      renderAECard(i, cData, cardImgs);
+    });
+  } else {
+    addAE();
+  }
+
+  // Restore non-AE inputs (Cover, Checklist, Subjects) from state.vals
+  const aeWrap = document.getElementById('ae-wrap');
+  const allEls = Array.from(document.querySelectorAll('input:not([type=file]), textarea, select'));
+  let nonAeIdx = 0;
+  for (const el of allEls) {
+    if (aeWrap.contains(el)) break; // stop at #ae-wrap boundary
+    if (nonAeIdx < (state.vals || []).length) {
+      const item = state.vals[nonAeIdx];
+      if (item.t === 'c') el.checked = item.v;
+      else el.value = item.v;
+    }
+    nonAeIdx++;
+  }
+
+  // Restore scores
+  const sgs = document.querySelectorAll('.st-score');
+  (state.scores || []).forEach((v, gi) => {
+    if (gi >= sgs.length || v === null) return;
+    sgs[gi].querySelectorAll('.score-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.v === String(v)));
   });
-  Object.entries(slotCounts).forEach(([key, needed]) => {
-    const m = key.match(/^ae(\d+)-([tl])$/);
-    if (!m) return;
-    const n = parseInt(m[1]); const side = m[2];
-    const listEl = document.getElementById(`ae${n}-${side}-list`);
-    if (!listEl) return;
-    while (listEl.querySelectorAll('.us-slot').length < needed) addUSImg(n, side);
-  });
+  updateTotal('hygiene-table', 'hygiene-total', 14);
+  updateTotal('safety-table', 'safety-total', 20);
+
+  // Restore non-AE images (OSCE, waffle etc.)
   Object.entries(migratedImgs).forEach(([id, src]) => {
+    if (id.startsWith('ae')) return;
     const img = document.getElementById(id);
     if (!img || !src) return;
     img.src = src; img.style.display = 'block';
-    const ph = img.closest('.img-ph');
-    if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
+    const ph = img.closest('.img-ph,.osce-box,.waffle-box');
+    if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt,.osce-ico,.osce-txt,.waffle-ico,.waffle-txt').forEach(e => e.style.display = 'none');
   });
-  // 섹션4 성찰 데이터 적용 (reflectEntries 우선, 필요시 행 자동 추가)
+
+  // Restore Section 4 reflections (reflectEntries)
   if (state.reflectEntries && state.reflectEntries.length > 0) {
     const reflTable = document.getElementById('reflect-main');
     let rows = reflTable.querySelectorAll('.rt-row');
-    // 부족한 행은 동적으로 추가
     while (rows.length < state.reflectEntries.length) {
       const newRow = document.createElement('div');
       newRow.className = 'rt-row';
@@ -1280,7 +1631,8 @@ function applyState(state) {
       if (contentEl) contentEl.value = e.content || '';
     });
   }
-  // 피시술자 피드백 복원
+
+  // Restore Section 4b feedback (subjectFeedbackEntries)
   if (state.subjectFeedbackEntries && state.subjectFeedbackEntries.length > 0) {
     const sfTable = document.getElementById('reflect-sf');
     let sfRows = sfTable.querySelectorAll('.rt-row');
@@ -1302,11 +1654,10 @@ function applyState(state) {
       if (contentEl) contentEl.value = e.content || '';
     });
   }
-  // 모든 textarea 높이 재계산 (복원된 내용 반영)
-  document.querySelectorAll('textarea').forEach(ta => {
-    bindTaResize(ta);
-    taAutoResize(ta);
-  });
+
+  // Auto-resize all textareas
+  initAllTaResize();
+
   setStatus('✓ 불러오기 완료', true);
 }
 
@@ -1949,15 +2300,15 @@ function renderMergeUI() {
   // 파일 카드
   document.getElementById('merge-cards').innerHTML = _mf.map((f, i) => {
     const inf = f.state._info || {};
-    const ts  = f.state.ts ? new Date(f.state.ts).toLocaleString('ko-KR') : '—';
-    const nE  = f.state.nEntries || 0;
-    const old = !f.state._ae;
+    const cards = extractAECards(f.state);
+    const nE  = cards.length || f.state.nEntries || 0;
+    const isLegacy = !f.state.aeEntries;
     const meta = [
       inf.date    && '실습일: ' + inf.date,
       inf.section || '',
       inf.group   || '',
       nE + '개 경혈기록',
-      old ? '⚠ 구버전 형식' : '',
+      isLegacy ? '복원완료 (호환모드)' : 'v40 고정밀',
     ].filter(Boolean).join(' · ');
     return `<div class="mcard">
   <div class="mcard-badge">파일 ${i+1}</div>
@@ -1976,7 +2327,10 @@ function renderMergeUI() {
   if (prev && parseInt(prev) < _mf.length) sel.value = prev;
 
   // AE 통합 요약
-  const totalAE = _mf.reduce((s, f) => s + (f.state.nEntries || 0), 0);
+  const totalAE = _mf.reduce((s, f) => {
+    const cards = extractAECards(f.state);
+    return s + (cards ? cards.length : (f.state.nEntries || 0));
+  }, 0);
   const totalReflect = _mf.reduce((s, f) => {
     return s + (f.state.reflectEntries || []).filter(e => (e.name||'').trim() || (e.content||'').trim()).length
              + (f.state.subjectFeedbackEntries || []).filter(e => (e.name||'').trim() || (e.content||'').trim()).length;
@@ -1984,151 +2338,102 @@ function renderMergeUI() {
   document.getElementById('merge-ae-info').innerHTML =
     `경혈기록 <strong>${totalAE}</strong>개 + 성찰 <strong>${totalReflect}</strong>개 통합`;
 
-  // 경고
-  const oldFmt = _mf.filter(f => !f.state._ae);
+  // 경고 (추출 불가능한 파일만 표시)
+  const unparsable = _mf.filter(f => extractAECards(f.state).length === 0);
   const warn = document.getElementById('merge-warn');
-  if (oldFmt.length > 0) {
+  if (unparsable.length > 0) {
     warn.style.display = '';
-    warn.innerHTML = `⚠ <strong>구버전 형식 파일 ${oldFmt.length}개:</strong> ${oldFmt.map(f=>f.name).join(', ')}<br>
-이 파일들은 경혈 기록 텍스트를 정밀하게 추출할 수 없습니다. 최신 버전의 실습일지에서 <em>데이터 저장</em>을 다시 실행하면 정확도가 향상됩니다. 현재는 기준 파일의 텍스트 영역을 기반으로 통합합니다.`;
+    warn.innerHTML = `⚠ <strong>경혈 기록 추출 불가 파일 ${unparsable.length}개:</strong> ${unparsable.map(f=>f.name).join(', ')}<br>
+해당 파일은 데이터 구조가 손상되었거나 지원되지 않는 형식입니다.`;
   } else { warn.style.display = 'none'; }
 }
 
 function executeMerge() {
   if (_mf.length === 0) { alert('파일을 먼저 불러오세요.'); return; }
+  const filesToMerge = [..._mf];
   const baseIdx  = parseInt(document.getElementById('merge-base-sel').value) || 0;
-  const baseFile = _mf[baseIdx];
+  const baseFile = filesToMerge[baseIdx] || filesToMerge[0];
   const base     = baseFile.state;
 
   // ── STEP 1: 기준 파일을 완전히 적용 (cover·체크리스트·OSCE·성찰 포함) ──
   applyState(base);
 
-  // ── STEP 2: AE 섹션만 초기화하고 파일별로 카드 단위 재구성 ──
+  // ── STEP 2: AE 섹션만 초기화하고 모든 파일에서 카드 단위로 무손실 정밀 통합 ──
   aeCount = 0;
   document.getElementById('ae-wrap').querySelectorAll('.ae-card').forEach(c => c.remove());
   document.getElementById('btn-add').style.display = '';
 
   let globalCardIdx = 0;
-  const mergedImgs = {};
+  const nonAeImgs = {};
 
   // 비-AE 이미지(OSCE 등): 기준 파일이 최우선으로 덮어씀
-  for (const f of _mf) {
+  for (const f of filesToMerge) {
     if (f === baseFile) continue;
     Object.entries(f.state.imgs || {}).forEach(([id, src]) => {
-      if (!id.startsWith('ae')) mergedImgs[id] = src;
+      if (!id.startsWith('ae')) nonAeImgs[id] = src;
     });
   }
   Object.entries(base.imgs || {}).forEach(([id, src]) => {
-    if (!id.startsWith('ae')) mergedImgs[id] = src;
+    if (!id.startsWith('ae')) nonAeImgs[id] = src;
   });
 
   // 각 파일의 AE 카드를 순서대로 통합
-  for (const f of _mf) {
-    const fState   = f.state;
-    const fEntries = fState.entries || [];
-    const fN       = fEntries.length;
-    if (!fN) continue;
-    const fAE      = fState._ae;
+  for (const f of filesToMerge) {
+    const fState = f.state;
+    const cards = extractAECards(fState);
+    if (!cards || cards.length === 0) continue;
 
-    for (let cardIdx = 0; cardIdx < fN; cardIdx++) {
+    for (let cIdx = 0; cIdx < cards.length; cIdx++) {
       if (globalCardIdx >= MAX_AE) break;
-      const entry = fEntries[cardIdx];
-      const n     = globalCardIdx; // 통합 결과에서의 카드 번호
+      const cardData = cards[cIdx];
+      const n = globalCardIdx; // 통합 결과에서의 카드 번호
 
-      addAE(); // ae-N 카드 생성
-
-      // 경맥·경혈 드롭다운 설정
-      const merEl = document.getElementById('ae-mer-' + n);
-      if (merEl && entry.mer) {
-        merEl.value = entry.mer;
-        updateAcuPts(n);
-        const acuEl = document.getElementById('ae-acu-' + n);
-        if (acuEl && entry.acu) acuEl.value = entry.acu;
-        updateAETitle(n);
-      }
-
-      // 카드 내 입력값 복원 (perCard 기반 슬라이스 → 카드 내 DOM 순서로 매핑)
-      if (fAE && fAE.perCard > 0) {
-        const cardVals = fState.vals.slice(
-          fAE.start + cardIdx * fAE.perCard,
-          fAE.start + (cardIdx + 1) * fAE.perCard
-        );
-        const cardEl = document.getElementById('ae-' + n);
-        if (cardEl) {
-          const cardInputs = Array.from(
-            cardEl.querySelectorAll('input:not([type=file]), textarea, select')
-          );
-          cardVals.forEach((item, vi) => {
-            if (vi >= cardInputs.length) return;
-            const el = cardInputs[vi];
-            // 경맥·경혈 select는 위에서 이미 설정
-            if (el.id && /^ae-mer-\d+$|^ae-acu-\d+$/.test(el.id)) return;
-            if (item.t === 'c') el.checked = item.v;
-            else el.value = item.v;
-          });
-          // 시술자 서브라벨 업데이트
-          const pracInp = document.getElementById('ae-prac-inp-' + n);
-          if (pracInp) updateAESub(n);
-        }
-      }
-
-      // AE 이미지 수집 — 소스 파일의 cardIdx → 통합 결과의 n 으로 ID 재매핑
+      // AE 이미지 수집 — 소스 파일의 cIdx → 통합 결과의 n 번 카드 ID로 매핑
+      const cardImgs = {};
       Object.entries(fState.imgs || {}).forEach(([id, src]) => {
-        // 자침 사진: ae{cardIdx}-iv-ph
+        // 자침 사진: ae{cIdx}-iv-ph
         const needleM = id.match(/^ae(\d+)-iv-ph$/);
-        if (needleM && parseInt(needleM[1]) === cardIdx) {
-          mergedImgs[`ae${n}-iv-ph`] = src; return;
+        if (needleM && parseInt(needleM[1]) === cIdx) {
+          cardImgs[`ae${n}-iv-ph`] = src;
         }
-        // 초음파 영상: ae{cardIdx}-iv-{t|l}-{slotIdx}
+        // 초음파 영상: ae{cIdx}-iv-{t|l}-{slotIdx}
         const usM = id.match(/^ae(\d+)-iv-([tl])-(\d+)$/);
-        if (usM && parseInt(usM[1]) === cardIdx) {
-          mergedImgs[`ae${n}-iv-${usM[2]}-${usM[3]}`] = src;
+        if (usM && parseInt(usM[1]) === cIdx) {
+          cardImgs[`ae${n}-iv-${usM[2]}-${usM[3]}`] = src;
+        }
+        // 구형 형식: ae{cIdx}-iv-{t|l}
+        const oldUsM = id.match(/^ae(\d+)-iv-([tl])$/);
+        if (oldUsM && parseInt(oldUsM[1]) === cIdx) {
+          cardImgs[`ae${n}-iv-${oldUsM[2]}-0`] = src;
         }
       });
 
+      // renderAECard를 통해 슬롯 동적 생성, Probe/Depth/Gain, 관측조직 8개 층, 이미지 등을 완전 복원
+      renderAECard(n, cardData, cardImgs);
       globalCardIdx++;
     }
     if (globalCardIdx >= MAX_AE) break;
   }
 
-  // ── STEP 3: 초음파 슬롯 사전 생성 후 이미지 일괄 복원 ──
-  const slotCounts = {};
-  Object.keys(mergedImgs).forEach(id => {
-    const m = id.match(/^ae(\d+)-iv-([tl])-(\d+)$/);
-    if (m) {
-      const key = `ae${m[1]}-${m[2]}`;
-      const idx = parseInt(m[3]);
-      slotCounts[key] = Math.max(slotCounts[key] || 0, idx + 1);
-    }
-  });
-  Object.entries(slotCounts).forEach(([key, needed]) => {
-    const m = key.match(/^ae(\d+)-([tl])$/);
-    if (!m) return;
-    const n = parseInt(m[1]); const side = m[2];
-    const listEl = document.getElementById(`ae${n}-${side}-list`);
-    if (!listEl) return;
-    while (listEl.querySelectorAll('.us-slot').length < needed) addUSImg(n, side);
-  });
-  Object.entries(mergedImgs).forEach(([id, src]) => {
+  // 비-AE 이미지 복원
+  Object.entries(nonAeImgs).forEach(([id, src]) => {
     const img = document.getElementById(id);
     if (!img || !src) return;
     img.src = src; img.style.display = 'block';
-    const ph = img.closest('.img-ph');
-    if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
+    const ph = img.closest('.img-ph,.osce-box,.waffle-box');
+    if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt,.osce-ico,.osce-txt,.waffle-ico,.waffle-txt').forEach(el => el.style.display = 'none');
   });
 
-  // ── STEP 4: 성찰 통합 — vals[] 경로를 완전히 우회, reflectEntries만 사용
-  //    이름+내용이 같은 중복 항목은 제거
+  // ── STEP 3: 성찰 통합 — reflectEntries 사용, 중복 제거 ──
   const seen = new Set();
   const allReflect = [];
-  for (const f of _mf) {
+  for (const f of filesToMerge) {
     for (const e of (f.state.reflectEntries || [])) {
       if (!(e.name || '').trim() && !(e.content || '').trim()) continue;
       const dedupeKey = ((e.role || '').trim()) + '\x00' + ((e.name || '').trim()) + '\x00' + ((e.content || '').trim());
       if (!seen.has(dedupeKey)) { seen.add(dedupeKey); allReflect.push(e); }
     }
   }
-  // ↑ 버그 수정: querySelector('.reflect-table') → getElementById('reflect-main')
   const reflTable = document.getElementById('reflect-main');
   let reflRows = reflTable.querySelectorAll('.rt-row');
   while (reflRows.length < allReflect.length) {
@@ -2150,11 +2455,20 @@ function executeMerge() {
     if (nm)     nm.value     = e.name    || '';
     if (ct)     ct.value     = e.content || '';
   });
+  // Clear any remaining rows beyond allReflect if base had empty rows
+  for (let i = allReflect.length; i < reflRows.length; i++) {
+    const roleEl = reflRows[i].querySelector('.rt-name .rt-role');
+    const nm     = reflRows[i].querySelector('.rt-name input');
+    const ct     = reflRows[i].querySelector('.rt-text textarea');
+    if (roleEl) roleEl.value = '';
+    if (nm)     nm.value     = '';
+    if (ct)     ct.value     = '';
+  }
 
-  // ── STEP 4b: 피시술자 수행 관찰 피드백 통합 ──
+  // ── STEP 4: 피시술자 수행 관찰 피드백 통합 ──
   const seenSF = new Set();
   const allSF  = [];
-  for (const f of _mf) {
+  for (const f of filesToMerge) {
     for (const e of (f.state.subjectFeedbackEntries || [])) {
       if (!(e.name || '').trim() && !(e.content || '').trim()) continue;
       const sfKey = ((e.name || '').trim()) + '\x00' + ((e.content || '').trim());
@@ -2181,13 +2495,19 @@ function executeMerge() {
       if (nm) nm.value = e.name    || '';
       if (ct) ct.value = e.content || '';
     });
+    for (let i = allSF.length; i < sfRows.length; i++) {
+      const nm = sfRows[i].querySelector('.rt-name input');
+      const ct = sfRows[i].querySelector('.rt-text textarea');
+      if (nm) nm.value = '';
+      if (ct) ct.value = '';
+    }
   }
 
   // 통합 후 전체 textarea 높이 재계산
-  document.querySelectorAll('textarea').forEach(ta => { bindTaResize(ta); taAutoResize(ta); });
+  initAllTaResize();
 
   closeMergeModal();
-  setStatus(`✓ ${_mf.length}개 파일 통합 완료 — 경혈기록 ${globalCardIdx}개, 성찰 ${allReflect.length}개`, true);
+  setStatus(`✓ ${filesToMerge.length}개 파일 통합 완료 — 경혈기록 ${globalCardIdx}개, 성찰 ${allReflect.length}개`, true);
 }
 
 
