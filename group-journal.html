@@ -1,5 +1,7 @@
 <title>경혈학실습 &amp; 경혈학임상술기실습 일지</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 /* ─── Tokens ─── */
@@ -296,7 +298,7 @@ select.fi{cursor:pointer;}
   body{background:#fff;color:#000;}
   /* ── position:sticky / fixed → static 해제 (Chrome print renderer 충돌 방지) ── */
   *{position:static!important;}
-  .toolbar,.btn-print,.ae-del,.btn-add-acu,.modal-backdrop{display:none!important;}
+  .toolbar,.btn-print,.ae-del,.btn-add-acu,.modal-backdrop,.us-add-btn{display:none!important;}
   .guide-body{display:block!important;}
   .pw{padding:10px 6px;}
   .ae-body{display:block!important;}
@@ -423,8 +425,8 @@ select.fi{cursor:pointer;}
       <div class="journal-sub">탐혈·자침·초음파영상 통합 실습 기록부 (Group Practice Journal)</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
-      <span class="ver-badge"><strong>v37</strong> · 2026-09-30</span>
-      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">html2pdf 직접생성 · OSCE 삭제</span>
+      <span class="ver-badge"><strong>v39</strong> · 2026-10-05</span>
+      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">50p 자동분할 저장 · 그림/텍스트 절단 방지</span>
     </div>
   </div>
   <div class="meta-g" style="margin-bottom:14px;">
@@ -1340,16 +1342,207 @@ function loadFromFile(event) {
   reader.readAsText(file); event.target.value = '';
 }
 
-/* ── html2pdf.js 동적 로더 ── */
-function _loadHtml2pdf() {
+/* ── PDF 라이브러리 동적 로더 (html2canvas 1.4.1 + jsPDF 2.5.1) ── */
+function _loadScript(src) {
   return new Promise((resolve, reject) => {
-    if (window.html2pdf) { resolve(); return; }
+    const existing = document.querySelector(`script[src="${src}"]`);
+    if (existing) {
+      if (existing.dataset.loaded === 'true') { resolve(); return; }
+      existing.addEventListener('load', resolve);
+      existing.addEventListener('error', () => reject(new Error(`스크립트 로드 실패: ${src}`)));
+      return;
+    }
     const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
-    s.onload = resolve;
-    s.onerror = () => reject(new Error('CDN 로드 실패 — 인터넷 연결을 확인하세요.'));
+    s.src = src;
+    s.onload = () => { s.dataset.loaded = 'true'; resolve(); };
+    s.onerror = () => reject(new Error(`CDN 로드 실패 — 인터넷 연결을 확인하세요: ${src}`));
     document.head.appendChild(s);
   });
+}
+
+async function _loadPdfLibs() {
+  const hasH2C = typeof window.html2canvas === 'function';
+  const hasJSPDF = typeof (window.jspdf && window.jspdf.jsPDF) === 'function' || typeof window.jsPDF === 'function';
+  if (hasH2C && hasJSPDF) return;
+
+  if (!hasH2C) {
+    await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  }
+  if (!hasJSPDF) {
+    await _loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  }
+}
+
+/* ── PDF 렌더링용 DOM 복제 도우미 (input/textarea 값 및 이미지 유지 + textarea div 치환) ── */
+function _cloneForPrint(node) {
+  const clone = node.cloneNode(true);
+  const origInputs = node.querySelectorAll('input, textarea, select');
+  const cloneInputs = clone.querySelectorAll('input, textarea, select');
+
+  for (let i = 0; i < origInputs.length; i++) {
+    const orig = origInputs[i];
+    const cl = cloneInputs[i];
+    if (!orig || !cl) continue;
+
+    if (orig.tagName === 'SELECT') {
+      cl.value = orig.value;
+      cl.selectedIndex = orig.selectedIndex;
+    } else if (orig.type === 'checkbox' || orig.type === 'radio') {
+      cl.checked = orig.checked;
+      if (orig.checked) cl.setAttribute('checked', 'checked');
+      else cl.removeAttribute('checked');
+    } else {
+      cl.value = orig.value;
+      cl.setAttribute('value', orig.value);
+    }
+  }
+
+  // 이미지 복제 동기화
+  const origImgs = node.querySelectorAll('img');
+  const cloneImgs = clone.querySelectorAll('img');
+  for (let i = 0; i < origImgs.length; i++) {
+    const origImg = origImgs[i];
+    const clImg = cloneImgs[i];
+    if (origImg && clImg) {
+      clImg.src = origImg.src;
+      clImg.style.display = origImg.style.display;
+    }
+  }
+
+  // textarea → div 치환 (줄바꿈 버그 해결)
+  clone.querySelectorAll('textarea').forEach(ta => {
+    const cs = window.getComputedStyle(ta);
+    const proxy = document.createElement('div');
+    proxy.style.cssText = [
+      'display:block',
+      'width:100%',
+      'box-sizing:border-box',
+      'white-space:pre-wrap',
+      'word-break:break-word',
+      'overflow-wrap:break-word',
+      'overflow:hidden',
+      'font-family:' + (cs.fontFamily || 'inherit'),
+      'font-size:' + (cs.fontSize || '12.5px'),
+      'line-height:' + (cs.lineHeight || '1.6'),
+      'color:' + (cs.color || 'inherit'),
+      'background:' + (cs.backgroundColor || 'transparent'),
+      'border:' + (cs.border || 'none'),
+      'border-radius:' + (cs.borderRadius || '0px'),
+      'padding:' + (cs.padding || '5px 8px'),
+      'min-height:' + (ta.scrollHeight > 0 ? ta.scrollHeight + 'px' : (cs.minHeight || '56px')),
+    ].join(';');
+    proxy.textContent = ta.value || '';
+    ta.parentNode.insertBefore(proxy, ta);
+    ta.style.display = 'none';
+  });
+
+  return clone;
+}
+
+// 미니 카드 컨테이너 래퍼
+function _wrapMiniCard(elements, customStyle) {
+  const card = document.createElement('div');
+  card.className = 'pdf-mini-card';
+  card.style.cssText = [
+    'background:var(--surface, #ffffff)',
+    'border:1.5px solid var(--border, #c6d3e4)',
+    'border-radius:6px',
+    'padding:14px 18px',
+    'margin-bottom:8px',
+    'box-sizing:border-box',
+    'width:100%',
+    customStyle || ''
+  ].join(';');
+
+  elements.forEach(el => {
+    if (!el) return;
+    card.appendChild(_cloneForPrint(el));
+  });
+  return card;
+}
+
+// 섹션 헤더 생성 도우미
+function _wrapSecHeader(scHead, extraEl) {
+  const wrap = document.createElement('div');
+  wrap.className = 'sc';
+  wrap.style.cssText = 'background:var(--surface, #ffffff);border:1.5px solid var(--border, #c6d3e4);border-radius:7px;margin-bottom:8px;overflow:hidden;box-sizing:border-box;width:100%;';
+  if (scHead) wrap.appendChild(_cloneForPrint(scHead));
+  if (extraEl) {
+    const body = document.createElement('div');
+    body.className = 'sc-body';
+    body.style.padding = '12px 18px';
+    body.appendChild(_cloneForPrint(extraEl));
+    wrap.appendChild(body);
+  }
+  return wrap;
+}
+
+// 경혈 카드(.ae-card)를 원자적 서브블록으로 분할 (사진이나 텍스트가 절대 페이지 경계에서 잘리지 않도록 보장)
+function _splitAECard(card, cIdx) {
+  const headEl = card.querySelector('.ae-head');
+  const bodyEl = card.querySelector('.ae-body');
+  const cardTitle = (card.querySelector('.ae-title') || {}).textContent || `경혈 ${cIdx + 1}`;
+  const cardSub = (card.querySelector('.ae-sub') || {}).textContent || '';
+
+  if (!headEl || !bodyEl) return [{ el: _cloneForPrint(card), isTemp: true, name: cardTitle }];
+
+  const subBlocks = [];
+  const children = Array.from(bodyEl.children);
+
+  function makeCardHeader(badgeText) {
+    const h = document.createElement('div');
+    h.style.cssText = 'background:var(--surface-alt, #eef3fa);border-bottom:1.5px solid var(--border, #c6d3e4);padding:8px 14px;margin:-14px -18px 12px;display:flex;justify-content:space-between;align-items:center;border-radius:5px 5px 0 0;';
+    h.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="font-size:12.5px;font-weight:700;color:var(--accent, #1a5f96);">${cardTitle} ${badgeText ? `<span style="font-size:11px;font-weight:600;color:var(--text-sec, #4a6585);">&ensp;· ${badgeText}</span>` : ''}</div>
+        <div style="font-size:10.5px;color:var(--text-sec, #4a6585);">${cardSub}</div>
+      </div>
+      <span style="font-size:10px;font-weight:700;color:var(--accent, #1a5f96);background:var(--accent-lt, #e1edf8);border:1px solid var(--accent-line, #4a9fdc);border-radius:12px;padding:2px 8px;">No. ${cIdx + 1}</span>
+    `;
+    return h;
+  }
+
+  const p1Els = [];
+  const p2Els = [];
+  const p3Els = [];
+  let currentPart = 1;
+
+  children.forEach(child => {
+    const txt = (child.textContent || '').trim();
+    if (child.classList.contains('ssl')) {
+      if (txt.includes('탐혈 과정') || txt.includes('자침 기록')) {
+        currentPart = 2;
+      } else if (txt.includes('초음파 영상')) {
+        currentPart = 3;
+      }
+    }
+    if (currentPart === 1) p1Els.push(child);
+    else if (currentPart === 2) p2Els.push(child);
+    else p3Els.push(child);
+  });
+
+  // Part 1: 선택 및 사전학습
+  if (p1Els.length > 0) {
+    const card1 = _wrapMiniCard(p1Els);
+    card1.insertBefore(makeCardHeader('선택 및 사전학습'), card1.firstChild);
+    subBlocks.push({ el: card1, isTemp: true, name: `${cardTitle} (선택 & 사전학습)` });
+  }
+
+  // Part 2: 탐혈 과정 & 자침 기록 (자침 사진 및 이상반응 포함)
+  if (p2Els.length > 0) {
+    const card2 = _wrapMiniCard(p2Els);
+    card2.insertBefore(makeCardHeader('탐혈 및 자침 기록'), card2.firstChild);
+    subBlocks.push({ el: card2, isTemp: true, name: `${cardTitle} (탐혈 & 자침기록)` });
+  }
+
+  // Part 3: 초음파 영상 실습 기록 (초음파 사진 전체 + 종합 소견)
+  if (p3Els.length > 0) {
+    const card3 = _wrapMiniCard(p3Els);
+    card3.insertBefore(makeCardHeader('초음파 영상 실습 기록'), card3.firstChild);
+    subBlocks.push({ el: card3, isTemp: true, name: `${cardTitle} (초음파 영상)` });
+  }
+
+  return subBlocks;
 }
 
 async function printToPDF() {
@@ -1363,128 +1556,308 @@ async function printToPDF() {
   const grp   = rawGrp.trim();
   const topic = rawTopic.replace(/[\\/:*?"<>|]/g, '').trim();
   const parts = [date, cls, grp, topic].filter(Boolean);
-  const pdfTitle = parts.length ? parts.join('_') : document.title;
+  const pdfTitle = parts.length ? parts.join('_') : (document.title || '실습일지');
 
-  // ── html2pdf 라이브러리 로드 ──
-  setStatus('⏳ PDF 라이브러리 로딩 중...');
+  // ── PDF 라이브러리 로드 ──
+  setStatus('⏳ PDF 엔진 로딩 중...');
   try {
-    await _loadHtml2pdf();
+    await _loadPdfLibs();
   } catch (e) {
-    setStatus('❌ ' + e.message + ' — 인터넷 연결 후 재시도하세요.');
+    setStatus('❌ ' + e.message);
+    alert('PDF 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.\n\n대안: 브라우저 인쇄 기능(Ctrl+P)을 통해 PDF로 저장할 수 있습니다.');
+    return;
+  }
+
+  const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+  if (!jsPDFClass || !window.html2canvas) {
+    setStatus('❌ PDF 라이브러리 초기화 실패');
     return;
   }
 
   // ── 캡처 전 준비 ──
-
   // 1. 인쇄 불필요 요소 숨기기
-  const hideEls = document.querySelectorAll('.toolbar, .ae-del, .btn-add-acu, .btn-print, .modal-backdrop');
-  hideEls.forEach(el => { el.dataset._ph = el.style.display || ''; el.style.setProperty('display','none','important'); });
+  const hideEls = document.querySelectorAll('.toolbar, .ae-del, .btn-add-acu, .btn-print, .modal-backdrop, .us-add-btn');
+  hideEls.forEach(el => { el.dataset._ph = el.style.display || ''; el.style.setProperty('display', 'none', 'important'); });
 
   // 2. 접힌 섹션 펼치기
-  document.querySelectorAll('.guide-body').forEach(el => { el.dataset._phd = el.style.display || ''; el.style.display = 'block'; });
-  document.querySelectorAll('.ae-body').forEach(el => { el.dataset._phd2 = el.style.display || ''; el.style.display = 'block'; });
+  document.querySelectorAll('.guide-body').forEach(el => el.style.display = 'block');
+  document.querySelectorAll('.ae-body').forEach(el => el.style.display = 'block');
 
-  // 3. textarea → <div> 치환 (html2canvas textarea 렌더링 버그 우회)
-  //    — textarea 내용이 잘리는 문제: html2canvas는 textarea 내부 텍스트를 정확히 렌더링하지 못함
-  const proxies = []; // { ta, proxy }
-  document.querySelectorAll('textarea').forEach(ta => {
-    const cs = window.getComputedStyle(ta);
-    const proxy = document.createElement('div');
-    // textarea와 동일한 시각적 스타일 복사
-    // ※ width는 고정 px 대신 자연스러운 블록 100% 사용
-    //   → .sc{overflow:hidden} 환경에서 고정 px 값이 미세하게 넘쳐 오른쪽이 잘리는 문제 방지
-    proxy.style.cssText = [
-      'display:block',
-      'width:100%',
-      'box-sizing:border-box',
-      'white-space:pre-wrap',
-      'word-break:break-word',
-      'overflow-wrap:break-word',
-      'overflow:hidden',
-      'font-family:' + cs.fontFamily,
-      'font-size:' + cs.fontSize,
-      'line-height:' + cs.lineHeight,
-      'color:' + cs.color,
-      'background:' + cs.backgroundColor,
-      'border:' + cs.border,
-      'border-radius:' + cs.borderRadius,
-      'padding:' + cs.padding,
-      'min-height:' + cs.minHeight,
-    ].join(';');
-    proxy.textContent = ta.value;
-    ta.parentNode.insertBefore(proxy, ta);
-    ta.style.display = 'none';
-    proxies.push({ ta, proxy });
-  });
+  // 3. 스크롤 최상단 이동
+  const _savedScrollX = window.scrollX;
+  const _savedScrollY = window.scrollY;
+  window.scrollTo(0, 0);
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-  // 4. 이미지 잘림 방지: overflow:hidden 컨테이너 임시 해제 + page-break-inside 설정
-  //    — html2pdf는 overflow:hidden 요소의 경계를 잘못 인식해 avoid가 동작하지 않을 수 있음
-  const imgBreakEls = document.querySelectorAll('.img-ph, .us-cols, .us-slot');
-  imgBreakEls.forEach(el => {
-    el.dataset._bkOvf = el.style.overflow;
-    el.dataset._bkPbi = el.style.pageBreakInside;
-    el.dataset._bkBki = el.style.breakInside;
-    el.style.overflow        = 'visible';
-    el.style.pageBreakInside = 'avoid';
-    el.style.breakInside     = 'avoid';
-  });
+  // 임시 렌더링 컨테이너 (화면 밖)
+  const renderSandbox = document.createElement('div');
+  renderSandbox.id = 'pdf-render-sandbox';
+  renderSandbox.style.cssText = 'position:fixed;left:-9999px;top:0;width:924px;background:#ffffff;z-index:-1000;box-sizing:border-box;';
+  document.body.appendChild(renderSandbox);
 
-  // 4-1. 자침 사진 부모(.ae-card) overflow:hidden 임시 해제 — 렌더링 클립 방지
-  //      page-break-inside는 미적용 (카드 전체가 다음 페이지로 밀리는 현상 방지)
-  const cardOverflowEls = document.querySelectorAll('.ae-card');
-  cardOverflowEls.forEach(el => {
-    el.dataset._cOvf = el.style.overflow;
-    el.style.overflow = 'visible';
-  });
-
-  setStatus('⏳ PDF 생성 중... 잠시 기다려 주세요.');
-
-  const opt = {
-    margin:     [13, 13, 13, 13],
-    filename:   pdfTitle + '.pdf',
-    image:      { type: 'jpeg', quality: 0.93 },
-    html2canvas: {
-      scale:         2,
-      useCORS:       true,
-      allowTaint:    false,
-      letterRendering: true,
-      logging:       false,
-      scrollX:       0,
-      scrollY:       0,
-      windowWidth:   document.documentElement.scrollWidth
-    },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-    pagebreak: { mode: ['css', 'legacy'], avoid: ['img', '.img-ph', '.us-cols', '.us-slot'] }
-  };
-
-  // ── 캡처 실행 ──
   try {
-    await html2pdf().set(opt).from(document.body).save();
-    setStatus('✓ PDF 저장 완료 — ' + pdfTitle + '.pdf', true);
+    // ── 원자적 인쇄 블록 수집 (그림과 텍스트 분할 방지) ──
+    const blocks = [];
+
+    // 1. 표지 (Cover)
+    const coverEl = document.querySelector('.cover');
+    if (coverEl) blocks.push({ el: _cloneForPrint(coverEl), name: '표지 및 참여자' });
+
+    // 2. 가이드 (Guide)
+    const guideEl = document.querySelector('.guide-card');
+    if (guideEl) blocks.push({ el: _cloneForPrint(guideEl), name: '실습 가이드' });
+
+    // 3. 섹션들 순회
+    const secList = document.querySelectorAll('.pw > .sc');
+    secList.forEach((sc, sIdx) => {
+      const scNum = (sc.querySelector('.sc-num') || {}).textContent || (sIdx + 1);
+
+      // 섹션 1: 관찰자 기록
+      if (sc.querySelector('#hygiene-table') || sc.querySelector('#safety-table')) {
+        const scHead = sc.querySelector('.sc-head');
+        const obsInfo = sc.querySelector('.two');
+        if (scHead) blocks.push({ el: _wrapSecHeader(scHead, obsInfo), name: '섹션 1 헤더' });
+
+        const hygTable = sc.querySelector('#hygiene-table');
+        if (hygTable) {
+          const hygSSL = sc.querySelector('.ssl');
+          const hygDesc = sc.querySelector('.sc-body > div[style*="font-size:11px"]');
+          const hygNote = hygTable.nextElementSibling;
+          blocks.push({ el: _wrapMiniCard([hygSSL, hygDesc, hygTable, hygNote].filter(Boolean)), name: '섹션 1 위생관리 점검' });
+        }
+
+        const safeTable = sc.querySelector('#safety-table');
+        if (safeTable) {
+          const allSSL = sc.querySelectorAll('.ssl');
+          const safeSSL = allSSL[1] || safeTable.previousElementSibling;
+          const safeDesc = safeTable.previousElementSibling;
+          const safeNote = safeTable.nextElementSibling;
+          blocks.push({ el: _wrapMiniCard([safeSSL, safeDesc, safeTable, safeNote].filter(Boolean)), name: '섹션 1 안전관리 점검' });
+        }
+        return;
+      }
+
+      // 섹션 2: 피시술자 정보
+      if (sc.querySelector('#subj-0') || sc.querySelector('#subj-wrap')) {
+        const scHead = sc.querySelector('.sc-head');
+        if (scHead) blocks.push({ el: _wrapSecHeader(scHead), name: '섹션 2 헤더' });
+
+        const subj0 = sc.querySelector('#subj-0');
+        if (subj0) blocks.push({ el: _cloneForPrint(subj0), name: '피시술자 1 정보' });
+
+        const extraSubjs = sc.querySelectorAll('#subj-wrap .subj-card');
+        extraSubjs.forEach((sCard, idx) => {
+          const sLbl = (sCard.querySelector('.subj-lbl') || {}).textContent || `피시술자 ${idx + 2}`;
+          blocks.push({ el: _cloneForPrint(sCard), name: `${sLbl} 정보` });
+        });
+        return;
+      }
+
+      // 섹션 3: 탐혈/시술 및 초음파영상 실습 기록 (경혈 카드 3개 파트 분할)
+      const aeWrap = sc.querySelector('#ae-wrap');
+      if (aeWrap) {
+        const scHead = sc.querySelector('.sc-head');
+        const scIntro = sc.querySelector('.sc-body > div:first-child');
+        if (scHead) blocks.push({ el: _wrapSecHeader(scHead, scIntro), name: '섹션 3 헤더' });
+
+        const aeCards = aeWrap.querySelectorAll('.ae-card');
+        aeCards.forEach((card, cIdx) => {
+          const cardSubBlocks = _splitAECard(card, cIdx);
+          cardSubBlocks.forEach(sb => blocks.push(sb));
+        });
+        return;
+      }
+
+      // 섹션 4: 성찰 기록
+      if (sc.querySelector('#reflect-main') || sc.querySelector('#reflect-sf')) {
+        const scHead = sc.querySelector('.sc-head');
+        const scIntro = sc.querySelector('.sc-body > div:first-child');
+        if (scHead) blocks.push({ el: _wrapSecHeader(scHead, scIntro), name: '섹션 4 헤더' });
+
+        const reflMain = sc.querySelector('#reflect-main');
+        if (reflMain) blocks.push({ el: _wrapMiniCard([reflMain]), name: '학습 성찰 기록' });
+
+        const sfWrap = sc.querySelector('#reflect-sf');
+        if (sfWrap) {
+          const sfTitle = sfWrap.previousElementSibling;
+          blocks.push({ el: _wrapMiniCard([sfTitle, sfWrap].filter(Boolean)), name: '시술자 관찰 및 피드백' });
+        }
+        return;
+      }
+
+      // 기본
+      blocks.push({ el: _cloneForPrint(sc), name: `섹션 ${scNum}` });
+    });
+
+    const totalBlocks = blocks.length;
+    if (totalBlocks === 0) throw new Error('출력할 문서 내용이 없습니다.');
+
+    // ── 50페이지 단위 분할 설정 ──
+    const MAX_PAGES_PER_PART = 50;
+
+    let currentPdf = new jsPDFClass({
+      unit: 'mm',
+      format: 'a4',
+      orientation: 'portrait',
+      compress: true
+    });
+
+    let partIndex = 1;
+    let partStartPage = 1;
+    let partPageCount = 1;
+    let globalPageCount = 1;
+    const partsToSave = [];
+
+    const pageW_MM = 210;
+    const pageH_MM = 297;
+    const margin_MM = 10;
+    const contentW_MM = pageW_MM - (margin_MM * 2); // 190mm
+    const contentH_MM = pageH_MM - (margin_MM * 2); // 277mm
+    const maxBottom_MM = pageH_MM - margin_MM;      // 287mm
+
+    let currentY = margin_MM; // 10mm
+
+    // 새 페이지 필요 시 50페이지 도달 여부에 따라 파트 분할 관리
+    function advancePage() {
+      if (partPageCount < MAX_PAGES_PER_PART) {
+        currentPdf.addPage();
+        partPageCount++;
+        globalPageCount++;
+        currentY = margin_MM;
+      } else {
+        // 현재 파트(50페이지) 마감 및 신규 파트 시작
+        partsToSave.push({
+          pdf: currentPdf,
+          partIndex: partIndex,
+          startPage: partStartPage,
+          endPage: globalPageCount,
+          pageCount: partPageCount
+        });
+
+        partIndex++;
+        partStartPage = globalPageCount + 1;
+        partPageCount = 1;
+        globalPageCount++;
+
+        currentPdf = new jsPDFClass({
+          unit: 'mm',
+          format: 'a4',
+          orientation: 'portrait',
+          compress: true
+        });
+        currentY = margin_MM;
+      }
+    }
+
+    // ── 순차 블록 렌더링 & 스마트 페이지네이션 루프 ──
+    for (let i = 0; i < totalBlocks; i++) {
+      const b = blocks[i];
+      const partStatus = partIndex > 1 || partPageCount > 1 ? ` [Part ${partIndex}, ${partPageCount}p]` : '';
+      setStatus(`⏳ PDF 생성 중... (${i + 1}/${totalBlocks}) ${b.name}${partStatus}`);
+
+      // 샌드박스에 임시 추가하여 캡처
+      renderSandbox.innerHTML = '';
+      renderSandbox.appendChild(b.el);
+
+      const canvas = await window.html2canvas(b.el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      renderSandbox.innerHTML = '';
+
+      if (!canvas || canvas.width === 0 || canvas.height === 0) continue;
+
+      const imgH_MM = (canvas.height / canvas.width) * contentW_MM;
+      const remainingH_MM = maxBottom_MM - currentY;
+
+      // 1. 현재 페이지의 잔여 공간에 블록 전체가 온전히 들어가는 경우
+      if (imgH_MM <= remainingH_MM) {
+        const imgData = canvas.toDataURL('image/jpeg', 0.93);
+        currentPdf.addImage(imgData, 'JPEG', margin_MM, currentY, contentW_MM, imgH_MM);
+        currentY += imgH_MM + 3; // 블록 간 간격 3mm
+      }
+      // 2. 현재 페이지 잔여 공간에 다 안 들어가는 경우: 그림/글자 분할을 방지하고 통째로 새 페이지로 넘김!
+      else {
+        if (currentY > margin_MM + 1) {
+          advancePage();
+        }
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.93);
+        currentPdf.addImage(imgData, 'JPEG', margin_MM, currentY, contentW_MM, imgH_MM);
+        currentY += imgH_MM + 3;
+      }
+
+      await new Promise(r => setTimeout(r, 0));
+    }
+
+    // 마지막 진행 중이던 PDF 파트 마감
+    partsToSave.push({
+      pdf: currentPdf,
+      partIndex: partIndex,
+      startPage: partStartPage,
+      endPage: globalPageCount,
+      pageCount: partPageCount
+    });
+
+    const totalParts = partsToSave.length;
+
+    // ── 파트별 하단 페이지 번호 삽입 및 다운로드 실행 ──
+    for (let pIdx = 0; pIdx < totalParts; pIdx++) {
+      const part = partsToSave[pIdx];
+      const { pdf, partIndex: pNum, startPage, endPage, pageCount } = part;
+
+      // 페이지 번호 기입
+      for (let p = 1; p <= pageCount; p++) {
+        pdf.setPage(p);
+        pdf.setFontSize(8);
+        pdf.setTextColor(130, 145, 165);
+
+        let footerText = '';
+        if (totalParts === 1) {
+          footerText = `${p} / ${pageCount}`;
+        } else {
+          const curGlobalP = startPage + p - 1;
+          footerText = `Part ${pNum} (${p}/${pageCount}) · 전체 p.${curGlobalP}/${globalPageCount}`;
+        }
+        pdf.text(footerText, pageW_MM / 2, pageH_MM - 4, { align: 'center' });
+      }
+
+      // 파일명 결정 (50페이지 초과 시 Part 구분 파일명 생성)
+      let fname = '';
+      if (totalParts === 1) {
+        fname = `${pdfTitle}.pdf`;
+      } else {
+        fname = `${pdfTitle}_Part${pNum}(${startPage}-${endPage}p).pdf`;
+      }
+
+      setStatus(`💾 PDF 저장 중... Part ${pNum}/${totalParts} (${fname})`);
+      pdf.save(fname);
+
+      // 브라우저의 다중 파일 동시 다운로드 차단 방지 딜레이
+      if (pIdx < totalParts - 1) {
+        await new Promise(r => setTimeout(r, 600));
+      }
+    }
+
+    if (totalParts === 1) {
+      setStatus(`✓ PDF 저장 완료 — ${pdfTitle}.pdf (${globalPageCount}페이지)`, true);
+    } else {
+      setStatus(`✓ PDF 분할 저장 완료 — 총 ${totalParts}개 파일 (${globalPageCount}페이지, 50p 단위 분할)`, true);
+    }
+
   } catch (err) {
+    console.error('PDF Generation Error:', err);
     setStatus('❌ PDF 생성 실패: ' + err.message);
+    alert('PDF 생성 중 오류가 발생했습니다: ' + err.message + '\n\n대안: 브라우저 인쇄(Ctrl+P)를 시도해보세요.');
   } finally {
-    // ── 복원 ──
-    // textarea 복원 (proxy div 제거)
-    proxies.forEach(({ ta, proxy }) => {
-      proxy.remove();
-      ta.style.display = '';
-    });
+    // 샌드박스 제거
+    renderSandbox.remove();
     hideEls.forEach(el => { el.style.display = el.dataset._ph || ''; delete el.dataset._ph; });
-    document.querySelectorAll('.guide-body').forEach(el => { el.style.display = el.dataset._phd || ''; delete el.dataset._phd; });
-    document.querySelectorAll('.ae-body').forEach(el => { el.style.display = el.dataset._phd2 || ''; delete el.dataset._phd2; });
-    // 이미지 잘림 방지용 스타일 복원
-    imgBreakEls.forEach(el => {
-      el.style.overflow        = el.dataset._bkOvf || '';
-      el.style.pageBreakInside = el.dataset._bkPbi || '';
-      el.style.breakInside     = el.dataset._bkBki || '';
-      delete el.dataset._bkOvf; delete el.dataset._bkPbi; delete el.dataset._bkBki;
-    });
-    // ae-card overflow 복원
-    cardOverflowEls.forEach(el => {
-      el.style.overflow = el.dataset._cOvf || '';
-      delete el.dataset._cOvf;
-    });
+    window.scrollTo(_savedScrollX, _savedScrollY);
   }
 }
 
