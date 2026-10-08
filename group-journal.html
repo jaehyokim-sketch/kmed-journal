@@ -182,6 +182,17 @@ select.fi{cursor:pointer;}
 .img-ph-ico{font-size:26px;opacity:.35;}
 .img-ph-txt{font-size:10.5px;color:var(--text-faint);text-align:center;line-height:1.4;}
 .img-preview{max-width:100%;max-height:200px;border-radius:4px;display:none;object-fit:contain;}
+/* ── 이미지 삭제 버튼 ── */
+.img-del-btn{display:none;position:absolute;top:5px;right:5px;width:22px;height:22px;background:rgba(184,50,50,.88);color:#fff;border:none;border-radius:50%;font-size:14px;line-height:1;cursor:pointer;z-index:10;align-items:center;justify-content:center;font-family:inherit;transition:background .12s;padding:0;flex-shrink:0;}
+.img-del-btn:hover{background:#B83232;}
+.img-ph.has-img .img-del-btn{display:flex;}
+.img-ph.has-img input[type=file]{pointer-events:none;}
+.img-ph.has-img{cursor:default;}
+/* ── 초음파 슬롯 헤더(라벨+슬롯삭제버튼) ── */
+.us-slot-header{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:4px;}
+.us-slot-lbl{font-size:10px;font-weight:700;color:var(--text-faint);letter-spacing:.04em;}
+.us-slot-del{background:none;border:1px solid var(--warn);color:var(--warn);border-radius:3px;padding:1px 6px;font-size:10px;cursor:pointer;font-family:inherit;transition:all .12s;line-height:1.4;}
+.us-slot-del:hover{background:var(--warn);color:#fff;}
 .obs-list{display:flex;flex-direction:column;gap:4px;}
 .obs-item{display:flex;align-items:flex-start;gap:6px;font-size:12px;background:var(--surface-alt);border:1px solid var(--border-lt);border-radius:4px;padding:5px 8px;line-height:1.5;}
 .obs-item input[type=checkbox]{margin-top:2px;width:13px;height:13px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;}
@@ -298,7 +309,7 @@ select.fi{cursor:pointer;}
   body{background:#fff;color:#000;}
   /* ── position:sticky / fixed → static 해제 (Chrome print renderer 충돌 방지) ── */
   *{position:static!important;}
-  .toolbar,.btn-print,.ae-del,.btn-add-acu,.modal-backdrop,.us-add-btn{display:none!important;}
+  .toolbar,.btn-print,.ae-del,.btn-add-acu,.modal-backdrop,.us-add-btn,.img-del-btn,.us-slot-del{display:none!important;}
   .guide-body{display:block!important;}
   .pw{padding:10px 6px;}
   .ae-body{display:block!important;}
@@ -425,8 +436,8 @@ select.fi{cursor:pointer;}
       <div class="journal-sub">탐혈·자침·초음파영상 통합 실습 기록부 (Group Practice Journal)</div>
     </div>
     <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;">
-      <span class="ver-badge"><strong>v40</strong> · 2026-10-05</span>
-      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">파일 통합 완전성 강화 (Gn·Depth·탐촉자·관측조직 정밀 복원) · 50p 자동분할</span>
+      <span class="ver-badge"><strong>v41</strong> · 2026-10-08</span>
+      <span class="ver-badge" style="font-size:9px;padding:3px 9px;">탐혈 및 자침 사진 최대 5장 멀티슬롯 추가 · 사진 삭제 기능</span>
     </div>
   </div>
   <div class="meta-g" style="margin-bottom:14px;">
@@ -930,8 +941,14 @@ function addAE() {
       <textarea class="fi" placeholder="득기감 발생 시점, 방사 방향, 강도 및 피시술자의 반응을 기술하시오."></textarea>
     </div>
     <div class="fr">
-      <label class="fl">자침 사진 첨부 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(이상반응 발생 시 근거자료로 권장)</span></label>
-      <div class="img-ph" id="ae${n}-ph" style="min-height:90px;"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-ph','ae${n}-iv-ph')"><img class="img-preview" id="ae${n}-iv-ph" alt=""><div class="img-ph-ico">📷</div><div class="img-ph-txt">자침 사진 (선택)<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div></div>
+      <label class="fl">탐혈 및 자침 사진 첨부 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(이상반응 발생 시 근거자료로 권장, 최대 5장)</span></label>
+      <div class="us-img-list" id="ae${n}-ph-list">
+        <div class="us-slot">
+          <div class="us-slot-lbl">P-1</div>
+          <div class="img-ph" id="ae${n}-ph-0" style="min-height:90px;"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-ph-0','ae${n}-iv-ph-0')"><img class="img-preview" id="ae${n}-iv-ph-0" alt=""><div class="img-ph-ico">📷</div><div class="img-ph-txt">탐혈 및 자침 사진 1<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div><button type="button" class="img-del-btn" title="이미지 삭제" onclick="clearImgAE('ae${n}-ph-0','ae${n}-iv-ph-0',event)">×</button></div>
+        </div>
+      </div>
+      <button type="button" class="us-add-btn" id="ae${n}-ph-addbtn" onclick="addPhImg(${n})">+ 사진 추가 (최대 5장)</button>
     </div>
     <div class="fr">
       <label class="fl">이상반응 및 대처방법 <span style="font-size:10px;color:var(--text-faint);font-weight:400;">(발생 시 필수 기재)</span></label>
@@ -947,7 +964,7 @@ function addAE() {
           <div class="us-slot">
             <div class="us-slot-lbl">T-1</div>
             <div class="us-slot-probe">탐촉자: <label class="chk-i"><input type="radio" name="pb${n}-t-0" value="l"> Linear</label><label class="chk-i"><input type="radio" name="pb${n}-t-0" value="c"> Convex</label>&ensp;Depth<input class="probe-val" type="text" placeholder="cm">Gain<input class="probe-val" type="text" placeholder="dB"></div>
-            <div class="img-ph" id="ae${n}-t-0"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-t-0','ae${n}-iv-t-0')"><img class="img-preview" id="ae${n}-iv-t-0" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">Transverse 1<br><span style="font-size:10px;">클릭하여 첨부</span></div></div>
+            <div class="img-ph" id="ae${n}-t-0"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-t-0','ae${n}-iv-t-0')"><img class="img-preview" id="ae${n}-iv-t-0" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">Transverse 1<br><span style="font-size:10px;">클릭하여 첨부</span></div><button type="button" class="img-del-btn" title="이미지 삭제" onclick="clearImgAE('ae${n}-t-0','ae${n}-iv-t-0',event)">×</button></div>
           </div>
         </div>
         <button type="button" class="us-add-btn" id="ae${n}-t-addbtn" onclick="addUSImg(${n},'t')">+ 이미지 추가 (최대 5장)</button>
@@ -958,7 +975,7 @@ function addAE() {
           <div class="us-slot">
             <div class="us-slot-lbl">L-1</div>
             <div class="us-slot-probe">탐촉자: <label class="chk-i"><input type="radio" name="pb${n}-l-0" value="l"> Linear</label><label class="chk-i"><input type="radio" name="pb${n}-l-0" value="c"> Convex</label>&ensp;Depth<input class="probe-val" type="text" placeholder="cm">Gain<input class="probe-val" type="text" placeholder="dB"></div>
-            <div class="img-ph" id="ae${n}-l-0"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-l-0','ae${n}-iv-l-0')"><img class="img-preview" id="ae${n}-iv-l-0" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">Longitudinal 1<br><span style="font-size:10px;">클릭하여 첨부</span></div></div>
+            <div class="img-ph" id="ae${n}-l-0"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-l-0','ae${n}-iv-l-0')"><img class="img-preview" id="ae${n}-iv-l-0" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">Longitudinal 1<br><span style="font-size:10px;">클릭하여 첨부</span></div><button type="button" class="img-del-btn" title="이미지 삭제" onclick="clearImgAE('ae${n}-l-0','ae${n}-iv-l-0',event)">×</button></div>
           </div>
         </div>
         <button type="button" class="us-add-btn" id="ae${n}-l-addbtn" onclick="addUSImg(${n},'l')">+ 이미지 추가 (최대 5장)</button>
@@ -1058,10 +1075,65 @@ function prevImgAE(input, phId, ivId) {
     if (!ph || !iv) return;
     iv.src = e.target.result;
     iv.style.display = 'block';
+    ph.classList.add('has-img');
     ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
   };
   reader.readAsDataURL(file);
 }
+
+/* 이미지 삭제 — img-ph 플레이스홀더로 초기화 */
+function clearImgAE(phId, ivId, e) {
+  if (e) { e.stopPropagation(); e.preventDefault(); }
+  const ph = document.getElementById(phId);
+  const iv = document.getElementById(ivId);
+  if (iv) { iv.src = ''; iv.style.display = 'none'; }
+  if (ph) {
+    ph.classList.remove('has-img');
+    ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = '');
+    const fi = ph.querySelector('input[type=file]');
+    if (fi) fi.value = '';
+  }
+}
+
+/* 초음파 슬롯 전체 삭제 (추가된 슬롯 idx≥1만 허용) */
+function removeUSSlot(n, side, slotIdx, e) {
+  if (e) e.stopPropagation();
+  const listEl = document.getElementById(`ae${n}-${side}-list`);
+  if (!listEl) return;
+  const slots = listEl.querySelectorAll('.us-slot');
+  if (slotIdx < 1 || slotIdx >= slots.length) return;
+  slots[slotIdx].remove();
+
+  // 나머지 슬롯 번호·id·이벤트 재정렬
+  const prefix = side === 't' ? 'T' : 'L';
+  listEl.querySelectorAll('.us-slot').forEach((slot, i) => {
+    const lbl = slot.querySelector('.us-slot-lbl');
+    if (lbl) lbl.textContent = `${prefix}-${i + 1}`;
+    slot.querySelectorAll('input[type=radio]').forEach(r => { r.name = `pb${n}-${side}-${i}`; });
+    const ph = slot.querySelector('.img-ph');
+    if (ph) {
+      const newPhId  = `ae${n}-${side}-${i}`;
+      const newIvId  = `ae${n}-iv-${side}-${i}`;
+      ph.id = newPhId;
+      const fi = ph.querySelector('input[type=file]');
+      if (fi) fi.setAttribute('onchange', `prevImgAE(this,'${newPhId}','${newIvId}')`);
+      const img = ph.querySelector('img.img-preview');
+      if (img) img.id = newIvId;
+      const delBtn = ph.querySelector('.img-del-btn');
+      if (delBtn) delBtn.setAttribute('onclick', `clearImgAE('${newPhId}','${newIvId}',event)`);
+    }
+    // 슬롯 삭제 버튼 onclick 재정렬
+    const slotDel = slot.querySelector('.us-slot-del');
+    if (slotDel) {
+      if (i === 0) slotDel.remove();
+      else slotDel.setAttribute('onclick', `removeUSSlot(${n},'${side}',${i},event)`);
+    }
+  });
+
+  const btn = document.getElementById(`ae${n}-${side}-addbtn`);
+  if (btn) btn.disabled = listEl.querySelectorAll('.us-slot').length >= 5;
+}
+
 function addUSImg(n, side) {
   const listEl = document.getElementById(`ae${n}-${side}-list`);
   if (!listEl) return;
@@ -1071,12 +1143,58 @@ function addUSImg(n, side) {
   const prefix = side === 't' ? 'T' : 'L';
   const slot = document.createElement('div');
   slot.className = 'us-slot';
-  slot.innerHTML = `<div class="us-slot-lbl">${prefix}-${idx+1}</div><div class="us-slot-probe">탐촉자: <label class="chk-i"><input type="radio" name="pb${n}-${side}-${idx}" value="l"> Linear</label><label class="chk-i"><input type="radio" name="pb${n}-${side}-${idx}" value="c"> Convex</label>&ensp;Depth<input class="probe-val" type="text" placeholder="cm">Gain<input class="probe-val" type="text" placeholder="dB"></div><div class="img-ph" id="ae${n}-${side}-${idx}"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-${side}-${idx}','ae${n}-iv-${side}-${idx}')"><img class="img-preview" id="ae${n}-iv-${side}-${idx}" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">${idx+1}번째 영상<br><span style="font-size:10px;">클릭하여 첨부</span></div></div>`;
+  slot.innerHTML = `<div class="us-slot-header"><div class="us-slot-lbl">${prefix}-${idx+1}</div><button type="button" class="us-slot-del" onclick="removeUSSlot(${n},'${side}',${idx},event)">× 슬롯 삭제</button></div><div class="us-slot-probe">탐촉자: <label class="chk-i"><input type="radio" name="pb${n}-${side}-${idx}" value="l"> Linear</label><label class="chk-i"><input type="radio" name="pb${n}-${side}-${idx}" value="c"> Convex</label>&ensp;Depth<input class="probe-val" type="text" placeholder="cm">Gain<input class="probe-val" type="text" placeholder="dB"></div><div class="img-ph" id="ae${n}-${side}-${idx}"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-${side}-${idx}','ae${n}-iv-${side}-${idx}')"><img class="img-preview" id="ae${n}-iv-${side}-${idx}" alt=""><div class="img-ph-ico">🔬</div><div class="img-ph-txt">${idx+1}번째 영상<br><span style="font-size:10px;">클릭하여 첨부</span></div><button type="button" class="img-del-btn" title="이미지 삭제" onclick="clearImgAE('ae${n}-${side}-${idx}','ae${n}-iv-${side}-${idx}',event)">×</button></div>`;
   listEl.appendChild(slot);
   if (idx + 1 >= 5) {
     const btn = document.getElementById(`ae${n}-${side}-addbtn`);
     if (btn) btn.disabled = true;
   }
+}
+
+function addPhImg(n) {
+  const listEl = document.getElementById(`ae${n}-ph-list`);
+  if (!listEl) return;
+  const slots = listEl.querySelectorAll('.us-slot');
+  const idx = slots.length;
+  if (idx >= 5) return;
+  const slot = document.createElement('div');
+  slot.className = 'us-slot';
+  slot.innerHTML = `<div class="us-slot-header"><div class="us-slot-lbl">P-${idx+1}</div><button type="button" class="us-slot-del" onclick="removePhSlot(${n},${idx},event)">× 슬롯 삭제</button></div><div class="img-ph" id="ae${n}-ph-${idx}"><input type="file" accept="image/*" onchange="prevImgAE(this,'ae${n}-ph-${idx}','ae${n}-iv-ph-${idx}')"><img class="img-preview" id="ae${n}-iv-ph-${idx}" alt=""><div class="img-ph-ico">📷</div><div class="img-ph-txt">${idx+1}번째 사진<br><span style="font-size:10px;">클릭하여 이미지 첨부</span></div><button type="button" class="img-del-btn" title="이미지 삭제" onclick="clearImgAE('ae${n}-ph-${idx}','ae${n}-iv-ph-${idx}',event)">×</button></div>`;
+  listEl.appendChild(slot);
+  const btn = document.getElementById(`ae${n}-ph-addbtn`);
+  if (btn) btn.disabled = listEl.querySelectorAll('.us-slot').length >= 5;
+}
+
+function removePhSlot(n, slotIdx, e) {
+  if (e) e.stopPropagation();
+  const listEl = document.getElementById(`ae${n}-ph-list`);
+  if (!listEl) return;
+  const slots = listEl.querySelectorAll('.us-slot');
+  if (slotIdx < 1 || slotIdx >= slots.length) return;
+  slots[slotIdx].remove();
+  listEl.querySelectorAll('.us-slot').forEach((slot, i) => {
+    const lbl = slot.querySelector('.us-slot-lbl');
+    if (lbl) lbl.textContent = `P-${i + 1}`;
+    const ph = slot.querySelector('.img-ph');
+    if (ph) {
+      const newPhId = `ae${n}-ph-${i}`;
+      const newIvId = `ae${n}-iv-ph-${i}`;
+      ph.id = newPhId;
+      const fi = ph.querySelector('input[type=file]');
+      if (fi) fi.setAttribute('onchange', `prevImgAE(this,'${newPhId}','${newIvId}')`);
+      const img = ph.querySelector('img.img-preview');
+      if (img) img.id = newIvId;
+      const delBtn = ph.querySelector('.img-del-btn');
+      if (delBtn) delBtn.setAttribute('onclick', `clearImgAE('${newPhId}','${newIvId}',event)`);
+    }
+    const slotDel = slot.querySelector('.us-slot-del');
+    if (slotDel) {
+      if (i === 0) slotDel.remove();
+      else slotDel.setAttribute('onclick', `removePhSlot(${n},${i},event)`);
+    }
+  });
+  const btn = document.getElementById(`ae${n}-ph-addbtn`);
+  if (btn) btn.disabled = listEl.querySelectorAll('.us-slot').length >= 5;
 }
 function oscePrev(input, previewId) {
   const file = input.files[0]; if (!file) return;
@@ -1406,6 +1524,21 @@ function renderAECard(n, cardData, cardImgs) {
     }
   }
 
+  // Pre-create needle/palpation photo slots based on saved images
+  if (cardImgs) {
+    let maxPh = 0;
+    Object.keys(cardImgs).forEach(id => {
+      const m = id.match(new RegExp('^ae' + n + '-iv-ph-(\\d+)$'));
+      if (m) maxPh = Math.max(maxPh, parseInt(m[1]) + 1);
+    });
+    const phListEl = document.getElementById('ae' + n + '-ph-list');
+    if (phListEl && maxPh > 1) {
+      while (phListEl.querySelectorAll('.us-slot').length < maxPh) {
+        addPhImg(n);
+      }
+    }
+  }
+
   // Pre-create and populate Transverse slots
   const tSlots = (cardData.tSlots && cardData.tSlots.length > 0) ? cardData.tSlots : [{ probe: '', depth: '', gain: '' }];
   const tListEl = document.getElementById('ae' + n + '-t-list');
@@ -1461,7 +1594,10 @@ function renderAECard(n, cardData, cardImgs) {
       if (!img || !src) return;
       img.src = src; img.style.display = 'block';
       const ph = img.closest('.img-ph');
-      if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
+      if (ph) {
+        ph.classList.add('has-img');
+        ph.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = 'none');
+      }
     });
   }
 
@@ -1553,12 +1689,15 @@ function applyState(state) {
   document.getElementById('ae-wrap').querySelectorAll('.ae-card').forEach(c => c.remove());
   document.getElementById('btn-add').style.display = '';
 
-  // Migrate old single-slot keys ae{n}-iv-t / ae{n}-iv-l → ae{n}-iv-t-0 / ae{n}-iv-l-0
+  // Migrate old single-slot keys: ae{n}-iv-t / ae{n}-iv-l → ae{n}-iv-t-0 / ae{n}-iv-l-0
+  //                               ae{n}-iv-ph (구형 단일) → ae{n}-iv-ph-0
   const migratedImgs = {};
   Object.entries(state.imgs || {}).forEach(([id, src]) => {
     const oldFmt = id.match(/^(ae\d+)-iv-([tl])$/);
-    if (oldFmt) { migratedImgs[`${oldFmt[1]}-iv-${oldFmt[2]}-0`] = src; }
-    else { migratedImgs[id] = src; }
+    if (oldFmt) { migratedImgs[`${oldFmt[1]}-iv-${oldFmt[2]}-0`] = src; return; }
+    const oldPh = id.match(/^(ae\d+)-iv-ph$/);
+    if (oldPh) { migratedImgs[`${oldPh[1]}-iv-ph-0`] = src; return; }
+    migratedImgs[id] = src;
   });
 
   // Render each AE card with renderAECard
@@ -1604,7 +1743,10 @@ function applyState(state) {
     if (!img || !src) return;
     img.src = src; img.style.display = 'block';
     const ph = img.closest('.img-ph,.osce-box,.waffle-box');
-    if (ph) ph.querySelectorAll('.img-ph-ico,.img-ph-txt,.osce-ico,.osce-txt,.waffle-ico,.waffle-txt').forEach(e => e.style.display = 'none');
+    if (ph) {
+      if (ph.classList.contains('img-ph')) ph.classList.add('has-img');
+      ph.querySelectorAll('.img-ph-ico,.img-ph-txt,.osce-ico,.osce-txt,.waffle-ico,.waffle-txt').forEach(e => e.style.display = 'none');
+    }
   });
 
   // Restore Section 4 reflections (reflectEntries)
@@ -1927,7 +2069,7 @@ async function printToPDF() {
 
   // ── 캡처 전 준비 ──
   // 1. 인쇄 불필요 요소 숨기기
-  const hideEls = document.querySelectorAll('.toolbar, .ae-del, .btn-add-acu, .btn-print, .modal-backdrop, .us-add-btn');
+  const hideEls = document.querySelectorAll('.toolbar, .ae-del, .btn-add-acu, .btn-print, .modal-backdrop, .us-add-btn, .img-del-btn, .us-slot-del');
   hideEls.forEach(el => { el.dataset._ph = el.style.display || ''; el.style.setProperty('display', 'none', 'important'); });
 
   // 2. 접힌 섹션 펼치기
@@ -2224,6 +2366,7 @@ function resetForm() {
   document.getElementById('hygiene-total').textContent = '— / 14';
   document.getElementById('safety-total').textContent = '— / 20';
   document.querySelectorAll('img.img-preview, img.osce-preview').forEach(img => { img.src = ''; img.style.display = 'none'; });
+  document.querySelectorAll('.img-ph').forEach(ph => ph.classList.remove('has-img'));
   document.querySelectorAll('.img-ph-ico,.img-ph-txt').forEach(el => el.style.display = '');
   document.getElementById('pd').value = new Date().toISOString().split('T')[0];
   addAE(); setStatus('초기화 완료', true);
@@ -2391,10 +2534,14 @@ function executeMerge() {
       // AE 이미지 수집 — 소스 파일의 cIdx → 통합 결과의 n 번 카드 ID로 매핑
       const cardImgs = {};
       Object.entries(fState.imgs || {}).forEach(([id, src]) => {
-        // 자침 사진: ae{cIdx}-iv-ph
-        const needleM = id.match(/^ae(\d+)-iv-ph$/);
+        // 탐혈/자침 사진: ae{cIdx}-iv-ph-{slotIdx} (신형) 또는 ae{cIdx}-iv-ph (구형 → ph-0으로)
+        const needleM = id.match(/^ae(\d+)-iv-ph-(\d+)$/);
         if (needleM && parseInt(needleM[1]) === cIdx) {
-          cardImgs[`ae${n}-iv-ph`] = src;
+          cardImgs[`ae${n}-iv-ph-${needleM[2]}`] = src;
+        }
+        const needleOld = id.match(/^ae(\d+)-iv-ph$/);
+        if (needleOld && parseInt(needleOld[1]) === cIdx) {
+          cardImgs[`ae${n}-iv-ph-0`] = src;
         }
         // 초음파 영상: ae{cIdx}-iv-{t|l}-{slotIdx}
         const usM = id.match(/^ae(\d+)-iv-([tl])-(\d+)$/);
